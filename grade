@@ -1,8 +1,13 @@
 require './lib/auto_grader.rb'
+require 'ruby-debug'
 
-code = IO.read('spec/fixtures/correct_example.rb')
-spec = 'spec/fixtures/correct_example.spec.rb'
+def grade(file,spec)
+  g = AutoGrader.create('1', 'CodeGrader', IO.read(file), :spec => spec)
+  g.grade!
+  puts "Score out of 100: #{g.normalized_score(100)}\n"
+  puts "\nComments:\n#{'-'*80}\n#{g.comments}\n#{'-'*80}\n"
+end
 
-g = AutoGrader.create('1', 'CodeGrader', code, :spec => spec)
-g.grade!
-puts "Result ===>  #{g.normalized_score}"
+PFX = 'spec/fixtures'
+grade "#{PFX}/correct_example.rb", "#{PFX}/correct_example.spec.rb"
+grade "#{PFX}/example_with_syntax_error.rb", "#{PFX}/correct_example.spec.rb"
