@@ -1,0 +1,8 @@
+require './lib/auto_grader.rb'
+
+code = IO.read('spec/fixtures/correct_example.rb')
+spec = 'spec/fixtures/correct_example.spec.rb'
+
+g = AutoGrader.create('1', 'CodeGrader', code, :spec => spec)
+g.grade!
+puts "Result ===>  #{g.normalized_score}"
