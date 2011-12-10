@@ -1,17 +1,18 @@
 require 'auto_grader'
 describe AutoGrader do
-  describe 'initializing' do
-    it 'should succeed with valid grader' do
-      AutoGrader.new('MultipleChoiceGrader', 'b', {}).should be_a_kind_of AutoGrader
-    end
-    it 'should raise NoSuchGraderError with invalid grader' do
-      lambda { AutoGrader.new 'Bad', 'b', {} }.should raise_error(AutoGrader::NoSuchGraderError)
-    end
+  describe 'initializing with valid grader' do
+    subject { AutoGrader.create('1-1', 'MultipleChoiceGrader', 'b', {}) }
+    it { should be_a_kind_of AutoGrader }
+    it 'should copy question_id' do ; subject.question_id.should == '1-1' ; end
+  end
+  it 'should raise NoSuchGraderError with invalid grader' do
+    lambda { AutoGrader.create '1-1', 'Bad', 'b', {} }.
+      should raise_error(AutoGrader::NoSuchGraderError)
   end
   describe 'generic grading' do
     describe 'with an empty answer' do
       before :each do
-        @grader = AutoGrader.new('MultipleChoiceGrader', '', {})
+        @grader = AutoGrader.create('1-1', 'MultipleChoiceGrader', '', {})
         @grader.grade!
       end
       it 'should return a score of 0.0' do
