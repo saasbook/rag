@@ -15,27 +15,18 @@ class CodeGrader < AutoGrader
   end
 
   def grade!
-    @run_spec = RspecRunner.new(@code, @specfile)
-    @run_spec.run
-    @comments = @run_spec.all_output
-    @normalized_score = @run_spec.normalized_score(100)
+    if spec_runner.run
+      @comments = @spec_runner.all_output
+      @normalized_score = @spec_runner.normalized_score(100)
+    else
+      @comments = @spec_runner.errors
+    end
   end
 
   private
 
-  def run_specs
-    error_stream = StringIO.new('', 'w')
-    output_stream = StringIO.new("OUTPUT:\n", 'w')
-    file = Tempfile.open(["rspec-#{question_id}", '.rb'])
-    file.write(@code)
-    file.close
-    config = RSpec::configuration
-    RSpec::configuration.requires = [file.path]
-    RSpec::configuration.files_to_run = @specfile
-    puts "Files = #{@specfile} for #{file.path}"
-    debugger
-    #RSpec::Core::Runner::run(@@rspec_options, error_stream, output_stream)
-    RSpec::Core::Runner::run(['--require', file.path, @specfile], error_stream, output_stream)
-    @comments << ([error_stream, output_stream].join "\n\n")
+  def spec_runner
+    @spec_runner ||= RspecRunner.new(@code, @specfile)
   end
+  
 end
