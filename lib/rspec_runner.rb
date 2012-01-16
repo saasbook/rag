@@ -1,4 +1,4 @@
-class RspecRunner
+class RspecRunner               # :nodoc:
   require 'rubygems'
   require 'rspec'
   require 'tempfile'

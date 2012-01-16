@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+<meta content="text/html; charset=UTF-8" http-equiv="Content-Type">
+
+<title>class AutoGrader - RDoc Documentation</title>
+
+<link type="text/css" media="screen" href="./rdoc.css" rel="stylesheet">
+
+<script type="text/javascript">
+  var rdoc_rel_prefix = "./";
+</script>
+
+<script type="text/javascript" charset="utf-8" src="./js/jquery.js"></script>
+<script type="text/javascript" charset="utf-8" src="./js/navigation.js"></script>
+<script type="text/javascript" charset="utf-8" src="./js/search_index.js"></script>
+<script type="text/javascript" charset="utf-8" src="./js/search.js"></script>
+<script type="text/javascript" charset="utf-8" src="./js/searcher.js"></script>
+<script type="text/javascript" charset="utf-8" src="./js/darkfish.js"></script>
+
+
+<body id="top" class="class">
+<nav id="metadata">
+  <nav id="home-section" class="section">
+  <h3 class="section-header">
+    <a href="./index.html">Home</a>
+    <a href="./table_of_contents.html#classes">Classes</a>
+    <a href="./table_of_contents.html#methods">Methods</a>
+  </h3>
+</nav>
+
+
+  <nav id="search-section" class="section project-section" class="initially-hidden">
+  <form action="#" method="get" accept-charset="utf-8">
+    <h3 class="section-header">
+      <input type="text" name="search" placeholder="Search" id="search-field"
+             title="Type to search, Up and Down to navigate, Enter to load">
+    </h3>
+  </form>
+
+  <ul id="search-results" class="initially-hidden"></ul>
+</nav>
+
+
+  <div id="file-metadata">
+    <nav id="file-list-section" class="section">
+  <h3 class="section-header">Defined In</h3>
+  <ul>
+    <li>lib/auto_grader.rb
+  </ul>
+</nav>
+
+    
+  </div>
+
+  <div id="class-metadata">
+    
+    <nav id="parent-class-section" class="section">
+  <h3 class="section-header">Parent</h3>
+  
+  <p class="link"><a href="Object.html">Object</a>
+  
+</nav>
+
+    
+    <!-- Method Quickref -->
+<nav id="method-list-section" class="section">
+  <h3 class="section-header">Methods</h3>
+
+  <ul class="link-list">
+    
+    <li><a href="#method-c-create">::create</a>
+    
+    <li><a href="#method-i-grade-21">#grade!</a>
+    
+    <li><a href="#method-i-normalized_score">#normalized_score</a>
+    
+  </ul>
+</nav>
+
+  </div>
+
+  <div id="project-metadata">
+    <nav id="fileindex-section" class="section project-section">
+  <h3 class="section-header">Pages</h3>
+
+  <ul>
+  
+    <li class="file"><a href="./Gemfile.html">Gemfile</a>
+  
+    <li class="file"><a href="./Gemfile~.html">Gemfile~</a>
+  
+    <li class="file"><a href="./README.html">README</a>
+  
+  </ul>
+</nav>
+
+    <nav id="classindex-section" class="section project-section">
+  <h3 class="section-header">Class and Module Index</h3>
+
+  <ul class="link-list">
+  
+    <li><a href="./RspecGrader.html">RspecGrader</a>
+  
+    <li><a href="./RspecGrader/RspecGrader.html">RspecGrader::RspecGrader</a>
+  
+    <li><a href="./RspecGrader/RspecGrader/NoSpecsGivenError.html">RspecGrader::RspecGrader::NoSpecsGivenError</a>
+  
+    <li><a href="./RspecGrader/RspecGrader/RspecGrader.html">RspecGrader::RspecGrader::RspecGrader</a>
+  
+    <li><a href="./RspecGrader/RspecGrader/RspecGrader/NoSuchSpecError.html">RspecGrader::RspecGrader::RspecGrader::NoSuchSpecError</a>
+  
+    <li><a href="./AutoGrader.html">AutoGrader</a>
+  
+    <li><a href="./AutoGrader/AutoGrader.html">AutoGrader::AutoGrader</a>
+  
+    <li><a href="./AutoGrader/AutoGrader/AutoGrader.html">AutoGrader::AutoGrader::AutoGrader</a>
+  
+    <li><a href="./AutoGrader/AutoGrader/AutoGrader/NoSuchGraderError.html">AutoGrader::AutoGrader::AutoGrader::NoSuchGraderError</a>
+  
+    <li><a href="./BeautifulCodeGrader.html">BeautifulCodeGrader</a>
+  
+    <li><a href="./MultipleChoiceGrader.html">MultipleChoiceGrader</a>
+  
+    <li><a href="./MyCode.html">MyCode</a>
+  
+    <li><a href="./Object.html">Object</a>
+  
+  </ul>
+</nav>
+
+  </div>
+</nav>
+
+<div id="documentation">
+  <h1 class="class">class AutoGrader</h1>
+
+  <div id="description" class="description">
+    
+  </div><!-- description -->
+
+  
+  
+  
+  <section id="5Buntitled-5D" class="documentation-section">
+    
+
+    
+
+    
+
+    
+    <!-- Attributes -->
+    <section id="attribute-method-details" class="method-section section">
+      <h3 class="section-header">Attributes</h3>
+
+      
+      <div id="attribute-i-assignment_id" class="method-detail">
+        <div class="method-heading attribute-method-heading">
+          <span class="method-name">assignment_id</span><span
+            class="attribute-access-type">[RW]</span>
+        </div>
+
+        <div class="method-description">
+        
+        <p>identifier of question being graded</p>
+        
+        </div>
+      </div>
+      
+      <div id="attribute-i-comments" class="method-detail">
+        <div class="method-heading attribute-method-heading">
+          <span class="method-name">comments</span><span
+            class="attribute-access-type">[RW]</span>
+        </div>
+
+        <div class="method-description">
+        
+        <p>textual feedback from the autograder on the student’s answer</p>
+        
+        </div>
+      </div>
+      
+      <div id="attribute-i-errors" class="method-detail">
+        <div class="method-heading attribute-method-heading">
+          <span class="method-name">errors</span><span
+            class="attribute-access-type">[RW]</span>
+        </div>
+
+        <div class="method-description">
+        
+        <p>errors running the autograder, if any; else nil</p>
+        
+        </div>
+      </div>
+      
+      <div id="attribute-i-raw_max" class="method-detail">
+        <div class="method-heading attribute-method-heading">
+          <span class="method-name">raw_max</span><span
+            class="attribute-access-type">[R]</span>
+        </div>
+
+        <div class="method-description">
+        
+        <p>the maximum possible raw score as reported by the underlying grader</p>
+        
+        </div>
+      </div>
+      
+      <div id="attribute-i-raw_score" class="method-detail">
+        <div class="method-heading attribute-method-heading">
+          <span class="method-name">raw_score</span><span
+            class="attribute-access-type">[R]</span>
+        </div>
+
+        <div class="method-description">
+        
+        <p>achieved raw score as reported by the underlying grader</p>
+        
+        </div>
+      </div>
+      
+    </section><!-- attribute-method-details -->
+    
+
+    <!-- Methods -->
+    
+     <section id="public-class-5Buntitled-5D-method-details" class="method-section section">
+      <h3 class="section-header">Public Class Methods</h3>
+
+    
+      <div id="method-c-create" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">create</span><span
+            class="method-args">(assignment_id, grader, submitted_answer, grading_rules, normalize=100)</span>
+          <span class="method-click-advice">click to toggle source</span>
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>Create a new autograder object, which will grade a student’s submission
+given the submission text, a grading strategy, and grading rules to be used
+by that strategy.</p>
+<ul><li>
+<p><code>assignment_id</code> - string identifier for question being graded</p>
+</li><li>
+<p><code>grader</code> - grading strategy to use.  Currently only
+<code>:rspec_grader</code> is valid.  Raises
++AutoGrader::NoSuchGraderError+ if nonexistent strategy specified.</p>
+</li><li>
+<p><code>submitted_answer</code> - a string containing the student's submitted
+answer, such as code.</p>
+</li><li>
+<p><code>grading_rules</code> - a hash containing the grading options
+supported by the chosen grading strategy.  See each strategy's class for
+what options are expected or required by that strategy.</p>
+</li><li>
+<p><code>normalize</code> - if given, normalize score to this maximum; default
+100</p>
+</li></ul>
+          
+
+          
+          <div class="method-source-code" id="create-source">
+            <pre><span class="ruby-comment"># File lib/auto_grader.rb, line 33</span>
+<span class="ruby-keyword">def</span> <span class="ruby-keyword">self</span>.<span class="ruby-identifier">create</span>(<span class="ruby-identifier">assignment_id</span>, <span class="ruby-identifier">grader</span>, <span class="ruby-identifier">submitted_answer</span>, <span class="ruby-identifier">grading_rules</span>, <span class="ruby-identifier">normalize</span>=<span class="ruby-value">100</span>)
+  <span class="ruby-identifier">@@initialized</span> <span class="ruby-operator">||=</span> <span class="ruby-constant">AutoGrader</span>.<span class="ruby-identifier">class_init</span>
+  <span class="ruby-keyword">if</span> <span class="ruby-identifier">submitted_answer</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">submitted_answer</span>.<span class="ruby-identifier">empty?</span>
+    <span class="ruby-constant">AutoGrader</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">assignment_id</span>)
+  <span class="ruby-keyword">else</span>
+    <span class="ruby-keyword">begin</span>
+      <span class="ruby-identifier">obj</span> = <span class="ruby-constant">Object</span>.<span class="ruby-identifier">const_get</span>(<span class="ruby-identifier">grader</span>).<span class="ruby-identifier">send</span>(<span class="ruby-value">:new</span>, <span class="ruby-identifier">submitted_answer</span>, <span class="ruby-identifier">grading_rules</span>)
+      <span class="ruby-identifier">obj</span>.<span class="ruby-identifier">assignment_id</span> = <span class="ruby-identifier">assignment_id</span>
+      <span class="ruby-keyword">return</span> <span class="ruby-identifier">obj</span>
+    <span class="ruby-keyword">rescue</span> <span class="ruby-constant">NameError</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">e</span>
+      <span class="ruby-identifier">raise</span> <span class="ruby-constant">AutoGrader</span><span class="ruby-operator">::</span><span class="ruby-constant">NoSuchGraderError</span>, <span class="ruby-node">&quot;Can't find grading strategy for #{grader}&quot;</span>
+    <span class="ruby-keyword">end</span>
+  <span class="ruby-keyword">end</span>
+<span class="ruby-keyword">end</span></pre>
+          </div><!-- create-source -->
+          
+        </div>
+
+        
+
+        
+      </div><!-- create-method -->
+
+    
+    </section><!-- public-class-method-details -->
+  
+     <section id="public-instance-5Buntitled-5D-method-details" class="method-section section">
+      <h3 class="section-header">Public Instance Methods</h3>
+
+    
+      <div id="method-i-grade-21" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">grade!</span><span
+            class="method-args">()</span>
+          <span class="method-click-advice">click to toggle source</span>
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>Grade the given question using the specified grader, strategy, and maximum
+score.  If all</p>
+          
+
+          
+          <div class="method-source-code" id="grade-21-source">
+            <pre><span class="ruby-comment"># File lib/auto_grader.rb, line 55</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">grade!</span>
+  <span class="ruby-comment"># default method does nothing and leaves a score of 0</span>
+<span class="ruby-keyword">end</span></pre>
+          </div><!-- grade-21-source -->
+          
+        </div>
+
+        
+
+        
+      </div><!-- grade-21-method -->
+
+    
+      <div id="method-i-normalized_score" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">normalized_score</span><span
+            class="method-args">(max=100)</span>
+          <span class="method-click-advice">click to toggle source</span>
+        </div>
+        
+
+        <div class="method-description">
+          
+          
+          
+
+          
+          <div class="method-source-code" id="normalized_score-source">
+            <pre><span class="ruby-comment"># File lib/auto_grader.rb, line 48</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier">normalized_score</span>(<span class="ruby-identifier">max</span>=<span class="ruby-value">100</span>)
+  <span class="ruby-identifier">raw_max</span>.<span class="ruby-identifier">zero?</span> <span class="ruby-operator">?</span> <span class="ruby-value">0</span> <span class="ruby-operator">:</span> (<span class="ruby-identifier">max</span>.<span class="ruby-identifier">to_f</span> * <span class="ruby-identifier">raw_score</span><span class="ruby-operator">/</span><span class="ruby-identifier">raw_max</span>).<span class="ruby-identifier">ceil</span>
+<span class="ruby-keyword">end</span></pre>
+          </div><!-- normalized_score-source -->
+          
+        </div>
+
+        
+
+        
+      </div><!-- normalized_score-method -->
+
+    
+    </section><!-- public-instance-method-details -->
+  
+  </section><!-- 5Buntitled-5D -->
+
+</div><!-- documentation -->
+
+
+<footer id="validator-badges">
+  <p><a href="http://validator.w3.org/check/referer">[Validate]</a>
+  <p>Generated by <a href="https://github.com/rdoc/rdoc">RDoc</a> 3.12.
+  <p>Generated with the <a href="http://deveiate.org/projects/Darkfish-Rdoc/">Darkfish Rdoc Generator</a> 3.
+</footer>
+

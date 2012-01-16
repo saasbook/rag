@@ -1,17 +1,17 @@
 require 'auto_grader'
-require 'graders/code_grader'
+require 'graders/rspec_grader'
 require 'ruby-debug'
 
-describe CodeGrader do
+describe RspecGrader do
   def fake_rspec_output(str)
     RspecRunner.any_instance.stub(:run_rspec).and_return(str)
   end
   it 'should give error when initializing with no specs' do
-    lambda { CodeGrader.new('foo', {}) }.should raise_error NoSpecsGivenError
+    lambda { RspecGrader.new('foo', {}) }.should raise_error RspecGrader::NoSpecsGivenError
   end
   describe 'running valid specfile' do
     before :each do
-      @g = CodeGrader.new('foo', :spec => 'spec/fixtures/correct_example.spec.rb')
+      @g = RspecGrader.new('foo', :spec => 'spec/fixtures/correct_example.spec.rb')
     end
     it 'should give 100% on correct code' do
       fake_rspec_output '1 example, 0 failures'
@@ -26,9 +26,7 @@ describe CodeGrader do
     it 'should give 0 (not exception) for all failures' do
       fake_rspec_output '3 examples, 3 failures'
       @g.grade!
-      @g.normalized_score.should be_zero
+      @g.normalized_score.should == 0
     end
-  end
-  describe 'running file with ruby syntax errors' do
   end
 end

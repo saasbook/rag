@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>new (CodeGrader)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File lib/graders/code_grader.rb, line 15</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">initialize</span>(<span class="ruby-identifier">submitted_answer</span>, <span class="ruby-identifier">grading_rules</span>)
+    <span class="ruby-ivar">@code</span> = <span class="ruby-identifier">submitted_answer</span>
+    <span class="ruby-ivar">@raw_score</span> = <span class="ruby-ivar">@raw_max</span> = <span class="ruby-value">0</span>
+    <span class="ruby-ivar">@comments</span> = <span class="ruby-value str">''</span>
+    <span class="ruby-comment cmt"># make sure exactly one of specdir, specfile is given</span>
+    <span class="ruby-ivar">@specfile</span> = <span class="ruby-identifier">grading_rules</span>[<span class="ruby-identifier">:spec</span>]
+    <span class="ruby-identifier">raise</span> <span class="ruby-constant">NoSpecsGivenError</span> <span class="ruby-keyword kw">if</span> <span class="ruby-ivar">@specfile</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-operator">||</span> <span class="ruby-ivar">@specfile</span>.<span class="ruby-identifier">empty?</span>
+    <span class="ruby-identifier">raise</span> <span class="ruby-constant">NoSuchSpecError</span>, <span class="ruby-node">&quot;Specfile #{@specfile} not found&quot;</span> <span class="ruby-keyword kw">unless</span> <span class="ruby-constant">File</span>.<span class="ruby-identifier">readable?</span>(<span class="ruby-ivar">@specfile</span>)
+  <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

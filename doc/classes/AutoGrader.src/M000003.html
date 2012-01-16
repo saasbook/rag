@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>create (AutoGrader)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File lib/auto_grader.rb, line 33</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">create</span>(<span class="ruby-identifier">assignment_id</span>, <span class="ruby-identifier">grader</span>, <span class="ruby-identifier">submitted_answer</span>, <span class="ruby-identifier">grading_rules</span>, <span class="ruby-identifier">normalize</span>=<span class="ruby-value">100</span>)
+    <span class="ruby-ivar">@@initialized</span> <span class="ruby-operator">||=</span> <span class="ruby-constant">AutoGrader</span>.<span class="ruby-identifier">class_init</span>
+    <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">submitted_answer</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">submitted_answer</span>.<span class="ruby-identifier">empty?</span>
+      <span class="ruby-constant">AutoGrader</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">assignment_id</span>)
+    <span class="ruby-keyword kw">else</span>
+      <span class="ruby-keyword kw">begin</span>
+        <span class="ruby-identifier">obj</span> = <span class="ruby-constant">Object</span>.<span class="ruby-identifier">const_get</span>(<span class="ruby-identifier">grader</span>).<span class="ruby-identifier">send</span>(<span class="ruby-identifier">:new</span>, <span class="ruby-identifier">submitted_answer</span>, <span class="ruby-identifier">grading_rules</span>)
+        <span class="ruby-identifier">obj</span>.<span class="ruby-identifier">assignment_id</span> = <span class="ruby-identifier">assignment_id</span>
+        <span class="ruby-keyword kw">return</span> <span class="ruby-identifier">obj</span>
+      <span class="ruby-keyword kw">rescue</span> <span class="ruby-constant">NameError</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">e</span>
+        <span class="ruby-identifier">raise</span> <span class="ruby-constant">AutoGrader</span><span class="ruby-operator">::</span><span class="ruby-constant">NoSuchGraderError</span>, <span class="ruby-node">&quot;Can't find grading strategy for #{grader}&quot;</span>
+      <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">end</span>
+  <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

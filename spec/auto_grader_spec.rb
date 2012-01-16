@@ -3,7 +3,7 @@ describe AutoGrader do
   describe 'initializing with valid grader' do
     subject { AutoGrader.create('1-1', 'MultipleChoiceGrader', 'b', {}) }
     it { should be_a_kind_of AutoGrader }
-    it 'should copy question_id' do ; subject.question_id.should == '1-1' ; end
+    it 'should copy assignment_id' do ; subject.assignment_id.should == '1-1' ; end
   end
   it 'should raise NoSuchGraderError with invalid grader' do
     lambda { AutoGrader.create '1-1', 'Bad', 'b', {} }.
