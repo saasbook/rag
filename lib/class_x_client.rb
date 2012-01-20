@@ -1,32 +1,56 @@
 require 'tempfile'
 require 'yaml'
 require 'net/http'
+require 'Base64'
 
 require './lib/class_x_controller.rb'
 require './lib/class_x_submission.rb'
 require './lib/auto_grader.rb'
 
 class ClassXClient
-  def initialize(endpoint, api_key, queue_id)
+  class ClassXClient::UnknownAssignmentPart < StandardError ; end
+  class ClassXClient::SpecNotFound < StandardError ; end
+
+  # Requires a file called 'autograders.yml' to exist in the current working 
+  # directory and it must represent a hash from assignment_part_sid's to
+  # spec URIs
+
+  def initialize(endpoint, api_key, autograders_yml)
     @endpoint = endpoint
     @api_key = api_key
-    @queue_id = queue_id
+    #@assignment_id = assignment_id
+    #@queue_id = queue_id || assignment_id
     @controller = ClassXController.new(endpoint, api_key)
 
     # Load configuration file for assignment_id->spec map
-    @autograders = init_autograders
+    # We assume that the keys are also the assignment_part_sids, as well as the queue_ids
+    @autograders = init_autograders(autograders_yml)
   end
 
   def run
-    while @controller.get_queue_length(@queue_id) > 0
-      result = @controller.get_pending_submission(@queue_id)
-      next if result.nil?
+    # Iterate round robin through assignment parts until all queues are empty
+    while @autograders.size > 0
+      to_delete = []
+      @autograders.keys.each do |assignment_part_sid|
+        puts assignment_part_sid
+        if @controller.get_queue_length(assignment_part_sid) == 0
+          puts "  deleting assignment part"
+          to_delete << assignment_part_sid
+          next
+        end
+        result = @controller.get_pending_submission(assignment_part_sid)
+        next if result.nil?
+        puts "  got submission"
 
-      raise "Can't handle encoding: #{result['submission_encoding']}" if result['submission_encoding'] != 'base64'
-      submission = ClassXSubmission.load_from_base64(result['submission'])
-      spec = load_spec(submission.assignment_part_sid)
-      grade = run_autograder(submission.submission, spec)
-      server.post_score(submission['api_state'], grade.score, grade.comments)
+        raise "Can't handle encoding: #{result['submission_encoding']}" if result['submission_encoding'] != 'base64'
+        submission = Base64.strict_decode64(result['submission'])
+        #puts submission
+        spec = load_spec(assignment_part_sid)
+        grade = run_autograder(submission, spec)
+        @controller.post_score(result['api_state'], grade.normalized_score, grade.comments)
+        puts "  scored #{grade.normalized_score}: #{grade.comments}"
+      end
+      @autograders.delete_if{|key,value| to_delete.include? key}
     end
   end
 
@@ -37,7 +61,11 @@ class ClassXClient
     autograder = @autograders[assignment_part_sid]
     if autograder[:cache].nil?
       spec_file = Tempfile.new('spec')
-      spec_file.write(Net::HTTP.get(autograder[:uri]))
+      response = Net::HTTP.get_response(URI(autograder[:uri]))
+      if response.code !~ /2\d\d/
+        raise ClassXClient::SpecNotFound, "Could not load the spec at #{autograder[:uri]}"
+      end
+      spec_file.write(response.body)
       spec_file.flush
       autograder[:cache] = spec_file
     end
@@ -50,10 +78,12 @@ class ClassXClient
     g
   end
 
-  def init_autograders
-    YAML::load(File.open('autograders.yml')).inject({}) do |result,pair|
+  def init_autograders(filename)
+    # TODO: Verify file format
+    YAML::load(File.open(filename, 'r')).inject({}) do |result,pair|
       id, uri = pair
       result[id] = {uri: uri, cache: nil}
+      result
     end
   end
 end

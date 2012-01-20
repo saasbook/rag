@@ -1,1 +1,4 @@
-assignment_1_part_1: https://s3.amazonaws.com/saas-class/example_spec.rb
+# This does not support https URIs yet
+test-assign-1-part-1: http://s3.amazonaws.com/saas-class/example_spec.rb
+test-assign-1-part-2: http://s3.amazonaws.com/saas-class/example_spec_2.rb
+test-assign-1-part-3: http://s3.amazonaws.com/saas-class/example_spec_2.rb

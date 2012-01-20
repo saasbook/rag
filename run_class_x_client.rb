@@ -1,13 +1,12 @@
 #!/usr/bin/env ruby
 
+require 'yaml'
 require './lib/class_x_client.rb'
 
-endpoint_uri = 'https://berkeley.campus-class.org/saas-staging/'
-api_key = ''
-if api_key.blank?
-  puts 'You must edit this script and add in the api_key. This can be found on the Course Settings administrative page.'
+unless File.file?('conf.yml')
+  puts "Please copy conf.yml.example into conf.yml and configure the parameters"
   exit
 end
-queue_id = "course_7_queue_test-assign-part-1"
+confs = YAML::load(File.open('conf.yml', 'r'))
 
-ClassXClient.new(endpoint_uri, api_key, queue_id).run
+ClassXClient.new(confs['endpoint_uri'], confs['api_key'], confs['autograders_yml']).run
