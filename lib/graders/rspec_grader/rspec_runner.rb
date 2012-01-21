@@ -4,13 +4,14 @@ class RspecRunner               # :nodoc:
   require 'tempfile'
   require 'stringio'
 
-  # array of options for rspec, as they would appear in ARGV; e.g. [--format, 'nested']
-  @@rspec_options = []
-  
+  class ExampleTimeoutError < StandardError ; end
+
+  @@preamble = IO.read(File.join(File.expand_path(File.dirname(__FILE__)), 'rspec_sandbox.rb'))
+
   attr_reader :total, :passed, :failed, :pending, :output
   def initialize(code, specfile)
     @code = code
-    @specfile = specfile
+    @specs = IO.read(specfile)
     @total = 0
     @passed = 0
     @failed = 0
@@ -31,9 +32,14 @@ class RspecRunner               # :nodoc:
     output = StringIO.new('', 'w')
     Tempfile.open(['rspec', '.rb']) do |file|
       begin
+        # don't put anything before student code, so line numbers are preserved
         file.write(@code)
+        # sandbox the code with timeouts
+        file.write(@@preamble)
+        # the specs that go with this code
+        file.write(@specs)
         file.flush
-        RSpec::Core::Runner::run(['--require', file.path, @specfile], errs, output)
+        RSpec::Core::Runner::run([file.path], errs, output)
       rescue Exception => e
         # if tmpfile name appears in err msg, replace with 'your_code.rb' to be friendly
         output.string << e.message.gsub(file.path, 'your_code.rb')

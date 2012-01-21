@@ -2,8 +2,6 @@ class RspecGrader < AutoGrader
   class RspecGrader::NoSuchSpecError < StandardError ; end
   class RspecGrader::NoSpecsGivenError < StandardError ; end
 
-  require './lib/rspec_runner.rb'
-  
   # The constructor is called from +AutoGrader.create+ so you shouldn't call
   # it directly.  The required and optional grading rules for
   # +RspecGrader+ are:

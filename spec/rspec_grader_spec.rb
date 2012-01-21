@@ -1,10 +1,9 @@
 require 'auto_grader'
-require 'graders/rspec_grader'
-require 'ruby-debug'
+require 'graders/rspec_grader/rspec_grader'
 
 describe RspecGrader do
   def fake_rspec_output(str)
-    RspecRunner.any_instance.stub(:run_rspec).and_return(str)
+    ::RspecRunner.any_instance.stub(:run_rspec).and_return(str)
   end
   it 'should give error when initializing with no specs' do
     lambda { RspecGrader.new('foo', {}) }.should raise_error RspecGrader::NoSpecsGivenError

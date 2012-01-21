@@ -1,3 +1,5 @@
+require 'ruby-debug'
+
 class AutoGrader
   class AutoGrader::NoSuchGraderError < StandardError ; end
 
@@ -59,7 +61,7 @@ class AutoGrader
   private
 
   def self.class_init
-    Dir["lib/graders/*_grader.rb"].each { |file| load file }
+    Dir["lib/graders/*_grader/*.rb"].each { |file| load file }
   end
   
   #:nodoc: not to be used externally
