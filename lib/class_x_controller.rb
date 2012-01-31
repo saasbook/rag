@@ -40,8 +40,9 @@ class ClassXController
   #   "submission_encoding": ... (will be set to ‘base64’)
   #   "submission": (actual user submission in Base64 format) }
   # }
-  def get_pending_submission(queue_name)
+  def get_pending_submission(queue_name, peek=nil)
     params = {:queue => queue_name}
+    params[:peek] = true if peek
     response = send_request("assignment/api/pending_submission/", params, :get)
     response['submission']
   end
