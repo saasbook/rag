@@ -34,6 +34,8 @@ class RspecRunner               # :nodoc:
         file.write(@code)
         file.flush
         RSpec::Core::Runner::run(['--require', file.path, @specfile], errs, output)
+        output.string = output.string.gsub(file.path, 'your_code.rb')
+        errs.string = errs.string.gsub(file.path, 'your_code.rb')
       rescue Exception => e
         # if tmpfile name appears in err msg, replace with 'your_code.rb' to be friendly
         output.string << e.message.gsub(file.path, 'your_code.rb')

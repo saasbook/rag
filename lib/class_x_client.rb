@@ -54,11 +54,38 @@ class ClassXClient
     end
   end
 
+  def download_submissions(file)
+    # Iterate through assignment parts until all queues are empty
+    # Note, this process MUST complete in under 15 minutes or else the queues
+    # will start repopulating. This method does NOT permanently remove 
+    # submissions from the queue
+    raise if file.nil?
+    submissions = {}
+    @autograders.each_key {|x| submissions[x] = []}
+
+    @autograders.keys.each do |assignment_part_sid|
+      while true
+        if @controller.get_queue_length(assignment_part_sid) == 0
+          puts "  deleting assignment part"
+          break
+        end
+        result = @controller.get_pending_submission(assignment_part_sid)
+        next if result.nil?
+        puts "  got submission"
+        submissions[assignment_part_sid] << result
+      end
+    end
+    puts "Finishing"
+    file.write(submissions.inspect)
+    file.flush
+  end
+
   private
 
   def load_spec(assignment_part_sid)
     raise "Assignment part #{assignment_part_sid} not found!" unless @autograders.include?(assignment_part_sid)
     autograder = @autograders[assignment_part_sid]
+    return autograder[:uri] if autograder[:uri] !~ /^http/ # Assume that if uri doesn't start with http, then it is a local file path
     if autograder[:cache].nil?
       spec_file = Tempfile.new('spec')
       response = Net::HTTP.get_response(URI(autograder[:uri]))

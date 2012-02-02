@@ -20,4 +20,6 @@ end
 conf = confs[conf_name]
 raise "Couldn't load configuration #{conf_name}" if conf.nil?
 
-ClassXClient.new(conf['endpoint_uri'], conf['api_key'], conf['autograders_yml']).run
+f = File.open('submissions', 'w')
+ClassXClient.new(conf['endpoint_uri'], conf['api_key'], conf['autograders_yml']).download_submissions(f)
+f.close
