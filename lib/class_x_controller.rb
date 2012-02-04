@@ -83,6 +83,12 @@ class ClassXController
     request['X-api-key'] = @api_key
 
     response = http.request(request)
-    JSON.parse(response.body)
+    begin
+      JSON.parse(response.body)
+    rescue StandardError => e
+      puts "Response body: "
+      puts response.body
+      raise e
+    end
   end
 end

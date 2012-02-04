@@ -46,9 +46,17 @@ class ClassXClient
         submission = Base64.strict_decode64(result['submission'])
         #puts submission
         spec = load_spec(assignment_part_sid)
-        grade = run_autograder(submission, spec)
-        @controller.post_score(result['api_state'], grade.normalized_score, grade.comments)
-        puts "  scored #{grade.normalized_score}: #{grade.comments}"
+        #grade = run_autograder(submission, spec)
+        #score = grade.normalized_score
+        #comments = grade.comments
+        Tempfile.open(['test', '.rb']) do |file|
+          file.write(submission)
+          file.flush
+          score, comments = ghetto_run_autograder(file.path, spec)
+          @controller.post_score(result['api_state'], score, comments)
+          puts "  scored #{score}: #{comments}" if score != 100
+          #puts "  scored #{score}: #{comments}"
+        end
       end
       @autograders.delete_if{|key,value| to_delete.include? key}
     end
@@ -99,11 +107,33 @@ class ClassXClient
     autograder[:cache].path
   end
 
-  def run_autograder(submission, spec)
-    g = AutoGrader.create('1', 'RspecGrader', submission, :spec => spec)
-    g.grade!
-    g
+  # Ghetto fix, remove later
+  def ghetto_run_autograder(submission, spec)
+    def parse_grade(str)
+      # Used for parsing the stdout output from running grade as a shell command
+      # FIXME: This feels insecure and fragile
+      score_regex = /Score out of 100:\s*(\d+(?:\.\d+)?)$/
+      score = str.match(score_regex, str.rindex(score_regex))[1].to_f
+      comments = str.match(/^---BEGIN rspec comments---\n#{'-'*80}\n(.*)#{'-'*80}\n---END rspec comments---$/m)[1]
+      comments = comments.split("\n").map do |line|
+        line.gsub(/\(FAILED - \d+\)/, "(FAILED)")
+      end.join("\n")
+      [score, comments]
+    rescue
+      raise "Failed to parse autograder output", str
+    end
+    output = `./grade #{submission} #{spec}`
+    score, comments = parse_grade(output)
+    comments.gsub!(spec, 'spec.rb')
+    [score, comments]
   end
+
+
+  #def run_autograder(submission, spec)
+  #  g = AutoGrader.create('1', 'WeightedRspecGrader', submission, :spec => spec)
+  #  g.grade!
+  #  g
+  #end
 
   def init_autograders(filename)
     # TODO: Verify file format
