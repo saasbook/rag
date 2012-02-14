@@ -41,6 +41,7 @@ class ClassXClient
         result = @controller.get_pending_submission(assignment_part_sid)
         next if result.nil?
         puts "  got submission"
+        puts result['submission_metadata']
 
         raise "Can't handle encoding: #{result['submission_encoding']}" if result['submission_encoding'] != 'base64'
         submission = Base64.strict_decode64(result['submission'])
@@ -54,8 +55,8 @@ class ClassXClient
           file.flush
           score, comments = ghetto_run_autograder(file.path, spec)
           @controller.post_score(result['api_state'], score, comments)
-          puts "  scored #{score}: #{comments}" if score != 100
-          #puts "  scored #{score}: #{comments}"
+          #puts "  scored #{score}: #{comments}" if score != 100
+          puts "  scored #{score}: #{comments}"
         end
       end
       @autograders.delete_if{|key,value| to_delete.include? key}
@@ -122,7 +123,17 @@ class ClassXClient
     rescue
       raise "Failed to parse autograder output", str
     end
+
+    # Normal stuff
     output = `./grade #{submission} #{spec}`
+
+    #HEROKU stuff
+    #uri = File.open(submission, 'r'){|x| x.read}
+    #uri.gsub!(/herokuapps/, 'herokuapp')
+    #puts uri
+    ## This is a ghetto thing for the rottenpotatoes app
+    #output = `HEROKU_URI="#{uri}" ./grade dummy_file.rb #{spec}`
+
     score, comments = parse_grade(output)
     comments.gsub!(spec, 'spec.rb')
     [score, comments]

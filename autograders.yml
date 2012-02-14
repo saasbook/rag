@@ -2,8 +2,15 @@
 #test-assign-1-part-1: http://s3.amazonaws.com/saas-class/example_spec.rb
 #test-assign-1-part-2: http://s3.amazonaws.com/saas-class/example_spec_2.rb
 #test-assign-1-part-3: http://s3.amazonaws.com/saas-class/example_spec_2.rb
-assign-1-part-1: http://s3.amazonaws.com/saas-class/example_spec.rb
-assign-1-part-2: http://s3.amazonaws.com/saas-class/example_spec_2.rb
-assign-1-part-3: http://s3.amazonaws.com/saas-class/example_spec_2.rb
-assign-1-part-4: http://s3.amazonaws.com/saas-class/example_spec_2.rb
-assign-1-part-5: http://s3.amazonaws.com/saas-class/example_spec_2.rb
+
+#assign-1-part-1: http://s3.amazonaws.com/saas-class/example_spec.rb
+#assign-1-part-2: http://s3.amazonaws.com/saas-class/example_spec_2.rb
+#assign-1-part-3: http://s3.amazonaws.com/saas-class/example_spec_2.rb
+#assign-1-part-4: http://s3.amazonaws.com/saas-class/example_spec_2.rb
+#assign-1-part-5: http://s3.amazonaws.com/saas-class/example_spec_2.rb
+
+assign-2-part-1: http://s3.amazonaws.com/saas-class/example_spec.rb
+assign-2-part-2: http://s3.amazonaws.com/saas-class/example_spec_2.rb
+assign-2-part-3: http://s3.amazonaws.com/saas-class/example_spec_2.rb
+assign-2-part-4: http://s3.amazonaws.com/saas-class/example_spec_2.rb
+assign-2-part-5: http://s3.amazonaws.com/saas-class/example_spec_2.rb
