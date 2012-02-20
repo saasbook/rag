@@ -1,4 +1,4 @@
-require 'graders/weighted_rspec_grader'
+require_relative 'weighted_rspec_grader'
 
 class HerokuRspecGrader < WeightedRspecGrader
   def initialize(uri, grading_rules)

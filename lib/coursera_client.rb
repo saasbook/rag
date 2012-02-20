@@ -45,7 +45,7 @@ class CourseraClient
         submission = Base64.strict_decode64(result['submission'])
         #puts submission
         spec = load_spec(assignment_part_sid)
-        grader_type = @autograders[spec][:type]
+        grader_type = @autograders[assignment_part_sid][:type]
 
         # Original method
         #grade = run_autograder(submission, spec, grader_type)
@@ -129,6 +129,7 @@ class CourseraClient
   # FIXME: This is a hack, remove later
   # Runs a separate process for grading
   def run_autograder_subprocess(submission, spec, grader_type)
+    output = ''
     Tempfile.open(['test', '.rb']) do |file|
       file.write(submission)
       file.flush
@@ -136,6 +137,9 @@ class CourseraClient
         output = `./grade_heroku #{file.path} #{spec}`
       else
         output = `./grade #{file.path} #{spec}`
+      end
+      if $?.to_i != 0
+        raise 'AutograderSubprocess error'
       end
     end
 

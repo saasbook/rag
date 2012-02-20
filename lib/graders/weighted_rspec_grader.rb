@@ -1,4 +1,4 @@
-require 'graders/rspec_grader'
+require_relative 'rspec_grader'
 
 class WeightedRspecGrader < RspecGrader
   def grade!

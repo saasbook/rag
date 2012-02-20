@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 
 require 'yaml'
-require './lib/class_x_client.rb'
+require './lib/coursera_client.rb'
 
 unless File.file?('conf.yml')
   puts "Please copy conf.yml.example into conf.yml and configure the parameters"
@@ -20,4 +20,4 @@ end
 conf = confs[conf_name]
 raise "Couldn't load configuration #{conf_name}" if conf.nil?
 
-ClassXClient.new(conf['endpoint_uri'], conf['api_key'], conf['autograders_yml']).run
+CourseraClient.new(conf['endpoint_uri'], conf['api_key'], conf['autograders_yml']).run
