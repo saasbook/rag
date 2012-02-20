@@ -134,7 +134,7 @@ class CourseraClient
       file.write(submission)
       file.flush
       if grader_type == 'HerokuRspecGrader'
-        output = `./grade_heroku #{file.path} #{spec}`
+        output = `./grade_heroku #{submission} #{spec}`
       else
         output = `./grade #{file.path} #{spec}`
       end
