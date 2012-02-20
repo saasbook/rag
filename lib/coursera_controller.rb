@@ -1,4 +1,8 @@
+require_relative 'rag_logger'
+
 class CourseraController
+  include RagLogger
+
   class CourseraController::InvalidHTTPMethodError < StandardError ; end
   class CourseraController::BadStatusCodeError < StandardError ; end
 
@@ -59,6 +63,7 @@ class CourseraController
     params = {:api_state => api_state, :score => score, :feedback => feedback, :options => options.to_json}
     response = send_request("assignment/api/score/", params, :post)
     if response['status'] !~ /2\d\d/
+      logger.error "Bad post score response: #{response['status']}"
       raise CourseraController::BadStatusCode, "Bad post score response: #{response['status']}"
     end
   end
@@ -69,6 +74,7 @@ class CourseraController
   # Returns a Hash representing the JSON-encoded response.
   def send_request(path, params={}, mode=:get)
     unless HTTP_MODES.include? mode
+      logger.fatal "Invalid mode: #{mode}"
       raise CourseraController::InvalidHTTPMethodError, "Invalid mode: #{mode}"
     end
     uri = URI.join(@base_uri, path)
@@ -86,8 +92,7 @@ class CourseraController
     begin
       JSON.parse(response.body)
     rescue StandardError => e
-      puts "Response body: "
-      puts response.body
+      logger.error "Invalid JSON in response body #{response.body}"
       raise e
     end
   end

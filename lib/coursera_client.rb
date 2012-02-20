@@ -2,12 +2,16 @@ require 'tempfile'
 require 'yaml'
 require 'net/http'
 require 'Base64'
+require 'open3'
 
-require './lib/coursera_controller.rb'
-require './lib/coursera_submission.rb'
-require './lib/auto_grader.rb'
+require_relative 'rag_logger'
+require_relative 'coursera_controller'
+require_relative 'coursera_submission'
+require_relative 'auto_grader'
 
 class CourseraClient
+  include RagLogger
+
   class CourseraClient::UnknownAssignmentPart < StandardError ; end
   class CourseraClient::SpecNotFound < StandardError ; end
 
@@ -30,20 +34,22 @@ class CourseraClient
     while @autograders.size > 0
       to_delete = []
       @autograders.keys.each do |assignment_part_sid|
-        puts assignment_part_sid
+        logger.info assignment_part_sid
         if @controller.get_queue_length(assignment_part_sid) == 0
-          puts "  deleting assignment part"
+          logger.info "  queue length 0; removing"
           to_delete << assignment_part_sid
           next
         end
         result = @controller.get_pending_submission(assignment_part_sid)
         next if result.nil?
-        puts "  got submission"
-        puts result['submission_metadata']
+        logger.info "  received submission: #{result['submission_metadata']['submission_id']}"
+        logger.debug result['submission_metadata']
 
-        raise "Can't handle encoding: #{result['submission_encoding']}" if result['submission_encoding'] != 'base64'
+        if result['submission_encoding'] != 'base64'
+          logger.fatal "Can't handle encoding: #{result['submission_encoding']}" 
+          raise "Can't handle encoding: #{result['submission_encoding']}" 
+        end
         submission = Base64.strict_decode64(result['submission'])
-        #puts submission
         spec = load_spec(assignment_part_sid)
         grader_type = @autograders[assignment_part_sid][:type]
 
@@ -57,8 +63,7 @@ class CourseraClient
         formatted_comments = format_for_html(comments)
         @controller.post_score(result['api_state'], score, formatted_comments)
 
-        #puts "  scored #{score}: #{comments}" if score != 100
-        puts "  scored #{score}: #{comments}"
+        logger.debug "  scored #{score}: #{comments}"
       end
 
       @autograders.delete_if{|key,value| to_delete.include? key}
@@ -70,23 +75,25 @@ class CourseraClient
     # Note, this process MUST complete in under 15 minutes or else the queues
     # will start repopulating. This method does NOT permanently remove 
     # submissions from the queue
-    raise if file.nil?
+    if file.nil?
+      logger.fatal 'Target file is nil'
+    end
     submissions = {}
     @autograders.each_key {|x| submissions[x] = []}
 
     @autograders.keys.each do |assignment_part_sid|
       while true
         if @controller.get_queue_length(assignment_part_sid) == 0
-          puts "  deleting assignment part"
+          logger.info "  deleting assignment part"
           break
         end
         result = @controller.get_pending_submission(assignment_part_sid)
         next if result.nil?
-        puts "  got submission"
+        logger.info "  got submission"
         submissions[assignment_part_sid] << result
       end
     end
-    puts "Finishing"
+    logger.info "Finishing"
     file.write(submissions.inspect)
     file.flush
   end
@@ -94,7 +101,10 @@ class CourseraClient
   private
 
   def load_spec(assignment_part_sid)
-    raise "Assignment part #{assignment_part_sid} not found!" unless @autograders.include?(assignment_part_sid)
+    unless @autograders.include?(assignment_part_sid)
+      logger.fatal "Assignment part #{assignment_part_sid} not found!"
+      raise "Assignment part #{assignment_part_sid} not found!"
+    end
     autograder = @autograders[assignment_part_sid]
     return autograder[:uri] if autograder[:uri] !~ /^http/ # Assume that if uri doesn't start with http, then it is a local file path
 
@@ -103,6 +113,7 @@ class CourseraClient
       spec_file = Tempfile.new('spec')
       response = Net::HTTP.get_response(URI(autograder[:uri]))
       if response.code !~ /2\d\d/
+        logger.fatal "Could not load the spec at #{autograder[:uri]}"
         raise CourseraClient::SpecNotFound, "Could not load the spec at #{autograder[:uri]}"
       end
       spec_file.write(response.body)
@@ -124,27 +135,29 @@ class CourseraClient
     end.join("\n")
     [score, comments]
   rescue
-    raise "Failed to parse autograder output", str
+    logger.fatal "Failed to parse autograder output: #{str}"
+    raise "Failed to parse autograder output: #{str}"
   end
 
   # FIXME: This is a hack, remove later
   # Runs a separate process for grading
   def run_autograder_subprocess(submission, spec, grader_type)
-    output = ''
+    stdout = ''
     Tempfile.open(['test', '.rb']) do |file|
       file.write(submission)
       file.flush
       if grader_type == 'HerokuRspecGrader'
-        output = `./grade_heroku "#{submission}" #{spec}`
+        stdin, stdout, stderr = Open3.popen3(%Q{./grade_heroku "#{submission}" #{spec}})
       else
-        output = `./grade #{file.path} #{spec}`
+        stdin, stdout, stderr = Open3.popen3(%Q{./grade #{file.path} #{spec}})
       end
       if $?.to_i != 0
+        logger.fatal "AutograderSubprocess error: #{stderr}"
         raise 'AutograderSubprocess error'
       end
     end
 
-    score, comments = parse_grade(output)
+    score, comments = parse_grade(stdout)
     comments.gsub!(spec, 'spec.rb')
     [score, comments]
   end

@@ -1,3 +1,5 @@
+require_relative 'rag_logger'
+
 require 'Base64'
 require 'json'
 class CourseraSubmission
