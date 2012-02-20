@@ -45,18 +45,19 @@ class CourseraClient
         submission = Base64.strict_decode64(result['submission'])
         #puts submission
         spec = load_spec(assignment_part_sid)
-        #grade = run_autograder(submission, spec)
+        grader_type = @autograders[spec][:type]
+
+        # Original method
+        #grade = run_autograder(submission, spec, grader_type)
         #score = grade.normalized_score
         #comments = grade.comments
 
-        Tempfile.open(['test', '.rb']) do |file|
-          file.write(submission)
-          file.flush
-          score, comments = ghetto_run_autograder(file.path, spec)
-          @controller.post_score(result['api_state'], score, comments)
-          #puts "  scored #{score}: #{comments}" if score != 100
-          puts "  scored #{score}: #{comments}"
-        end
+        # FIXME: Run as subprocess
+        score, comments = run_autograder_subprocess(submission, spec, grader_type)
+        @controller.post_score(result['api_state'], score, comments)
+
+        #puts "  scored #{score}: #{comments}" if score != 100
+        puts "  scored #{score}: #{comments}"
       end
 
       @autograders.delete_if{|key,value| to_delete.include? key}
@@ -95,6 +96,8 @@ class CourseraClient
     raise "Assignment part #{assignment_part_sid} not found!" unless @autograders.include?(assignment_part_sid)
     autograder = @autograders[assignment_part_sid]
     return autograder[:uri] if autograder[:uri] !~ /^http/ # Assume that if uri doesn't start with http, then it is a local file path
+
+    # If not in cache, download and add to cache
     if autograder[:cache].nil?
       spec_file = Tempfile.new('spec')
       response = Net::HTTP.get_response(URI(autograder[:uri]))
@@ -102,12 +105,13 @@ class CourseraClient
         raise CourseraClient::SpecNotFound, "Could not load the spec at #{autograder[:uri]}"
       end
       spec_file.write(response.body)
-      spec_file.flush
+      spec_file.close
       autograder[:cache] = spec_file
     end
     autograder[:cache].path
   end
 
+  # FIXME: This is related to the below hack, remove later
   def parse_grade(str)
     # Used for parsing the stdout output from running grade as a shell command
     # FIXME: This feels insecure and fragile
@@ -122,30 +126,29 @@ class CourseraClient
     raise "Failed to parse autograder output", str
   end
 
-  # Ghetto fix, remove later
-  def ghetto_run_autograder(submission, spec)
-
-    # Normal stuff
-    output = `./grade #{submission} #{spec}`
-
-    #HEROKU stuff
-    #uri = File.open(submission, 'r'){|x| x.read}
-    #uri.gsub!(/herokuapps/, 'herokuapp')
-    #puts uri
-    ## This is a ghetto thing for the rottenpotatoes app
-    #output = `HEROKU_URI="#{uri}" ./grade dummy_file.rb #{spec}`
+  # FIXME: This is a hack, remove later
+  # Runs a separate process for grading
+  def run_autograder_subprocess(submission, spec, grader_type)
+    Tempfile.open(['test', '.rb']) do |file|
+      file.write(submission)
+      file.flush
+      if grader_type == 'HerokuRspecGrader'
+        output = `./grade_heroku #{file.path} #{spec}`
+      else
+        output = `./grade #{file.path} #{spec}`
+      end
+    end
 
     score, comments = parse_grade(output)
     comments.gsub!(spec, 'spec.rb')
     [score, comments]
   end
 
-
-  #def run_autograder(submission, spec)
-  #  g = AutoGrader.create('1', 'WeightedRspecGrader', submission, :spec => spec)
-  #  g.grade!
-  #  g
-  #end
+  def run_autograder(submission, spec, grader_type)
+    g = AutoGrader.create('1', grader_type, submission, :spec => spec)
+    g.grade!
+    g
+  end
 
   # Returns hash of assignment_part_ids to hashes containing uri and grader type
   def init_autograders(filename)

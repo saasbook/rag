@@ -1,3 +1,5 @@
+require 'graders/rspec_grader'
+
 class WeightedRspecGrader < RspecGrader
   def grade!
     runner =  RspecRunner.new(@code, @specfile)
