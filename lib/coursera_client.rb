@@ -54,7 +54,8 @@ class CourseraClient
 
         # FIXME: Run as subprocess
         score, comments = run_autograder_subprocess(submission, spec, grader_type)
-        @controller.post_score(result['api_state'], score, comments)
+        formatted_comments = format_for_html(comments)
+        @controller.post_score(result['api_state'], score, formatted_comments)
 
         #puts "  scored #{score}: #{comments}" if score != 100
         puts "  scored #{score}: #{comments}"
@@ -162,5 +163,12 @@ class CourseraClient
       # Convert keys from string to sym
       yml[id] = obj.inject({}){|memo, (k,v)| memo[k.to_sym] = v; memo}
     end
+  end
+
+  # Formats autograder ouput for display in browser
+  def format_for_html(text)
+    "<pre>#{text.gsub(/&/, '&amp;').gsub(/</, '&lt;').gsub(/>/, '&gt;')}</pre>" # sanitize html
+    #  .gsub(/^(  +)/){|s| "&nbsp;"*s.size} # indentation
+    #  .gsub(/\n/, "<br />\n") # newlines
   end
 end
