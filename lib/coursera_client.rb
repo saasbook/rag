@@ -18,8 +18,6 @@ class CourseraClient
   def initialize(endpoint, api_key, autograders_yml)
     @endpoint = endpoint
     @api_key = api_key
-    #@assignment_id = assignment_id
-    #@queue_id = queue_id || assignment_id
     @controller = CourseraController.new(endpoint, api_key)
 
     # Load configuration file for assignment_id->spec map
@@ -50,6 +48,7 @@ class CourseraClient
         #grade = run_autograder(submission, spec)
         #score = grade.normalized_score
         #comments = grade.comments
+
         Tempfile.open(['test', '.rb']) do |file|
           file.write(submission)
           file.flush
@@ -59,6 +58,7 @@ class CourseraClient
           puts "  scored #{score}: #{comments}"
         end
       end
+
       @autograders.delete_if{|key,value| to_delete.include? key}
     end
   end
@@ -108,21 +108,22 @@ class CourseraClient
     autograder[:cache].path
   end
 
+  def parse_grade(str)
+    # Used for parsing the stdout output from running grade as a shell command
+    # FIXME: This feels insecure and fragile
+    score_regex = /Score out of 100:\s*(\d+(?:\.\d+)?)$/
+    score = str.match(score_regex, str.rindex(score_regex))[1].to_f
+    comments = str.match(/^---BEGIN rspec comments---\n#{'-'*80}\n(.*)#{'-'*80}\n---END rspec comments---$/m)[1]
+    comments = comments.split("\n").map do |line|
+      line.gsub(/\(FAILED - \d+\)/, "(FAILED)")
+    end.join("\n")
+    [score, comments]
+  rescue
+    raise "Failed to parse autograder output", str
+  end
+
   # Ghetto fix, remove later
   def ghetto_run_autograder(submission, spec)
-    def parse_grade(str)
-      # Used for parsing the stdout output from running grade as a shell command
-      # FIXME: This feels insecure and fragile
-      score_regex = /Score out of 100:\s*(\d+(?:\.\d+)?)$/
-      score = str.match(score_regex, str.rindex(score_regex))[1].to_f
-      comments = str.match(/^---BEGIN rspec comments---\n#{'-'*80}\n(.*)#{'-'*80}\n---END rspec comments---$/m)[1]
-      comments = comments.split("\n").map do |line|
-        line.gsub(/\(FAILED - \d+\)/, "(FAILED)")
-      end.join("\n")
-      [score, comments]
-    rescue
-      raise "Failed to parse autograder output", str
-    end
 
     # Normal stuff
     output = `./grade #{submission} #{spec}`
@@ -146,12 +147,13 @@ class CourseraClient
   #  g
   #end
 
+  # Returns hash of assignment_part_ids to hashes containing uri and grader type
   def init_autograders(filename)
     # TODO: Verify file format
-    YAML::load(File.open(filename, 'r')).inject({}) do |result,pair|
-      id, uri = pair
-      result[id] = {uri: uri, cache: nil}
-      result
+    yml = YAML::load(File.open(filename, 'r'))
+    yml.each_pair do |id, obj|
+      # Convert keys from string to sym
+      yml[id] = obj.inject({}){|memo, (k,v)| memo[k.to_sym] = v; memo}
     end
   end
 end

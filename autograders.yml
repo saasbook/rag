@@ -1,16 +1,33 @@
-# This does not support https URIs yet
-#test-assign-1-part-1: http://s3.amazonaws.com/saas-class/example_spec.rb
-#test-assign-1-part-2: http://s3.amazonaws.com/saas-class/example_spec_2.rb
-#test-assign-1-part-3: http://s3.amazonaws.com/saas-class/example_spec_2.rb
+# This does not support http URIs yet
 
-#assign-1-part-1: http://s3.amazonaws.com/saas-class/example_spec.rb
-#assign-1-part-2: http://s3.amazonaws.com/saas-class/example_spec_2.rb
-#assign-1-part-3: http://s3.amazonaws.com/saas-class/example_spec_2.rb
-#assign-1-part-4: http://s3.amazonaws.com/saas-class/example_spec_2.rb
-#assign-1-part-5: http://s3.amazonaws.com/saas-class/example_spec_2.rb
+assign-1-part-1: 
+  uri: http://s3.amazonaws.com/saas-class/assign-1/part1_spec.rb
+  type: WeightedRspecGrader
+assign-1-part-2:
+  uri: http://s3.amazonaws.com/saas-class/assign-1/part2_spec.rb
+  type: WeightedRspecGrader
+assign-1-part-3:
+  uri: http://s3.amazonaws.com/saas-class/assign-1/part3_spec.rb
+  type: WeightedRspecGrader
+assign-1-part-4:
+  uri: http://s3.amazonaws.com/saas-class/assign-1/part4_spec.rb
+  type: WeightedRspecGrader
+assign-1-part-5:
+  uri: http://s3.amazonaws.com/saas-class/assign-1/part5_spec.rb
+  type: WeightedRspecGrader
 
-assign-2-part-1: http://s3.amazonaws.com/saas-class/example_spec.rb
-assign-2-part-2: http://s3.amazonaws.com/saas-class/example_spec_2.rb
-assign-2-part-3: http://s3.amazonaws.com/saas-class/example_spec_2.rb
-assign-2-part-4: http://s3.amazonaws.com/saas-class/example_spec_2.rb
-assign-2-part-5: http://s3.amazonaws.com/saas-class/example_spec_2.rb
+assign-2-part-1: 
+  uri: http://s3.amazonaws.com/saas-class/assign-2/part1_spec.rb
+  type: WeightedRspecGrader
+assign-2-part-2:
+  uri: http://s3.amazonaws.com/saas-class/assign-2/part2_spec.rb
+  type: WeightedRspecGrader
+assign-2-part-3:
+  uri: http://s3.amazonaws.com/saas-class/assign-2/part3_spec.rb
+  type: HerokuRspecGrader
+assign-2-part-4:
+  uri: http://s3.amazonaws.com/saas-class/assign-2/part4_spec.rb
+  type: HerokuRspecGrader
+assign-2-part-5:
+  uri: http://s3.amazonaws.com/saas-class/assign-2/part5_spec.rb
+  type: HerokuRspecGrader
