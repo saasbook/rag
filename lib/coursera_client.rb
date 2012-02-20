@@ -3,13 +3,13 @@ require 'yaml'
 require 'net/http'
 require 'Base64'
 
-require './lib/class_x_controller.rb'
-require './lib/class_x_submission.rb'
+require './lib/coursera_controller.rb'
+require './lib/coursera_submission.rb'
 require './lib/auto_grader.rb'
 
-class ClassXClient
-  class ClassXClient::UnknownAssignmentPart < StandardError ; end
-  class ClassXClient::SpecNotFound < StandardError ; end
+class CourseraClient
+  class CourseraClient::UnknownAssignmentPart < StandardError ; end
+  class CourseraClient::SpecNotFound < StandardError ; end
 
   # Requires a file called 'autograders.yml' to exist in the current working 
   # directory and it must represent a hash from assignment_part_sid's to
@@ -20,7 +20,7 @@ class ClassXClient
     @api_key = api_key
     #@assignment_id = assignment_id
     #@queue_id = queue_id || assignment_id
-    @controller = ClassXController.new(endpoint, api_key)
+    @controller = CourseraController.new(endpoint, api_key)
 
     # Load configuration file for assignment_id->spec map
     # We assume that the keys are also the assignment_part_sids, as well as the queue_ids
@@ -99,7 +99,7 @@ class ClassXClient
       spec_file = Tempfile.new('spec')
       response = Net::HTTP.get_response(URI(autograder[:uri]))
       if response.code !~ /2\d\d/
-        raise ClassXClient::SpecNotFound, "Could not load the spec at #{autograder[:uri]}"
+        raise CourseraClient::SpecNotFound, "Could not load the spec at #{autograder[:uri]}"
       end
       spec_file.write(response.body)
       spec_file.flush

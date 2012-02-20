@@ -1,6 +1,6 @@
-class ClassXController
-  class ClassXController::InvalidHTTPMethodError < StandardError ; end
-  class ClassXController::BadStatusCodeError < StandardError ; end
+class CourseraController
+  class CourseraController::InvalidHTTPMethodError < StandardError ; end
+  class CourseraController::BadStatusCodeError < StandardError ; end
 
   require 'net/https'
   require 'json'
@@ -59,7 +59,7 @@ class ClassXController
     params = {:api_state => api_state, :score => score, :feedback => feedback, :options => options.to_json}
     response = send_request("assignment/api/score/", params, :post)
     if response['status'] !~ /2\d\d/
-      raise ClassXController::BadStatusCode, "Bad post score response: #{response['status']}"
+      raise CourseraController::BadStatusCode, "Bad post score response: #{response['status']}"
     end
   end
 
@@ -69,7 +69,7 @@ class ClassXController
   # Returns a Hash representing the JSON-encoded response.
   def send_request(path, params={}, mode=:get)
     unless HTTP_MODES.include? mode
-      raise ClassXController::InvalidHTTPMethodError, "Invalid mode: #{mode}"
+      raise CourseraController::InvalidHTTPMethodError, "Invalid mode: #{mode}"
     end
     uri = URI.join(@base_uri, path)
     uri.query = URI.encode_www_form(params) if mode == :get
