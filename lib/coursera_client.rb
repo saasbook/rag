@@ -45,11 +45,7 @@ class CourseraClient
         logger.info "  received submission: #{result['submission_metadata']['submission_id']}"
         logger.debug result['submission_metadata']
 
-        if result['submission_encoding'] != 'base64'
-          logger.fatal "Can't handle encoding: #{result['submission_encoding']}" 
-          raise "Can't handle encoding: #{result['submission_encoding']}" 
-        end
-        submission = Base64.strict_decode64(result['submission'])
+        submission = decode_submission(result)
         spec = load_spec(assignment_part_sid)
         grader_type = @autograders[assignment_part_sid][:type]
 
@@ -169,6 +165,7 @@ class CourseraClient
   end
 
   # Returns hash of assignment_part_ids to hashes containing uri and grader type
+  # i.e. { "assign-1-part-1" => {:uri => 'http://example.com', :type => 'RspecGrader' } }
   def init_autograders(filename)
     # TODO: Verify file format
     yml = YAML::load(File.open(filename, 'r'))
@@ -183,5 +180,15 @@ class CourseraClient
     "<pre>#{text.gsub(/&/, '&amp;').gsub(/</, '&lt;').gsub(/>/, '&gt;')}</pre>" # sanitize html
     #  .gsub(/^(  +)/){|s| "&nbsp;"*s.size} # indentation
     #  .gsub(/\n/, "<br />\n") # newlines
+  end
+
+  def decode_submission(submission)
+    case submission['submission_encoding']
+    when 'base64'
+      Base64.strict_decode64(submission['submission'])
+    else
+      logger.fatal "Can't handle encoding: #{submission['submission_encoding']}"
+      raise "Can't handle encoding: #{submission['submission_encoding']}"
+    end
   end
 end
