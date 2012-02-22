@@ -3,11 +3,12 @@
 require 'yaml'
 require './lib/coursera_client.rb'
 
-unless File.file?('conf.yml')
+config_path = 'config/conf.yml'
+unless File.file?(config_path)
   puts "Please copy conf.yml.example into conf.yml and configure the parameters"
   exit
 end
-confs = YAML::load(File.open('conf.yml', 'r'))
+confs = YAML::load(File.open(config_path, 'r'))
 
 if ARGV.size >= 1
   conf_name = ARGV[0]

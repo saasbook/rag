@@ -1,6 +1,3 @@
-require 'simplecov'
-SimpleCov.start
-
 require 'coursera_client'
 
 class URIMatcher
