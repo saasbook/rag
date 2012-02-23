@@ -1,7 +1,7 @@
 require 'tempfile'
 require 'yaml'
 require 'net/http'
-require 'Base64'
+require 'base64'
 
 require_relative 'rag_logger'
 require_relative 'coursera_controller'
