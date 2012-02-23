@@ -136,23 +136,7 @@ class CourseraClient
   end
 
   def each_submission
-    # Loop forever
     if @halt
-      while True
-        @autograders.keys.each do |assignment_part_sid|
-          logger.info assignment_part_sid
-          if @controller.get_queue_length(assignment_part_sid) == 0
-            next
-          end
-          result = @controller.get_pending_submission(assignment_part_sid)
-          next if result.nil?
-          logger.info "  received submission: #{result['submission_metadata']['submission_id']}"
-          logger.debug result['submission_metadata']
-
-          yield assignment_part_sid, result
-        end
-      end
-    else
     # Iterate round robin through assignment parts until all queues are empty
     # parameterize this differently
       while @autograders.size > 0
@@ -172,6 +156,22 @@ class CourseraClient
           yield assignment_part_sid, result
         end
         @autograders.delete_if{|key,value| to_delete.include? key}
+      end
+    else
+    # Loop forever
+      while True
+        @autograders.keys.each do |assignment_part_sid|
+          logger.info assignment_part_sid
+          if @controller.get_queue_length(assignment_part_sid) == 0
+            next
+          end
+          result = @controller.get_pending_submission(assignment_part_sid)
+          next if result.nil?
+          logger.info "  received submission: #{result['submission_metadata']['submission_id']}"
+          logger.debug result['submission_metadata']
+
+          yield assignment_part_sid, result
+        end
       end
     end
   end
