@@ -34,14 +34,18 @@ class String
   include Term::ANSIColor
 end
 
+class NilClass
+  def empty?
+    true
+  end
+end
+
 # +AutoGrader+ that scores using cucumber features
 class FeatureGrader < AutoGrader
 
   require 'yaml'
 
   class Feature
-    require 'rake'
-
     class TestFailedError < StandardError; end
 
     attr_reader :env
@@ -63,11 +67,22 @@ class FeatureGrader < AutoGrader
         target_status = h.has_key?(:pass) ? h.delete(:pass) : true
         puts "Cuking with #{h.inspect}"
 
-        status = !! system("rake cucumber #{h.collect{|k,v| [k,v].join("=")}.join(' ')}", :chdir => Dir::getwd)
-        puts "cuke returned #{status} (#{$?})"
-        if target_status == status
-          puts "Test #{h.inspect} passed".green
+         passed = true
+         begin
+           #Cucumber::Rake::Task.new({:ok => 'db:test:prepare'}, 'derp').runner.run
+           c = Cucumber::Runtime.new(Cucumber::Cli::Configuration.new)
+           c.run!
+           passed = !c.results.failure?
+         rescue => e
+           raise TestFailedError, "test failed to run b/c #{e.inspect}"
+         end
+
+#        status = !! system("rake cucumber #{h.collect{|k,v| [k,v].join("=")}.join(' ')}", :chdir => Dir::getwd)
+#        puts "cuke returned #{status} (#{$?.inspect})"
+        if target_status == passed
+          puts "Test #{h.inspect} was correct (#{target_status})".green
         else
+          puts "Test #{h.inspect} failed (#{passed} instead of #{target_status})".red
           raise TestFailedError, "Result should have been #{target_status}"
         end
       end
@@ -99,8 +114,11 @@ class FeatureGrader < AutoGrader
     end
 
     puts "Booting #{app}..."
-    load File.join(app, 'config', 'environment.rb')
-    load File.join(app, 'lib', 'tasks', 'cucumber.rake')
+    # requires have to be in this exact order
+    require 'cucumber/rake/task'
+    require File.join(app, 'config', 'environment.rb')
+    require 'rake'
+    #load File.join(app, 'lib', 'tasks', 'cucumber.rake')
   end
 
   def grade!
@@ -112,7 +130,13 @@ class FeatureGrader < AutoGrader
     @raw_max = @features.count
 
     @features.each do |f|
-      f.run!
+      begin
+        f.run!
+        @raw_score += 1
+      rescue Feature::TestFailedError
+      rescue => e
+        raise
+      end
     end
     Dir::chdir d
   end
