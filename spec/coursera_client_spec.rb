@@ -20,7 +20,7 @@ describe CourseraClient do
     CourseraController.stub(:new).and_return(controller)
   end
   let(:controller) { double('fake controller').as_null_object }
-  let(:client) { CourseraClient.new("endpoint", "api_key", "autograders.yml") }
+  let(:client) { CourseraClient.new }
 
   context 'when initialized' do
     it "@autograders should be a mapping from assignment_part_sid's to URIs and grader types" do
@@ -31,7 +31,7 @@ test-assign-1-part-1:
 EOF
       File.should_receive(:open).with('autograders.yml', 'r').and_return(autograders_yml)
 
-      client = CourseraClient.new("endpoint", "key", 'autograders.yml')
+      CourseraClient.any_instance.stub(:load_configurations).and_return('autograders_yml' => 'autograders.yml')
       client.instance_eval{@autograders}.should == {
         'test-assign-1-part-1' => { uri: 'http://test.url/', type: 'WeightedRspecGrader'},
       }
@@ -41,6 +41,7 @@ EOF
   describe "#run" do
     before :each do
       autograder = {'test-assignment' => { :uri => 'http://example.com', :type => 'RspecGrader' } }
+      CourseraClient.any_instance.stub(:load_configurations).and_return(double.as_null_object)
       CourseraClient.any_instance.stub(:init_autograders).and_return(autograder)
     end
 
@@ -87,10 +88,13 @@ EOF
     end
 
     context "with multiple autograders"
+
+    it "should not halt if @halt is false"
   end
 
   describe "#load_spec" do
     before :each do
+      CourseraClient.any_instance.stub(:load_configurations).and_return(double.as_null_object)
       CourseraClient.any_instance.stub(:init_autograders).and_return(autograder)
     end
     let(:assignment_part_sid) { 'test-assignment' }
