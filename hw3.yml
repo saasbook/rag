@@ -1,0 +1,11 @@
+---
+features:
+  - feature: features/filter_movie_list.feature
+    version: 1
+    pass: false
+  - feature: features/filter_movie_list.feature
+    version: 2
+    pass: false
+  - feature: features/filter_movie_list.feature
+    version: 13
+    pass: true
