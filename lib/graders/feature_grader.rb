@@ -1,43 +1,28 @@
 # Runs some code wrapped in a given environment.
 # Sets environment variables, then restores them after +yield+ing.
 
-def with_env(env={})
-  raise ArgumentError, "Block required" unless block_given?
-  prev_env = {}
-
-  env[:RAILS_ENV] ||= 'test'
-
-  # Save old ENV
-  env.each_pair do |k,v|
-    k = k.to_s
-    prev_env[k] = ENV[k]
-    ENV[k] = v.to_s
-  end
-
-  begin
-    yield
-  rescue => e
-    raise
-  ensure
-    # Restore original ENV
-    env.each_key do |k|
-      k = k.to_s
-      ENV[k] = prev_env[k]
-    end
-  end
-end
-
-class Hash
-  def symbolize_keys
-    h = {}
-    self.each_pair { |k,v| h[k.to_sym] = v }
-    return h
-  end
-end
-
 require 'term/ansicolor'
 class String
   include Term::ANSIColor
+end
+
+class Hash
+  # Returns a new +Hash+ containing +to_s+ed keys and values from this +Hash+.
+
+  def envify
+    h = {}
+    self.each_pair { |k,v| h[k.to_s] = v.to_s }
+    return h
+  end
+
+  # Merge in some critical environment variables
+  def merge_ruby_env!
+    %w(
+      BUNDLE_BIN_PATH
+      BUNDLE_GEMFILE
+      PATH
+    ).each { |k| self[k] = ENV[k] }
+  end
 end
 
 class NilClass
@@ -54,52 +39,81 @@ class FeatureGrader < AutoGrader
   class Feature
     class TestFailedError < StandardError; end
 
+    module Regex
+      StepResult = /^\d+ steps \((\d+)/
+      NumFailed  = /(\d+) failed/
+    end
+
     attr_reader :env
 
     # +env+ is a +Hash+ containing
     # [+:feature+] path to feature file
-    # [+:pass+]    +boolean+ specifying whether the spec should pass or not
+    # [+:fail+]    +boolean+ specifying whether the spec should pass or not,
+    #              _or_ +int+ specifying exact step failure count
     # [...]        and any other environment variables
 
     def initialize(env={})
-      raise ArgumentError, "No :feature specified" unless env[:feature]
+      raise ArgumentError, "No 'FEATURE' specified in #{env.inspect}" unless env['FEATURE']
       @env = env
     end
 
     def run!
+      puts '-'*80
+
       h = @env.dup
+      #h.merge_ruby_env!
 
-      # Extract params
-      feature = h.delete(:feature)
-      target_status = h.has_key?(:pass) ? h.delete(:pass) : true
+      target_failed = h.has_key?("fail") ? h.delete("fail") : 0
+      num_failed = 0
+      passed = false
+      lines = []
 
-      # Leftover h is env vars
-      with_env(h) do
-        puts "Cuking with #{h.inspect}"
+      popen_opts = {
+        #:unsetenv_others => true     # TODO why does this make cucumber not work?
+      }
 
-        passed = true
-        begin
-          config = Cucumber::Cli::Configuration.new
-          config.parse! [feature]
+      puts "Cuking with #{h.inspect}"
 
-          c = Cucumber::Runtime.new(config)
-          c.run!
+      begin
+#          config = Cucumber::Cli::Configuration.new
+#          config.parse! [feature]
+#
+#          c = Cucumber::Runtime.new(config)
+#          c.run!
 
-          puts "out of #{c.results.scenarios.count} #{c.results.steps.count}:".yellow.bold
-          puts "  failed #{c.results.scenarios(:failed).count} #{c.results.steps(:failed).count}".yellow.bold
-          puts "  passed #{c.results.scenarios(:passed).count} #{c.results.steps(:passed).count}".yellow.bold
+        raise TestFailedError, "Nonexistent feature file #{h["FEATURE"]}" unless File.readable? h["FEATURE"]
 
-          passed = !c.results.failure?
-        rescue => e
-          raise TestFailedError, "test failed to run b/c #{e.inspect}"
+        Open3.popen3(h, "bundle exec rake cucumber", popen_opts) do |stdin, stdout, stderr, wait_thr|
+          exit_status = wait_thr.value
+
+          lines = stdout.readlines
+          result_lines = lines.grep Regex::StepResult
+
+          puts "result_lines failed: #{result_lines.count}".red.bold unless result_lines.count == 1
+          puts lines unless result_lines.count == 1
+          raise TestFailedError unless result_lines.count == 1
+
+          num_failed = result_lines.first.scan(Regex::NumFailed).flatten.first || "0"
+          puts "num_failed = #{num_failed}".yellow
         end
 
-        if target_status == passed
-          puts "Test #{h.inspect} was correct (#{target_status})".green
-        else
-          puts "Test #{h.inspect} failed (#{passed} instead of #{target_status})".red
-          raise TestFailedError, "Result should have been #{target_status}"
-        end
+        passed = (target_failed == num_failed)  # these need to both be Strings
+
+      rescue => e
+        puts "test failed: #{e.inspect}".red.bold
+        puts e.backtrace
+        raise TestFailedError, "test failed to run b/c #{e.inspect}"
+
+      end
+
+      if passed
+        puts "Test #{h.inspect} was correct (failed #{target_failed})".green
+
+      else
+        puts "Test #{h.inspect} failed (#{num_failed} instead of #{target_failed})".red
+        puts lines.collect {|l| "| #{l}"}
+        raise TestFailedError, "Failed #{num_failed} steps instead of #{target_failed}"
+
       end
     end
   end
@@ -175,8 +189,7 @@ class FeatureGrader < AutoGrader
       end
 
       features.each do |f|
-        f = f.symbolize_keys
-        @features << Feature.new(f)
+        @features << Feature.new(f.envify)
       end
     rescue => e
       raise
