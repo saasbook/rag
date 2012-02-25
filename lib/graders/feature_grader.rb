@@ -5,6 +5,8 @@ def with_env(env={})
   raise ArgumentError, "Block required" unless block_given?
   prev_env = {}
 
+  env[:RAILS_ENV] ||= 'test'
+
   # Save old ENV
   env.each_pair do |k,v|
     k = k.to_s
@@ -12,12 +14,16 @@ def with_env(env={})
     ENV[k] = v.to_s
   end
 
-  yield
-
-  # Restore original ENV
-  env.each_key do |k|
-    k = k.to_s
-    ENV[k] = prev_env[k]
+  begin
+    yield
+  rescue => e
+    raise
+  ensure
+    # Restore original ENV
+    env.each_key do |k|
+      k = k.to_s
+      ENV[k] = prev_env[k]
+    end
   end
 end
 
@@ -61,24 +67,33 @@ class FeatureGrader < AutoGrader
     end
 
     def run!
-      @env[:FEATURE] = @env.delete(:feature)
-      with_env(@env) do
-        h = @env.dup
-        target_status = h.has_key?(:pass) ? h.delete(:pass) : true
+      h = @env.dup
+
+      # Extract params
+      feature = h.delete(:feature)
+      target_status = h.has_key?(:pass) ? h.delete(:pass) : true
+
+      # Leftover h is env vars
+      with_env(h) do
         puts "Cuking with #{h.inspect}"
 
-         passed = true
-         begin
-           #Cucumber::Rake::Task.new({:ok => 'db:test:prepare'}, 'derp').runner.run
-           c = Cucumber::Runtime.new(Cucumber::Cli::Configuration.new)
-           c.run!
-           passed = !c.results.failure?
-         rescue => e
-           raise TestFailedError, "test failed to run b/c #{e.inspect}"
-         end
+        passed = true
+        begin
+          config = Cucumber::Cli::Configuration.new
+          config.parse! [feature]
 
-#        status = !! system("rake cucumber #{h.collect{|k,v| [k,v].join("=")}.join(' ')}", :chdir => Dir::getwd)
-#        puts "cuke returned #{status} (#{$?.inspect})"
+          c = Cucumber::Runtime.new(config)
+          c.run!
+
+          puts "out of #{c.results.scenarios.count} #{c.results.steps.count}:".yellow.bold
+          puts "  failed #{c.results.scenarios(:failed).count} #{c.results.steps(:failed).count}".yellow.bold
+          puts "  passed #{c.results.scenarios(:passed).count} #{c.results.steps(:passed).count}".yellow.bold
+
+          passed = !c.results.failure?
+        rescue => e
+          raise TestFailedError, "test failed to run b/c #{e.inspect}"
+        end
+
         if target_status == passed
           puts "Test #{h.inspect} was correct (#{target_status})".green
         else
@@ -113,12 +128,16 @@ class FeatureGrader < AutoGrader
       raise ArgumentError, "Unable to find description file #{@description.inspect}"
     end
 
+    ENV['RAILS_ENV'] = 'test'
+
     puts "Booting #{app}..."
     # requires have to be in this exact order
+    require 'cucumber'
     require 'cucumber/rake/task'
+
     require File.join(app, 'config', 'environment.rb')
     require 'rake'
-    #load File.join(app, 'lib', 'tasks', 'cucumber.rake')
+
   end
 
   def grade!
@@ -128,6 +147,9 @@ class FeatureGrader < AutoGrader
 
     @raw_score = 0
     @raw_max = @features.count
+
+    puts "Preparing database..."
+    `rake db:test:prepare`
 
     @features.each do |f|
       begin
