@@ -36,6 +36,20 @@ EOF
         'test-assign-1-part-1' => { uri: 'http://test.url/', type: 'WeightedRspecGrader'},
       }
     end
+
+    it "@halt should be set to false if halt is false" do
+      CourseraClient.any_instance.stub(:init_autograders)
+      conf_yml = <<EOF
+saas-staging:
+  endpoint_uri: https://berkeley.campus-class.org/saas-staging/
+  api_key: bs
+  autograders_yml: autograders.yml
+  halt: false # default: true, exit when all submission queues are empty
+  sleep_duration: 300 # default 300, time in seconds to sleep when all queues are empty, only valid when halt == false
+EOF
+      File.stub(:open).and_return(conf_yml)
+      client.instance_eval{@halt}.should == false
+    end
   end
 
   describe "#run" do
