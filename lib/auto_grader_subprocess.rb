@@ -5,6 +5,8 @@ require_relative 'rag_logger'
 
 module AutoGraderSubprocess
   extend RagLogger
+  class AutoGraderSubprocess::OutputParseError < StandardError ; end
+  class AutoGraderSubprocess::SubprocessError < StandardError ; end
 
   # FIXME: This is a hack, remove later
   # This, and run_autograder, should really be part of a different module/class
@@ -21,7 +23,7 @@ module AutoGraderSubprocess
       end
       if $?.to_i != 0
         logger.fatal "AutograderSubprocess error: #{stderr}"
-        raise 'AutograderSubprocess error'
+        raise AutoGraderSubprocess::SubprocessError, "AutograderSubprocess error: #{stderr}"
       end
     end
 
@@ -47,7 +49,7 @@ module AutoGraderSubprocess
     [score, comments]
   rescue
     logger.fatal "Failed to parse autograder output: #{str}"
-    raise "Failed to parse autograder output: #{str}"
+    raise OutputParseError, "Failed to parse autograder output: #{str}"
   end
 
   def parse_grade(str)

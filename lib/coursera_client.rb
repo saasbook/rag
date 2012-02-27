@@ -42,11 +42,19 @@ class CourseraClient
       grader_type = @autograders[assignment_part_sid][:type]
 
       # FIXME: Use non-subprocess version instead
-      score, comments = run_autograder_subprocess(submission, spec, grader_type) # defined in AutoGraderSubprocess
+      begin
+        score, comments = run_autograder_subprocess(submission, spec, grader_type) # defined in AutoGraderSubprocess
+      rescue
+        logger.fatal(submission)
+        raise
+      end
       formatted_comments = format_for_html(comments)
       @controller.post_score(result['api_state'], score, formatted_comments)
       logger.debug "  scored #{score}: #{comments}"
     end
+  rescue Exception => e
+    logger.fatal(e)
+    raise
   end
 
   def download_submissions(file)
