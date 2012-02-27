@@ -12,7 +12,7 @@ module AutoGraderSubprocess
   # This, and run_autograder, should really be part of a different module/class
   # Runs a separate process for grading
   def self.run_autograder_subprocess(submission, spec, grader_type)
-    stdout = ''
+    stdin = stdout = stderr = nil
     Tempfile.open(['test', '.rb']) do |file|
       file.write(submission)
       file.flush
