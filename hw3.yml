@@ -1,11 +1,92 @@
 ---
+scenarios:
+  - &restrict_pg_r
+    match: "restrict to movies with 'PG' or 'R' ratings"
+  - &all_x_selected
+    match: "all (ratings|checkboxes) selected"
+
 features:
-  - FEATURE: features/filter_movie_list.feature
-    version: 1
-    fail: 2
-  - FEATURE: features/filter_movie_list.feature
-    version: 2
-    fail: 2
-  - FEATURE: features/filter_movie_list.feature
+  - &step1
+    FEATURE: features/filter_movie_list.feature
+    pass: true
+    if_pass:
+      - &step2
+        FEATURE: features/filter_movie_list.feature
+        version: 1
+        failures:
+          - *restrict_pg_r
+          - *all_x_selected
+      - &step3
+        FEATURE: features/filter_movie_list.feature
+        version: 2
+        failures:
+          - *restrict_pg_r
+          - *all_x_selected
+      - &step4
+        FEATURE: features/filter_movie_list.feature
+        version: 3
+        failures:
+          - *restrict_pg_r
+          - *all_x_selected
+      - &step5
+        FEATURE: features/filter_movie_list.feature
+        version: 4
+        failures:
+          - *restrict_pg_r
+          - *all_x_selected
+      - &step6
+        FEATURE: features/filter_movie_list.feature
+        version: 5
+        failures:
+          - *restrict_pg_r
+      - &step7
+        FEATURE: features/filter_movie_list.feature
+        version: 6
+        failures:
+          - *restrict_pg_r
+      - &step8
+        FEATURE: features/filter_movie_list.feature
+        version: 7
+        failures:
+          - *restrict_pg_r
+      - &step9
+        FEATURE: features/filter_movie_list.feature
+        version: 8
+        failures:
+          - *restrict_pg_r
+      - &step10
+        FEATURE: features/filter_movie_list.feature
+        version: 9
+        failures:
+          - *restrict_pg_r
+          - *all_x_selected
+      - &step11
+        FEATURE: features/filter_movie_list.feature
+        version: 10
+        failures:
+          - *restrict_pg_r
+      - &step12
+        FEATURE: features/filter_movie_list.feature
+        version: 11
+        failures:
+          - *restrict_pg_r
+      - &step13
+        FEATURE: features/filter_movie_list.feature
+        version: 12
+        failures:
+          - *restrict_pg_r
+          - *all_x_selected
+
+  - &step14
+    FEATURE: features/filter_movie_list.feature
     version: 13
-    fail: 0
+  - &step15
+    FEATURE: features/filter_movie_list.feature
+    version: 16
+  - &step16
+    FEATURE: features/filter_movie_list.feature
+    version: 17
+  - &step17
+    FEATURE: features/filter_movie_list.feature
+    version: 20
+

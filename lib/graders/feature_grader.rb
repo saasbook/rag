@@ -1,7 +1,7 @@
-# Runs some code wrapped in a given environment.
-# Sets environment variables, then restores them after +yield+ing.
-
+require 'open3'
+require 'yaml'
 require 'term/ansicolor'
+
 class String
   include Term::ANSIColor
 end
@@ -14,56 +14,136 @@ class Hash
     self.each_pair { |k,v| h[k.to_s] = v.to_s }
     return h
   end
+end
 
-  # Merge in some critical environment variables
-  def merge_ruby_env!
-    %w(
-      BUNDLE_BIN_PATH
-      BUNDLE_GEMFILE
-      PATH
-    ).each { |k| self[k] = ENV[k] }
+# class NilClass
+#   def empty?
+#     true
+#   end
+# end
+
+class Score
+  attr_accessor :points, :max
+
+  def initialize(points=0, max_points=0)
+    @points = points
+    @max    = max_points
+  end
+
+  def +(other)
+    case other
+    when Score
+      Score.new(@points+other.points, @max+other.max)
+    when Integer
+      Score.new(@points+other, @max+other)
+    else
+      raise ArgumentError
+    end
+  end
+
+  def pass()
+    @points += 1
+    @max += 1
+  end
+
+  def fail()
+    @max += 1
+  end
+
+  def to_s
+    "#{@points} / #{@max}"
   end
 end
 
-class NilClass
-  def empty?
-    true
-  end
+def log(*args)
+  puts *args
 end
 
 # +AutoGrader+ that scores using cucumber features
 class FeatureGrader < AutoGrader
 
-  require 'yaml'
+  class ScenarioMatcher
+    attr_reader :regex
+
+    # [+"match"+] +String+ regular expression for matching +cucumber+ output
+    def initialize(h)
+      raise(ArgumentError, "no regex") unless @regex = h["match"]
+
+      @regex = /#{@regex}/
+    end
+
+    # [+str+] _String_ to match against
+    def match?(str)
+      !!(str =~ @regex)
+    end
+  end
 
   class Feature
     class TestFailedError < StandardError; end
 
     module Regex
-      StepResult = /^\d+ steps \((\d+)/
-      NumFailed  = /(\d+) failed/
+      BlankLine = /^$/
+      FailingScenarios = /^Failing Scenarios:$/
+      StepResult = /^(\d+) steps \(.*?(\d+) passed.*\)/
     end
 
-    attr_reader :env
+    attr_reader :if_pass, :target_pass, :feature, :score
 
-    # +env+ is a +Hash+ containing
-    # [+:feature+] path to feature file
-    # [+:fail+]    +boolean+ specifying whether the spec should pass or not,
-    #              _or_ +int+ specifying exact step failure count
+    # +Array+ of +ScenarioMatcher+s that should fail for this step,
+    # or empty if it should pass in +cucumber+.
+    attr_reader :failures
+
+    # +Hash+ with
+    # [+:failed+] [_String_] +cucumber+ scenarios that failed
+    attr_reader :scenarios
+
+    class << self
+      def total(features=[])
+        s = Score.new
+        features.each do |f|
+          begin
+            s += f.run!
+          rescue TestFailedError
+            s.fail
+          end
+        end
+        return s
+      end
+    end
+
+    # +feature+ is a +Hash+ containing
+    # [+:FEATURE+] path to feature file
+    # [+:pass+]    +boolean+ specifying whether the feature should pass or not
+    # [+:if_pass+] additonal +Feature+s to run iff this one passes (recursive +Hash+ structure)
+    # [+:failures+] +ScenarioMatcher+s that indicate which scenarios should fail
+    #               for this step
     # [...]        and any other environment variables
 
-    def initialize(env={})
-      raise ArgumentError, "No 'FEATURE' specified in #{env.inspect}" unless env['FEATURE']
-      @env = env
+    def initialize(feature_={})
+      feature = feature_.dup
+      raise ArgumentError, "No 'FEATURE' specified in #{feature.inspect}" unless feature['FEATURE']
+
+      @score = Score.new
+
+      @if_pass = []
+      if feature["if_pass"] and feature["if_pass"].is_a? Array
+        @if_pass += feature.delete("if_pass").collect {|f| Feature.new(f)}
+      end
+
+      @target_pass = feature.has_key?("pass") ? feature.delete("pass") : true
+
+      @failures = feature.delete("failures") || []
+      @scenarios = {:failed => []}
+
+      @env = feature.envify  # whatever's left over
     end
 
     def run!
-      puts '-'*80
+      log '-'*80
 
       h = @env.dup
-      #h.merge_ruby_env!
 
-      target_failed = h.has_key?("fail") ? h.delete("fail") : 0
+      score = Score.new
       num_failed = 0
       passed = false
       lines = []
@@ -72,50 +152,92 @@ class FeatureGrader < AutoGrader
         #:unsetenv_others => true     # TODO why does this make cucumber not work?
       }
 
-      puts "Cuking with #{h.inspect}"
+      log "Cuking with #{h.inspect}"
 
       begin
-#          config = Cucumber::Cli::Configuration.new
-#          config.parse! [feature]
-#
-#          c = Cucumber::Runtime.new(config)
-#          c.run!
-
         raise TestFailedError, "Nonexistent feature file #{h["FEATURE"]}" unless File.readable? h["FEATURE"]
 
         Open3.popen3(h, "bundle exec rake cucumber", popen_opts) do |stdin, stdout, stderr, wait_thr|
           exit_status = wait_thr.value
 
           lines = stdout.readlines
-          result_lines = lines.grep Regex::StepResult
-
-          puts "result_lines failed: #{result_lines.count}".red.bold unless result_lines.count == 1
-          puts lines unless result_lines.count == 1
-          raise TestFailedError unless result_lines.count == 1
-
-          num_failed = result_lines.first.scan(Regex::NumFailed).flatten.first || "0"
-          puts "num_failed = #{num_failed}".yellow
+          lines.each(&:chomp!)
+          self.send :process_output, lines
         end
 
-        passed = (target_failed == num_failed)  # these need to both be Strings
-
       rescue => e
-        puts "test failed: #{e.inspect}".red.bold
-        puts e.backtrace
+        log "test failed: #{e.inspect}".red.bold
+        log e.backtrace
         raise TestFailedError, "test failed to run b/c #{e.inspect}"
 
       end
 
-      if passed
-        puts "Test #{h.inspect} was correct (failed #{target_failed})".green
-
+      if self.correct?
+        log "Test #{h.inspect} passed.".green
+        score.pass
+        score += Feature.total(@if_pass)
       else
-        puts "Test #{h.inspect} failed (#{num_failed} instead of #{target_failed})".red
-        puts lines.collect {|l| "| #{l}"}
-        raise TestFailedError, "Failed #{num_failed} steps instead of #{target_failed}"
+        log "Test #{h.inspect} failed".red
+        begin
+          self.correct!
+        rescue TestFailedError => e
+          log e.message
+        end
+        log lines.collect {|l| "| #{l}"}
+        score.fail
+      end
 
+      return score
+    end
+
+    def correct?
+      begin
+        correct!
+        return true
+      rescue
+        return false
       end
     end
+
+    # This step is correct if:
+    #   any +failures+ +?+ all +failures+ have failed +:+ it passed in cucumber
+    def correct!
+      if @failures.any?
+        unless @failures.all? {|matcher| @scenarios[:failed].any? {|s| matcher.match? s}}
+          raise TestFailedError, "Not all required failures were detected"
+        end
+      else
+        unless @scenarios[:failed].empty?
+          raise TestFailedError, "Feature should have passed, but had the following failures:\n#{@scenarios[:failed].collect {|f| "  #{f}"}}"
+        end
+      end
+      true
+    end
+
+  private
+    # Parses and remembers relevant output from +cucumber+.
+    # [+output+] +Array+ of stdout lines from +rake cucumber+, e.g. from +readlines+
+    def process_output(output)
+      raise ArgumentError unless output and output.is_a? Array
+
+      begin # parse failing scenarios (between FailingScenarios and BlankLine)
+        if i = output.find_index {|line| line =~ Regex::FailingScenarios}
+          temp = output[i+1..-1]
+          i = temp.find_index {|line| line =~ Regex::BlankLine}
+          @scenarios[:failed] = temp.first(i)
+        end
+      rescue => e
+        raise
+      end
+
+#      result_lines = lines.grep Regex::StepResult
+#
+#      raise TestFailedError unless result_lines.count == 1
+#
+#      num_steps, num_passed = result_lines.first.scan(Regex::StepResult).first
+#      passed = (num_steps == num_passed)
+    end
+
   end
 
   attr_accessor :features_archive, :description
@@ -142,58 +264,50 @@ class FeatureGrader < AutoGrader
       raise ArgumentError, "Unable to find description file #{@description.inspect}"
     end
 
-    ENV['RAILS_ENV'] = 'test'
-
-    puts "Booting #{app}..."
-    # requires have to be in this exact order
-    require 'cucumber'
-    require 'cucumber/rake/task'
-
-    require File.join(app, 'config', 'environment.rb')
-    require 'rake'
-
   end
 
   def grade!
     load_description
+
     d = Dir::getwd
     Dir::chdir @app
+    ENV['RAILS_ENV'] = 'test'
 
-    @raw_score = 0
-    @raw_max = @features.count
+    start_time = Time.now
 
-    puts "Preparing database..."
-    `rake db:test:prepare`
+    score = Feature.total(@features)   # TODO integrate Score
+    @raw_score, @raw_max = score.points, score.max
 
-    @features.each do |f|
-      begin
-        f.run!
-        @raw_score += 1
-      rescue Feature::TestFailedError
-      rescue => e
-        raise
-      end
-    end
+    log "Completed in #{Time.now-start_time} seconds.".yellow  # TODO remove this
     Dir::chdir d
   end
 
   private
 
   def load_description
-    begin
-      puts "Loading #{@description}..."
-      y = YAML.load_file(@description)
+    puts "Loading #{@description}..."
+    y = YAML::load_file(@description)
 
-      unless features = y["features"] and features.is_a? Array
-        raise ArgumentError, "Malformed description file"
-      end
+    # This does some hacky stuff to get references to work properly
 
-      features.each do |f|
-        @features << Feature.new(f.envify)
-      end
-    rescue => e
-      raise
+    { "scenarios" => ScenarioMatcher,
+      "features"  => Feature
+    }.each_pair do |label,klass|
+      y[label].each {|h| h[:object] = klass.new(h)}
     end
+
+    objectify = lambda {|arr| arr.collect! {|h| h[:object]}}
+    featurize = lambda do |f|
+      %w( failures ).each do |attr|
+        f[attr].collect! {|h| h.is_a?(Hash) ? h[:object] : h} if f.has_key?(attr)
+      end
+
+      f["if_pass"].collect! {|h| featurize.call(h); Feature.new(h)} if f.has_key?("if_pass")
+    end
+
+    y["features"].each {|h| featurize.call(h)}
+
+    @features = y["features"].collect {|h| h[:object]}
   end
 
 end
