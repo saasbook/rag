@@ -30,6 +30,10 @@ module AutoGraderSubprocess
     [score, comments]
   end
 
+  def run_autograder_subprocess(submission, spec, grader_type)
+    AutoGraderSubprocess.run_autograder_subprocess(submission, spec, grader_type)
+  end
+
   # FIXME: This is related to the below hack, remove later
   def self.parse_grade(str)
     # Used for parsing the stdout output from running grade as a shell command
@@ -46,4 +50,7 @@ module AutoGraderSubprocess
     raise "Failed to parse autograder output: #{str}"
   end
 
+  def parse_grade(str)
+    AutoGraderSubprocess.parse_grade(str)
+  end
 end
