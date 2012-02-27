@@ -166,6 +166,7 @@ class CourseraClient
         @autograders.keys.each do |assignment_part_sid|
           logger.info assignment_part_sid
           if @controller.get_queue_length(assignment_part_sid) == 0
+            logger.info "  queue length 0"
             next
           end
           all_empty = false

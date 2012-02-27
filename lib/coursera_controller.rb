@@ -32,6 +32,10 @@ class CourseraController
   def get_queue_length(queue_name)
     params = {:queue => queue_name}
     response = send_request("assignment/api/queue_length/", params, :get)
+    if response['status'] =~ /[3-5]\d\d/
+      logger.error "Bad queue length response: #{response['status']}"
+      raise CourseraController::BadStatusCodeError, "Bad queue length response: #{response['status']}"
+    end
     response['queue_length']
   end
 
@@ -64,7 +68,7 @@ class CourseraController
     response = send_request("assignment/api/score/", params, :post)
     if response['status'] !~ /2\d\d/
       logger.error "Bad post score response: #{response['status']}"
-      raise CourseraController::BadStatusCode, "Bad post score response: #{response['status']}"
+      raise CourseraController::BadStatusCodeError, "Bad post score response: #{response['status']}"
     end
   end
 
