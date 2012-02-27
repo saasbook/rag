@@ -12,17 +12,17 @@ module AutoGraderSubprocess
   # This, and run_autograder, should really be part of a different module/class
   # Runs a separate process for grading
   def self.run_autograder_subprocess(submission, spec, grader_type)
-    stdin_text = stdout_text = stderr_text = nil
+    stdout_text = stderr_text = nil
     Tempfile.open(['test', '.rb']) do |file|
       file.write(submission)
       file.flush
       if grader_type == 'HerokuRspecGrader'
         stdin, stdout, stderr, wait_thr = Open3.popen3 %Q{./grade_heroku "#{submission}" "#{spec}"}
-        stdin_text = stdin.read; stdout_text = stdout.read; stderr_text = stderr.read
+        stdout_text = stdout.read; stderr_text = stderr.read
         stdin.close; stdout.close; stderr.close
       else
         stdin, stdout, stderr, wait_thr = Open3.popen3 %Q{./grade "#{file.path}" "#{spec}"}
-        stdin_text = stdin.read; stdout_text = stdout.read; stderr_text = stderr.read
+        stdout_text = stdout.read; stderr_text = stderr.read
         stdin.close; stdout.close; stderr.close
       end
       if wait_thr.value.exitstatus != 0
