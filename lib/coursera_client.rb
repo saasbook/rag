@@ -28,6 +28,7 @@ class CourseraClient
     @api_key = conf['api_key']
     @controller = CourseraController.new(@endpoint, @api_key)
     @halt = conf['halt'] == 'false' ? false : true
+    @sleep_duration = conf['sleep_duration'] # in seconds
 
     # Load configuration file for assignment_id->spec map
     # We assume that the keys are also the assignment_part_sids, as well as the queue_ids
@@ -158,19 +159,25 @@ class CourseraClient
         @autograders.delete_if{|key,value| to_delete.include? key}
       end
     else
+
     # Loop forever
       while True
+        all_empty = true
         @autograders.keys.each do |assignment_part_sid|
           logger.info assignment_part_sid
           if @controller.get_queue_length(assignment_part_sid) == 0
             next
           end
+          all_empty = false
           result = @controller.get_pending_submission(assignment_part_sid)
           next if result.nil?
           logger.info "  received submission: #{result['submission_metadata']['submission_id']}"
           logger.debug result['submission_metadata']
 
           yield assignment_part_sid, result
+        end
+        if all_empty
+          sleep @sleep_duration
         end
       end
     end

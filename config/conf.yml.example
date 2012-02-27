@@ -6,3 +6,4 @@ saas-staging:
   api_key: 
   autograders_yml: autograders.yml
   halt: true # default: true, exit when all submission queues are empty
+  sleep_duration: 300 # default 300, time in seconds to sleep when all queues are empty, only valid when halt == false
