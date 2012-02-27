@@ -161,7 +161,7 @@ class CourseraClient
     else
 
     # Loop forever
-      while True
+      while true
         all_empty = true
         @autograders.keys.each do |assignment_part_sid|
           logger.info assignment_part_sid
