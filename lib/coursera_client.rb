@@ -28,7 +28,7 @@ class CourseraClient
     @api_key = conf['api_key']
     @controller = CourseraController.new(@endpoint, @api_key)
     @halt = conf['halt'] == 'false' ? false : true
-    @sleep_duration = conf['sleep_duration'] || 5*60 # in seconds
+    @sleep_duration = conf['sleep_duration'].nil? ? 5*60 : conf['sleep_duration'].to_i # in seconds
 
     # Load configuration file for assignment_id->spec map
     # We assume that the keys are also the assignment_part_sids, as well as the queue_ids
