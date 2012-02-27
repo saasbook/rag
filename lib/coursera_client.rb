@@ -44,6 +44,9 @@ class CourseraClient
       # FIXME: Use non-subprocess version instead
       begin
         score, comments = run_autograder_subprocess(submission, spec, grader_type) # defined in AutoGraderSubprocess
+      rescue AutoGraderSubprocess::SubprocessError => e
+        score = 0
+        comments = e.to_s
       rescue
         logger.fatal(submission)
         raise
