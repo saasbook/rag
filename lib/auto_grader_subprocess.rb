@@ -17,17 +17,19 @@ module AutoGraderSubprocess
       file.write(submission)
       file.flush
       if grader_type == 'HerokuRspecGrader'
-        stdin, stdout, stderr = Open3.popen3 %Q{./grade_heroku "#{submission}" "#{spec}"} 
+        stdin, stdout, stderr, wait_thr = Open3.popen3 %Q{./grade_heroku "#{submission}" "#{spec}"}
       else
-        stdin, stdout, stderr = Open3.popen3 %Q{./grade "#{file.path}" "#{spec}"}
+        stdin, stdout, stderr, wait_thr = Open3.popen3 %Q{./grade "#{file.path}" "#{spec}"}
       end
-      if $?.to_i != 0
-        logger.fatal "AutograderSubprocess error: #{stderr}"
-        raise AutoGraderSubprocess::SubprocessError, "AutograderSubprocess error: #{stderr}"
+      if wait_thr.value.exitstatus != 0
+        logger.fatal "AutograderSubprocess error: #{stderr.read}"
+        stdin.close; stdout.close; stderr.close
+        raise AutoGraderSubprocess::SubprocessError, "AutograderSubprocess error: #{stderr.read}"
       end
     end
 
     score, comments = parse_grade(stdout.read)
+    stdin.close; stdout.close; stderr.close
     comments.gsub!(spec, 'spec.rb')
     [score, comments]
   end
