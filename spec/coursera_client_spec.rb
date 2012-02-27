@@ -165,6 +165,28 @@ EOF
     it 'should raise an error if requested autograder is not found'
   end
 
+  describe "#load_configuration" do
+    before :each do
+      #CourseraClient.any_instance.stub(:load_configurations).and_return double('fake hash').as_null_object
+      CourseraClient.any_instance.stub(:init_autograders)
+    end
+
+    it "should load a conf file properly" do
+      conf_file = <<EOF
+default: default-profile
+default-profile:
+  endpoint_uri: http://test.url/
+  api_key: 1234abcd
+  autograders_yml: autograders.yml
+EOF
+      File.stub(:file?).and_return true
+      File.stub(:open).and_return conf_file
+      #client.send(:load_configurations).should == {'default-profile' => {'endpoint_uri' => 'http://test.url/', 'api_key' => '1234abcd', 'autograders_yml' => 'autograders.yml'}}
+      client.instance_eval{@endpoint}.should == 'http://test.url/'
+      client.instance_eval{@api_key}.should == '1234abcd'
+    end
+  end
+
   describe "#run_autograder_subprocess"
   describe "#parse_grade"
   describe "#decode_submission" # This method probably belongs in the controller

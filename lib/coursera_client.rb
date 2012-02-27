@@ -24,7 +24,7 @@ class CourseraClient
   def initialize(conf_name=nil)
     conf = load_configurations(conf_name)
 
-    @endpoint = conf['endpoint']
+    @endpoint = conf['endpoint_uri']
     @api_key = conf['api_key']
     @controller = CourseraController.new(@endpoint, @api_key)
     @halt = conf['halt'] == 'false' ? false : true
@@ -176,15 +176,16 @@ class CourseraClient
     end
   end
 
-  def load_configurations(conf_name)
+  def load_configurations(conf_name=nil)
     config_path = 'config/conf.yml'
     unless File.file?(config_path)
       puts "Please copy conf.yml.example into conf.yml and configure the parameters"
       exit
     end
-    confs = YAML::load(File.open(config_path, 'r'))
+    confs = YAML::load(File.open(config_path, 'r'){|f| f.read})
     conf_name ||= confs['default'] || confs.keys.first
     conf = confs[conf_name]
     raise "Couldn't load configuration #{conf_name}" if conf.nil?
+    conf
   end
 end
