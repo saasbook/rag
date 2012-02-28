@@ -51,7 +51,10 @@ module AutoGraderSubprocess
       line.gsub(/\(FAILED - \d+\)/, "(FAILED)")
     end.join("\n")
     [score, comments]
-  rescue
+  rescue ArgumentError => e
+    logger.error "Error running parse_grade: #{e.to_s}; #{str}"
+    [0, e.to_s]
+  rescue StandardError => e
     logger.fatal "Failed to parse autograder output: #{str}"
     raise OutputParseError, "Failed to parse autograder output: #{str}"
   end
