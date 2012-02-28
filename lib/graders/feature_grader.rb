@@ -1,6 +1,12 @@
 require 'open3'
 require 'yaml'
 require 'term/ansicolor'
+require 'thread'
+require 'fileutils'
+
+$m_stdout = Mutex.new
+$m_db = Mutex.new
+$i_db = 0
 
 class String
   include Term::ANSIColor
@@ -15,12 +21,6 @@ class Hash
     return h
   end
 end
-
-# class NilClass
-#   def empty?
-#     true
-#   end
-# end
 
 class Score
   attr_accessor :points, :max
@@ -56,7 +56,7 @@ class Score
 end
 
 def log(*args)
-  puts *args
+  $m_stdout.synchronize { puts *args }
 end
 
 # +AutoGrader+ that scores using cucumber features
@@ -100,13 +100,20 @@ class FeatureGrader < AutoGrader
     class << self
       def total(features=[])
         s = Score.new
+        m = Mutex.new
+        threads = []
         features.each do |f|
-          begin
-            s += f.run!
-          rescue TestFailedError
-            s.fail
+          t = Thread.new do
+            begin
+              result = f.run!
+              m.synchronize { s += result }
+            rescue TestFailedError
+              m.synchronize { s.fail }
+            end
           end
+          threads << t
         end
+        threads.each(&:join)
         return s
       end
     end
@@ -148,6 +155,10 @@ class FeatureGrader < AutoGrader
       passed = false
       lines = []
 
+      $m_db.synchronize do
+        h["TEST_DB"] = "db/test_#{$i_db}.sqlite3"
+        $i_db += 1
+      end
       popen_opts = {
         #:unsetenv_others => true     # TODO why does this make cucumber not work?
       }
@@ -157,6 +168,7 @@ class FeatureGrader < AutoGrader
       begin
         raise TestFailedError, "Nonexistent feature file #{h["FEATURE"]}" unless File.readable? h["FEATURE"]
 
+        FileUtils.cp "db/test.sqlite3", h["TEST_DB"]
         Open3.popen3(h, "bundle exec rake cucumber", popen_opts) do |stdin, stdout, stderr, wait_thr|
           exit_status = wait_thr.value
 
@@ -169,6 +181,9 @@ class FeatureGrader < AutoGrader
         log "test failed: #{e.inspect}".red.bold
         log e.backtrace
         raise TestFailedError, "test failed to run b/c #{e.inspect}"
+
+      ensure
+        FileUtils.rm h["TEST_DB"]
 
       end
 

@@ -64,12 +64,12 @@ features:
         FEATURE: features/filter_movie_list.feature
         version: 10
         failures:
-          - *restrict_pg_r
+          - *all_x_selected
       - &step12
         FEATURE: features/filter_movie_list.feature
         version: 11
         failures:
-          - *restrict_pg_r
+          - *all_x_selected
       - &step13
         FEATURE: features/filter_movie_list.feature
         version: 12
