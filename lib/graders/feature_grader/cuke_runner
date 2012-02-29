@@ -1,0 +1,22 @@
+#!/usr/bin/env ruby
+
+def main
+  require 'cucumber'
+  fpath = File.dirname(ENV["FEATURE"])
+  config = Cucumber::Cli::Configuration.new
+  config.parse! [
+    '--profile=default',
+    "--require=#{File.join(fpath, 'support/')}",
+    "--require=#{File.join(fpath, 'step_definitions/')}",
+    ENV["FEATURE"]
+  ]
+  runner = Cucumber::Runtime.new(config)
+  runner.run!
+end
+
+begin
+  main
+rescue Object => e
+  puts "*** ERROR: #{e.inspect}"
+  puts e.backtrace
+end
