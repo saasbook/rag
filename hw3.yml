@@ -22,18 +22,20 @@ features:
         failures:
           - *restrict_pg_r
           - *all_x_selected
-      - &step4
-        FEATURE: features/filter_movie_list.feature
-        version: 3
-        failures:
-          - *restrict_pg_r
-          - *all_x_selected
-      - &step5
-        FEATURE: features/filter_movie_list.feature
-        version: 4
-        failures:
-          - *restrict_pg_r
-          - *all_x_selected
+#======= Same as step3
+#      - &step4
+#        FEATURE: features/filter_movie_list.feature
+#        version: 3
+#        failures:
+#          - *restrict_pg_r
+#          - *all_x_selected
+#======= Same as step2
+#      - &step5
+#        FEATURE: features/filter_movie_list.feature
+#        version: 4
+#        failures:
+#          - *restrict_pg_r
+#          - *all_x_selected
       - &step6
         FEATURE: features/filter_movie_list.feature
         version: 5
@@ -44,22 +46,24 @@ features:
         version: 6
         failures:
           - *restrict_pg_r
-      - &step8
-        FEATURE: features/filter_movie_list.feature
-        version: 7
-        failures:
-          - *restrict_pg_r
+#======= Same as step6
+#      - &step8
+#        FEATURE: features/filter_movie_list.feature
+#        version: 7
+#        failures:
+#          - *restrict_pg_r
       - &step9
         FEATURE: features/filter_movie_list.feature
         version: 8
         failures:
           - *restrict_pg_r
-      - &step10
-        FEATURE: features/filter_movie_list.feature
-        version: 9
-        failures:
-          - *restrict_pg_r
-          - *all_x_selected
+#======= Same as step2
+#      - &step10
+#        FEATURE: features/filter_movie_list.feature
+#        version: 9
+#        failures:
+#          - *restrict_pg_r
+#          - *all_x_selected
       - &step11
         FEATURE: features/filter_movie_list.feature
         version: 10
@@ -77,16 +81,16 @@ features:
           - *restrict_pg_r
           - *all_x_selected
 
-  - &step14
-    FEATURE: features/filter_movie_list.feature
-    version: 13
+#  - &step14
+#    FEATURE: features/filter_movie_list.feature
+#    version: 13
   - &step15
     FEATURE: features/filter_movie_list.feature
     version: 16
   - &step16
     FEATURE: features/filter_movie_list.feature
     version: 17
-  - &step17
-    FEATURE: features/filter_movie_list.feature
-    version: 20
+#  - &step17
+#    FEATURE: features/filter_movie_list.feature
+#    version: 20
 

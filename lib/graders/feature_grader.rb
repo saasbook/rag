@@ -3,6 +3,7 @@ require 'yaml'
 require 'term/ansicolor'
 require 'thread'
 require 'fileutils'
+require 'tempfile'
 
 $m_stdout = Mutex.new
 $m_db = Mutex.new
@@ -19,6 +20,44 @@ class Hash
     h = {}
     self.each_pair { |k,v| h[k.to_s] = v.to_s }
     return h
+  end
+end
+
+class TempArchiveFile
+  def initialize(original_filename)
+    @tempfile = Tempfile.new ['submission', '.tar.gz']
+    @path = nil
+    File.open(original_filename) do |o|
+      FileUtils.copy_stream o, @tempfile
+    end
+  end
+
+  def path
+    return @path if @path
+    @path = File.join(File.dirname(@tempfile.path), File.basename(@tempfile.path, '.tar.gz'))
+    FileUtils.mkdir_p @path
+    `tar -xvzf #{@tempfile.path} -C #{@path.inspect}`
+    result = $?.to_i
+    raise(ScriptError, "untar failed") unless result == 0
+    return @path
+  end
+
+  def destroy
+    @tempfile.close
+    @tempfile.unlink
+    @tempfile = nil
+    if @path
+      FileUtils.rmdir @path
+      @path = nil
+    end
+  end
+end
+
+class SourcedTempfile < Tempfile
+  def initialize(*args)
+    source_path = args.shift
+    super(*args)
+    File.open source_path {|io| FileUtils.copy_stream io, self}
   end
 end
 
@@ -66,9 +105,10 @@ class FeatureGrader < AutoGrader
     attr_reader :regex
 
     # [+"match"+] +String+ regular expression for matching +cucumber+ output
-    def initialize(h)
+    def initialize(h, config={})
       raise(ArgumentError, "no regex") unless @regex = h["match"]
 
+      @config = config
       @regex = /#{@regex}/
     end
 
@@ -126,15 +166,17 @@ class FeatureGrader < AutoGrader
     #               for this step
     # [...]        and any other environment variables
 
-    def initialize(feature_={})
+    def initialize(feature_={}, config={})
       feature = feature_.dup
       raise ArgumentError, "No 'FEATURE' specified in #{feature.inspect}" unless feature['FEATURE']
 
       @score = Score.new
 
+      @config = config
+
       @if_pass = []
       if feature["if_pass"] and feature["if_pass"].is_a? Array
-        @if_pass += feature.delete("if_pass").collect {|f| Feature.new(f)}
+        @if_pass += feature.delete("if_pass").collect {|f| Feature.new(f, config)}
       end
 
       @target_pass = feature.has_key?("pass") ? feature.delete("pass") : true
@@ -156,7 +198,8 @@ class FeatureGrader < AutoGrader
       lines = []
 
       $m_db.synchronize do
-        h["TEST_DB"] = "db/test_#{$i_db}.sqlite3"
+        #h["TEST_DB"] = "db/test_#{$i_db}.sqlite3"
+        h["TEST_DB"] = File.join(@config[:temp].path, "test_#{$i_db}.sqlite3")
         $i_db += 1
       end
       popen_opts = {
@@ -267,9 +310,8 @@ class FeatureGrader < AutoGrader
   # :call-seq:
   #   new(features_archive, grading_rules, app) -> FeatureGrader
 
-  def initialize(features_archive, grading_rules={}, app)
+  def initialize(features_archive, grading_rules={})
     @features = []
-    @app = app
 
     unless @features_archive = features_archive and File.file? @features_archive and File.readable? @features_archive
       raise ArgumentError, "Unable to find features archive #{@features_archive.inspect}"
@@ -279,22 +321,24 @@ class FeatureGrader < AutoGrader
       raise ArgumentError, "Unable to find description file #{@description.inspect}"
     end
 
+    @temp = TempArchiveFile.new(@features_archive)
   end
 
   def grade!
-    load_description
+    begin
+      load_description
 
-    d = Dir::getwd
-    Dir::chdir @app
-    ENV['RAILS_ENV'] = 'test'
+      ENV['RAILS_ENV'] = 'test'
 
-    start_time = Time.now
+      start_time = Time.now
 
-    score = Feature.total(@features)   # TODO integrate Score
-    @raw_score, @raw_max = score.points, score.max
+      score = Feature.total(@features)   # TODO integrate Score
+      @raw_score, @raw_max = score.points, score.max
 
-    log "Completed in #{Time.now-start_time} seconds.".yellow  # TODO remove this
-    Dir::chdir d
+      log "Completed in #{Time.now-start_time} seconds.".yellow  # TODO remove this
+    ensure
+      @temp.destroy if @temp
+    end
   end
 
   private
@@ -304,11 +348,14 @@ class FeatureGrader < AutoGrader
     y = YAML::load_file(@description)
 
     # This does some hacky stuff to get references to work properly
+    config = {
+      :temp => @temp
+    }
 
     { "scenarios" => ScenarioMatcher,
       "features"  => Feature
     }.each_pair do |label,klass|
-      y[label].each {|h| h[:object] = klass.new(h)}
+      y[label].each {|h| h[:object] = klass.new(h, config)}
     end
 
     objectify = lambda {|arr| arr.collect! {|h| h[:object]}}
@@ -317,7 +364,7 @@ class FeatureGrader < AutoGrader
         f[attr].collect! {|h| h.is_a?(Hash) ? h[:object] : h} if f.has_key?(attr)
       end
 
-      f["if_pass"].collect! {|h| featurize.call(h); Feature.new(h)} if f.has_key?("if_pass")
+      f["if_pass"].collect! {|h| featurize.call(h); Feature.new(h, config)} if f.has_key?("if_pass")
     end
 
     y["features"].each {|h| featurize.call(h)}
