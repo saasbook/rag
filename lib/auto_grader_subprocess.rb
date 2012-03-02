@@ -1,5 +1,6 @@
 require 'tempfile'
 require 'open3'
+require 'timeout'
 
 require_relative 'rag_logger'
 
@@ -13,6 +14,7 @@ module AutoGraderSubprocess
   # Runs a separate process for grading
   def self.run_autograder_subprocess(submission, spec, grader_type)
     stdout_text = stderr_text = nil
+    exitstatus = 0
     Tempfile.open(['test', '.rb']) do |file|
       file.write(submission)
       file.flush
@@ -20,12 +22,21 @@ module AutoGraderSubprocess
         stdin, stdout, stderr, wait_thr = Open3.popen3 %Q{./grade_heroku "#{submission}" "#{spec}"}
         stdout_text = stdout.read; stderr_text = stderr.read
         stdin.close; stdout.close; stderr.close
+        exitstatus = wait_thr.value.exitstatus
       else
-        stdin, stdout, stderr, wait_thr = Open3.popen3 %Q{./grade "#{file.path}" "#{spec}"}
-        stdout_text = stdout.read; stderr_text = stderr.read
-        stdin.close; stdout.close; stderr.close
+        begin
+        Timeout::timeout(60) {
+          stdin, stdout, stderr, wait_thr = Open3.popen3 %Q{./grade "#{file.path}" "#{spec}"}
+          stdout_text = stdout.read; stderr_text = stderr.read
+          stdin.close; stdout.close; stderr.close
+          exitstatus = wait_thr.value.exitstatus
+        }
+        rescue Timeout::Error => e
+          exitstatus = -1
+          stderr_text = "Program timed out"
+        end
       end
-      if wait_thr.value.exitstatus != 0
+      if exitstatus != 0
         logger.fatal "AutograderSubprocess error: #{stderr_text}"
         raise AutoGraderSubprocess::SubprocessError, "AutograderSubprocess error: #{stderr_text}"
       end

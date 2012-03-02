@@ -30,13 +30,19 @@ class CourseraController
   # from get_queue_length() doesn't mean you are guaranteed to receive a
   # submission from get_pending_submission()
   def get_queue_length(queue_name)
-    params = {:queue => queue_name}
-    response = send_request("assignment/api/queue_length/", params, :get)
-    if response['status'] =~ /[3-5]\d\d/
-      logger.error "Bad queue length response: #{response['status']}"
-      raise CourseraController::BadStatusCodeError, "Bad queue length response: #{response['status']}"
+    begin
+      params = {:queue => queue_name}
+      response = send_request("assignment/api/queue_length/", params, :get)
+      if response['status'] =~ /[3-5]\d\d/
+        logger.error "Bad queue length response: #{response['status']}"
+        raise CourseraController::BadStatusCodeError, "Bad queue length response: #{response['status']}"
+      end
+      response['queue_length']
+    #rescue EOFError => e
+    #  logger.error e.to_s
+    #  logger.error "Retrying"
+    #  retry
     end
-    response['queue_length']
   end
 
   # Returns either nil or 

@@ -47,6 +47,9 @@ class CourseraClient
       rescue AutoGraderSubprocess::SubprocessError => e
         score = 0
         comments = e.to_s
+      rescue AutoGraderSubprocess::OutputParseError => e
+        score = 0
+        comments = e.to_s
       rescue
         logger.fatal(submission)
         raise
