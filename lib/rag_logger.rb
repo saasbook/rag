@@ -10,6 +10,6 @@ module RagLogger
       Dir.mkdir('log/') unless File.directory?('log/')
       @logger_file ||= 'log/rag.log'
     end
-    @logger ||= Logger.new(@logger_file)
+    @logger ||= Logger.new(@logger_file, 0, 1024*1024)
   end
 end
