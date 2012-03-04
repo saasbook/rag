@@ -19,18 +19,25 @@ module AutoGraderSubprocess
       file.write(submission)
       file.flush
       if grader_type == 'HerokuRspecGrader'
-        stdin, stdout, stderr, wait_thr = Open3.popen3 %Q{./grade_heroku "#{submission}" "#{spec}"}
-        stdout_text = stdout.read; stderr_text = stderr.read
-        stdin.close; stdout.close; stderr.close
-        exitstatus = wait_thr.value.exitstatus
+        begin
+          Timeout::timeout(180) do
+            stdin, stdout, stderr, wait_thr = Open3.popen3 %Q{./grade_heroku "#{submission}" "#{spec}"}
+            stdout_text = stdout.read; stderr_text = stderr.read
+            stdin.close; stdout.close; stderr.close
+            exitstatus = wait_thr.value.exitstatus
+          end
+        rescue Timeout::Error => e
+          exitstatus = -1
+          stderr_text = "Program timed out"
+        end
       else
         begin
-        Timeout::timeout(60) {
-          stdin, stdout, stderr, wait_thr = Open3.popen3 %Q{./grade "#{file.path}" "#{spec}"}
-          stdout_text = stdout.read; stderr_text = stderr.read
-          stdin.close; stdout.close; stderr.close
-          exitstatus = wait_thr.value.exitstatus
-        }
+          Timeout::timeout(60) do
+            stdin, stdout, stderr, wait_thr = Open3.popen3 %Q{./grade "#{file.path}" "#{spec}"}
+            stdout_text = stdout.read; stderr_text = stderr.read
+            stdin.close; stdout.close; stderr.close
+            exitstatus = wait_thr.value.exitstatus
+          end
         rescue Timeout::Error => e
           exitstatus = -1
           stderr_text = "Program timed out"
