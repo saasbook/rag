@@ -1,7 +1,7 @@
 require 'tempfile'
 require 'yaml'
 require 'net/http'
-require 'Base64'
+require 'base64'
 
 require_relative 'rag_logger'
 require_relative 'coursera_controller'
@@ -20,51 +20,47 @@ class CourseraClient
   # directory and it must represent a hash from assignment_part_sid's to
   # spec URIs
 
-  def initialize(endpoint, api_key, autograders_yml)
-    @endpoint = endpoint
-    @api_key = api_key
-    @controller = CourseraController.new(endpoint, api_key)
+  #def initialize(endpoint, api_key, autograders_yml)
+  def initialize(conf_name=nil)
+    conf = load_configurations(conf_name)
+
+    @endpoint = conf['endpoint_uri']
+    @api_key = conf['api_key']
+    @controller = CourseraController.new(@endpoint, @api_key)
+    @halt = conf['halt']
+    @sleep_duration = conf['sleep_duration'].nil? ? 5*60 : conf['sleep_duration'] # in seconds
 
     # Load configuration file for assignment_id->spec map
     # We assume that the keys are also the assignment_part_sids, as well as the queue_ids
-    @autograders = init_autograders(autograders_yml)
+    @autograders = init_autograders(conf['autograders_yml'])
   end
 
   def run
-    # Iterate round robin through assignment parts until all queues are empty
-    while @autograders.size > 0
-      to_delete = []
-      @autograders.keys.each do |assignment_part_sid|
-        logger.info assignment_part_sid
-        if @controller.get_queue_length(assignment_part_sid) == 0
-          logger.info "  queue length 0; removing"
-          to_delete << assignment_part_sid
-          next
-        end
-        result = @controller.get_pending_submission(assignment_part_sid)
-        next if result.nil?
-        logger.info "  received submission: #{result['submission_metadata']['submission_id']}"
-        logger.debug result['submission_metadata']
+    each_submission do |assignment_part_sid, result|
+      submission = decode_submission(result)
+      spec = load_spec(assignment_part_sid)
+      grader_type = @autograders[assignment_part_sid][:type]
 
-        submission = decode_submission(result)
-        spec = load_spec(assignment_part_sid)
-        grader_type = @autograders[assignment_part_sid][:type]
-
-        # Original method
-        #grade = run_autograder(submission, spec, grader_type)
-        #score = grade.normalized_score
-        #comments = grade.comments
-
-        # FIXME: Use non-subprocess version instead
+      # FIXME: Use non-subprocess version instead
+      begin
         score, comments = run_autograder_subprocess(submission, spec, grader_type) # defined in AutoGraderSubprocess
-        formatted_comments = format_for_html(comments)
-        @controller.post_score(result['api_state'], score, formatted_comments)
-
-        logger.debug "  scored #{score}: #{comments}"
+      rescue AutoGraderSubprocess::SubprocessError => e
+        score = 0
+        comments = e.to_s
+      rescue AutoGraderSubprocess::OutputParseError => e
+        score = 0
+        comments = e.to_s
+      rescue
+        logger.fatal(submission)
+        raise
       end
-
-      @autograders.delete_if{|key,value| to_delete.include? key}
+      formatted_comments = format_for_html(comments)
+      @controller.post_score(result['api_state'], score, formatted_comments)
+      logger.debug "  scored #{score}: #{comments}"
     end
+  rescue Exception => e
+    logger.fatal(e)
+    raise
   end
 
   def download_submissions(file)
@@ -152,5 +148,67 @@ class CourseraClient
       logger.fatal "Can't handle encoding: #{submission['submission_encoding']}"
       raise "Can't handle encoding: #{submission['submission_encoding']}"
     end
+  end
+
+  def each_submission
+    if @halt
+    # Iterate round robin through assignment parts until all queues are empty
+    # parameterize this differently
+      while @autograders.size > 0
+        to_delete = []
+        @autograders.keys.each do |assignment_part_sid|
+          logger.info assignment_part_sid
+          if @controller.get_queue_length(assignment_part_sid) == 0
+            logger.info "  queue length 0; removing"
+            to_delete << assignment_part_sid
+            next
+          end
+          result = @controller.get_pending_submission(assignment_part_sid)
+          next if result.nil?
+          logger.info "  received submission: #{result['submission_metadata']['submission_id']}"
+          logger.debug result['submission_metadata']
+
+          yield assignment_part_sid, result
+        end
+        @autograders.delete_if{|key,value| to_delete.include? key}
+      end
+    else
+
+    # Loop forever
+      while true
+        all_empty = true
+        @autograders.keys.each do |assignment_part_sid|
+          logger.info assignment_part_sid
+          if @controller.get_queue_length(assignment_part_sid) == 0
+            logger.info "  queue length 0"
+            next
+          end
+          all_empty = false
+          result = @controller.get_pending_submission(assignment_part_sid)
+          next if result.nil?
+          logger.info "  received submission: #{result['submission_metadata']['submission_id']}"
+          logger.debug result['submission_metadata']
+
+          yield assignment_part_sid, result
+        end
+        if all_empty
+          logger.info "sleeping for #{@sleep_duration} seconds"
+          sleep @sleep_duration
+        end
+      end
+    end
+  end
+
+  def load_configurations(conf_name=nil)
+    config_path = 'config/conf.yml'
+    unless File.file?(config_path)
+      puts "Please copy conf.yml.example into conf.yml and configure the parameters"
+      exit
+    end
+    confs = YAML::load(File.open(config_path, 'r'){|f| f.read})
+    conf_name ||= confs['default'] || confs.keys.first
+    conf = confs[conf_name]
+    raise "Couldn't load configuration #{conf_name}" if conf.nil?
+    conf
   end
 end

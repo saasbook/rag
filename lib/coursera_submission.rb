@@ -1,6 +1,6 @@
 require_relative 'rag_logger'
 
-require 'Base64'
+require 'base64'
 require 'json'
 class CourseraSubmission
   # sid that corresponds to an assignment part on Coursera

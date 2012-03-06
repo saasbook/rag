@@ -1,33 +1,61 @@
 require 'tempfile'
 require 'open3'
+require 'timeout'
 
 require_relative 'rag_logger'
 
 module AutoGraderSubprocess
   extend RagLogger
+  class AutoGraderSubprocess::OutputParseError < StandardError ; end
+  class AutoGraderSubprocess::SubprocessError < StandardError ; end
 
   # FIXME: This is a hack, remove later
   # This, and run_autograder, should really be part of a different module/class
   # Runs a separate process for grading
   def self.run_autograder_subprocess(submission, spec, grader_type)
-    stdout = ''
+    stdout_text = stderr_text = nil
+    exitstatus = 0
     Tempfile.open(['test', '.rb']) do |file|
       file.write(submission)
       file.flush
       if grader_type == 'HerokuRspecGrader'
-        stdin, stdout, stderr = Open3.popen3 %Q{./grade_heroku "#{submission}" "#{spec}"} 
+        begin
+          Timeout::timeout(180) do
+            stdin, stdout, stderr, wait_thr = Open3.popen3 %Q{./grade_heroku "#{submission}" "#{spec}"}
+            stdout_text = stdout.read; stderr_text = stderr.read
+            stdin.close; stdout.close; stderr.close
+            exitstatus = wait_thr.value.exitstatus
+          end
+        rescue Timeout::Error => e
+          exitstatus = -1
+          stderr_text = "Program timed out"
+        end
       else
-        stdin, stdout, stderr = Open3.popen3 %Q{./grade "#{file.path}" "#{spec}"}
+        begin
+          Timeout::timeout(60) do
+            stdin, stdout, stderr, wait_thr = Open3.popen3 %Q{./grade "#{file.path}" "#{spec}"}
+            stdout_text = stdout.read; stderr_text = stderr.read
+            stdin.close; stdout.close; stderr.close
+            exitstatus = wait_thr.value.exitstatus
+          end
+        rescue Timeout::Error => e
+          exitstatus = -1
+          stderr_text = "Program timed out"
+        end
       end
-      if $?.to_i != 0
-        logger.fatal "AutograderSubprocess error: #{stderr}"
-        raise 'AutograderSubprocess error'
+      if exitstatus != 0
+        logger.fatal "AutograderSubprocess error: #{stderr_text}"
+        raise AutoGraderSubprocess::SubprocessError, "AutograderSubprocess error: #{stderr_text}"
       end
     end
 
-    score, comments = parse_grade(stdout.read)
+    score, comments = parse_grade(stdout_text)
     comments.gsub!(spec, 'spec.rb')
     [score, comments]
+  end
+
+  def run_autograder_subprocess(submission, spec, grader_type)
+    AutoGraderSubprocess.run_autograder_subprocess(submission, spec, grader_type)
   end
 
   # FIXME: This is related to the below hack, remove later
@@ -41,9 +69,15 @@ module AutoGraderSubprocess
       line.gsub(/\(FAILED - \d+\)/, "(FAILED)")
     end.join("\n")
     [score, comments]
-  rescue
+  rescue ArgumentError => e
+    logger.error "Error running parse_grade: #{e.to_s}; #{str}"
+    [0, e.to_s]
+  rescue StandardError => e
     logger.fatal "Failed to parse autograder output: #{str}"
-    raise "Failed to parse autograder output: #{str}"
+    raise OutputParseError, "Failed to parse autograder output: #{str}"
   end
 
+  def parse_grade(str)
+    AutoGraderSubprocess.parse_grade(str)
+  end
 end
