@@ -59,7 +59,7 @@ class FeatureGrader < AutoGrader
       raise ArgumentError, "Unable to find description file #{@description.inspect}"
     end
 
-    $config = {:mt => grading_rules[:mt] || true} # TODO merge all the configs
+    $config = {:mt => grading_rules.has_key?(:mt) ? grading_rules[:mt] : true} # TODO merge all the configs
 
     @temp = TempArchiveFile.new(@features_archive)
   end

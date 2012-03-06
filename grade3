@@ -7,10 +7,10 @@ options = {:mt => true}
 o = nil
 OptionParser.new do |opts|
   o = opts
-  opts.banner = "Usage: #{$0} [options] input.tar.gz description.yml"
+  opts.banner = "Usage: #{$0} [options] -a /path/to/app/ input.tar.gz description.yml"
   opts.on('-a', '--app PATH', 'Path to app') {|p| options[:app] = p}
   opts.on('-h', '--help', 'Display this screen') { puts opts; exit }
-  opts.on('-m', '--[no-]multithread', 'Enable multithreading') { options[:mt] = true }
+  opts.on('-m', '--[no-]multithread', 'Enable multithreading') {|v| options[:mt] = v}
 end.parse!
 
 unless options[:app] and ARGV.count == 2

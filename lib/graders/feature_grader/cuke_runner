@@ -1,6 +1,7 @@
 #!/usr/bin/env ruby
 
 def main
+  require 'rubygems'
   require 'cucumber'
   fpath = File.dirname(ENV["FEATURE"])
   config = Cucumber::Cli::Configuration.new

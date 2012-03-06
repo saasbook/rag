@@ -4,8 +4,15 @@ scenarios:
     match: "restrict to movies with 'PG' or 'R' ratings"
   - &all_x_selected
     match: "all (ratings|checkboxes) selected"
+  - &sort_alpha
+    match: "sort movies alphabetically"
+  - &sort_date
+    match: "sort movies in increasing order of release date"
 
 features:
+  #############################
+  # filter_movie_list.feature #
+  #############################
   - &step1
     FEATURE: features/filter_movie_list.feature
     pass: true
@@ -94,3 +101,94 @@ features:
 #    FEATURE: features/filter_movie_list.feature
 #    version: 20
 
+  ###########################
+  # sort_movie_list.feature #
+  ###########################
+  - &step18
+    FEATURE: features/sort_movie_list.feature
+    if_pass:
+      - &step19
+        FEATURE: features/sort_movie_list.feature
+        version: 13
+        failures:
+          - *sort_alpha
+          - *sort_date
+      - &step20
+        FEATURE: features/sort_movie_list.feature
+        version: 14
+        failures:
+          - *sort_alpha
+          - *sort_date
+      - &step21
+        FEATURE: features/sort_movie_list.feature
+        version: 15
+        failures:
+          - *sort_alpha
+          - *sort_date
+      - &step22
+        FEATURE: features/sort_movie_list.feature
+        version: 16
+        failures:
+          - *sort_alpha
+          - *sort_date
+      - &step23
+        FEATURE: features/sort_movie_list.feature
+        version: 17
+        failures:
+          - *sort_alpha
+          - *sort_date
+      - &step24
+        FEATURE: features/sort_movie_list.feature
+        version: 18
+        failures:
+          - *sort_alpha
+          - *sort_date
+      - &step25
+        FEATURE: features/sort_movie_list.feature
+        version: 19
+        failures:
+          - *sort_alpha
+          - *sort_date
+      - &step26
+        FEATURE: features/sort_movie_list.feature
+        version: 20
+        failures:
+          - *sort_alpha
+          - *sort_date
+      - &step27
+        FEATURE: features/sort_movie_list.feature
+        version: 21
+        failures:
+          - *sort_alpha
+          - *sort_date
+      - &step28
+        FEATURE: features/sort_movie_list.feature
+        version: 22
+        failures:
+          - *sort_alpha
+          - *sort_date
+      - &step29
+        FEATURE: features/sort_movie_list.feature
+        version: 23
+        failures:
+          - *sort_alpha
+      - &step30
+        FEATURE: features/sort_movie_list.feature
+        version: 24
+        failures:
+          - *sort_date
+  - &step31
+    FEATURE: features/sort_movie_list.feature
+    version: 25
+  - &step32
+    FEATURE: features/sort_movie_list.feature
+    version: 26
+  - &step33
+    FEATURE: features/sort_movie_list.feature
+    version: 27
+  - &step34
+    FEATURE: features/sort_movie_list.feature
+    version: 28
+  - &step35
+    FEATURE: features/sort_movie_list.feature
+    version: 29
