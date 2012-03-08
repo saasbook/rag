@@ -18,31 +18,36 @@ module AutoGraderSubprocess
     Tempfile.open(['test', '.rb']) do |file|
       file.write(submission)
       file.flush
-      if grader_type == 'HerokuRspecGrader'
-        begin
-          Timeout::timeout(180) do
-            stdin, stdout, stderr, wait_thr = Open3.popen3 %Q{./grade_heroku "#{submission}" "#{spec}"}
-            stdout_text = stdout.read; stderr_text = stderr.read
-            stdin.close; stdout.close; stderr.close
-            exitstatus = wait_thr.value.exitstatus
-          end
-        rescue Timeout::Error => e
-          exitstatus = -1
-          stderr_text = "Program timed out"
-        end
+
+      opts = {
+        :timeout => 60,
+        :cmd => %Q{./grade "#{file.path}" "#{spec}"}
+      }.merge case grader_type
+      when 'HerokuRspecGrader'
+        { :timeout => 180,
+          :cmd => %Q{./grade_heroku "#{submission}" "#{spec}"}
+        }
+      when 'HW3Grader'
+        {
+          :timeout => 300,
+          :cmd => %Q{./grade3 -a ../rottenpotatoes "#{submission}" "#{spec}"}
+        }
       else
-        begin
-          Timeout::timeout(60) do
-            stdin, stdout, stderr, wait_thr = Open3.popen3 %Q{./grade "#{file.path}" "#{spec}"}
-            stdout_text = stdout.read; stderr_text = stderr.read
-            stdin.close; stdout.close; stderr.close
-            exitstatus = wait_thr.value.exitstatus
-          end
-        rescue Timeout::Error => e
-          exitstatus = -1
-          stderr_text = "Program timed out"
-        end
+        {}
       end
+
+      begin
+        Timeout::timeout(opts[:timeout]) do
+          stdin, stdout, stderr, wait_thr = Open3.popen3 opts[:cmd]
+          stdout_text = stdout.read; stderr_text = stderr.read
+          stdin.close; stdout.close; stderr.close
+          exitstatus = wait_thr.value.exitstatus
+        end
+      rescue Timeout::Error => e
+        exitstatus = -1
+        stderr_text = "Program timed out"
+      end
+
       if exitstatus != 0
         logger.fatal "AutograderSubprocess error: #{stderr_text}"
         raise AutoGraderSubprocess::SubprocessError, "AutograderSubprocess error: #{stderr_text}"

@@ -1,6 +1,9 @@
 class FeatureGrader < AutoGrader
   class Feature
     class TestFailedError < StandardError; end
+    class IncorrectAnswer < StandardError; end
+
+    SOURCE_DB = "db/test.sqlite3"
 
     module Regex
       BlankLine = /^$/
@@ -96,7 +99,8 @@ class FeatureGrader < AutoGrader
       begin
         raise TestFailedError, "Nonexistent feature file #{h["FEATURE"]}" unless File.readable? h["FEATURE"]
 
-        FileUtils.cp "db/test.sqlite3", h["TEST_DB"]
+        raise(TestFailedError, "Failed to find test db") unless File.readable? SOURCE_DB
+        FileUtils.cp SOURCE_DB, h["TEST_DB"]
 #        Open3.popen3(h, "bundle exec rake cucumber", popen_opts) do |stdin, stdout, stderr, wait_thr|
         Open3.popen3(h, $CUKE_RUNNER, popen_opts) do |stdin, stdout, stderr, wait_thr|
           exit_status = wait_thr.value
@@ -112,7 +116,7 @@ class FeatureGrader < AutoGrader
         raise TestFailedError, "test failed to run b/c #{e.inspect}"
 
       ensure
-        FileUtils.rm h["TEST_DB"]
+        FileUtils.rm h["TEST_DB"] if File.exists? h["TEST_DB"]
 
       end
 

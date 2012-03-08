@@ -13,7 +13,7 @@ Dir["lib/graders/feature_grader/*.rb"].each { |file| load file }
 $CUKE_RUNNER = File.join(File.expand_path('lib/graders/feature_grader'), 'cuke_runner')
 
 def log(*args)
-  $m_stdout.synchronize { puts *args }
+  $m_stdout.synchronize { STDOUT.puts *args }
 end
 
 # +AutoGrader+ that scores using cucumber features
@@ -55,7 +55,7 @@ class FeatureGrader < AutoGrader
       raise ArgumentError, "Unable to find features archive #{@features_archive.inspect}"
     end
 
-    unless @description = grading_rules[:description] and File.file? @description and File.readable? @description
+    unless @description = (grading_rules[:spec] || grading_rules[:description]) and File.file? @description and File.readable? @description
       raise ArgumentError, "Unable to find description file #{@description.inspect}"
     end
 
@@ -84,7 +84,6 @@ class FeatureGrader < AutoGrader
   private
 
   def load_description
-    puts "Loading #{@description}..."
     y = YAML::load_file(@description)
 
     # This does some hacky stuff to get references to work properly
@@ -95,6 +94,7 @@ class FeatureGrader < AutoGrader
     { "scenarios" => ScenarioMatcher,
       "features"  => Feature
     }.each_pair do |label,klass|
+      raise(ArgumentError, "Unable to find required key '#{label}' in #{@description}") unless y[label]
       y[label].each {|h| h[:object] = klass.new(h, config)}
     end
 
