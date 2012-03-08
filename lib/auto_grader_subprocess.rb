@@ -48,9 +48,13 @@ module AutoGraderSubprocess
         raise AutoGraderSubprocess::SubprocessError, "AutograderSubprocess error: #{stderr_text}"
       end
     end
-
     score, comments = parse_grade(stdout_text)
     comments.gsub!(spec, 'spec.rb')
+    [score, comments]
+  rescue ArgumentError => e
+    logger.error e.to_s
+    score = 0
+    comments = e.to_s
     [score, comments]
   end
 
