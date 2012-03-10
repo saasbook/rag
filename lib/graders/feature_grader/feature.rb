@@ -1,7 +1,7 @@
 class FeatureGrader < AutoGrader
   class Feature
-    class TestFailedError < StandardError; end
-    class IncorrectAnswer < StandardError; end
+    class TestFailedError < StandardError; end   # Internal error
+    class IncorrectAnswer < StandardError; end   # Incorrect answer encountered
 
     SOURCE_DB = "db/test.sqlite3"
 
@@ -11,7 +11,9 @@ class FeatureGrader < AutoGrader
       StepResult = /^(\d+) steps \(.*?(\d+) passed.*\)/
     end
 
-    attr_reader :if_pass, :target_pass, :feature, :score
+    attr_reader :if_pass, :target_pass, :feature, :score, :output
+
+    attr_reader :grader
 
     # +Array+ of +ScenarioMatcher+s that should fail for this step,
     # or empty if it should pass in +cucumber+.
@@ -23,6 +25,12 @@ class FeatureGrader < AutoGrader
     attr_reader :scenarios
 
     class << self
+
+      # Compute the total +Score+ resulting from the given array
+      # of +Feature+s.
+      #
+      # See +$config[:mt]+
+      #
       def total(features=[])
         s = Score.new
         m = Mutex.new
@@ -32,7 +40,7 @@ class FeatureGrader < AutoGrader
             begin
               result = f.run!
               m.synchronize { s += result }
-            rescue TestFailedError
+            rescue TestFailedError, IncorrectAnswer
               m.synchronize { s.fail }
             end
           end
@@ -40,6 +48,10 @@ class FeatureGrader < AutoGrader
           threads << t
         end
         threads.each(&:join)
+
+        # Dump output. TODO: better way to do this?
+        features.each { |f| f.dump_output }
+
         return s
       end
     end
@@ -52,17 +64,18 @@ class FeatureGrader < AutoGrader
     #               for this step
     # [...]        and any other environment variables
 
-    def initialize(feature_={}, config={})
+    def initialize(grader, feature_={}, config={})
       feature = feature_.dup
       raise ArgumentError, "No 'FEATURE' specified in #{feature.inspect}" unless feature['FEATURE']
 
+      @grader = grader
       @score = Score.new
-
       @config = config
+      @output = []
 
       @if_pass = []
       if feature["if_pass"] and feature["if_pass"].is_a? Array
-        @if_pass += feature.delete("if_pass").collect {|f| Feature.new(f, config)}
+        @if_pass += feature.delete("if_pass").collect {|f| Feature.new(self, f, config)}
       end
 
       @target_pass = feature.has_key?("pass") ? feature.delete("pass") : true
@@ -71,6 +84,14 @@ class FeatureGrader < AutoGrader
       @scenarios = {:failed => []}
 
       @env = feature.envify  # whatever's left over
+    end
+
+    def log(*args)
+      @output += [*args]
+    end
+
+    def dump_output
+      self.grader.log(@output)
     end
 
     def run!
@@ -129,7 +150,7 @@ class FeatureGrader < AutoGrader
         log "Test #{h.inspect} failed".red
         begin
           self.correct!
-        rescue TestFailedError => e
+        rescue TestFailedError, IncorrectAnswer => e
           log e.message
         end
         log lines.collect {|l| "| #{l}"}
@@ -153,11 +174,11 @@ class FeatureGrader < AutoGrader
     def correct!
       if @failures.any?
         unless @failures.all? {|matcher| @scenarios[:failed].any? {|s| matcher.match? s}}
-          raise TestFailedError, "Not all required failures were detected"
+          raise IncorrectAnswer, "Not all required failures were detected"
         end
       else
         unless @scenarios[:failed].empty? or @scenarios[:steps][:total] != @scenarios[:steps][:passed]
-          raise TestFailedError, "Feature should have passed, but had the following failures:\n#{@scenarios[:failed].collect {|f| "  #{f}"}}"
+          raise IncorrectAnswer, "Feature should have passed, but had the following failures:\n#{@scenarios[:failed].collect {|f| "  #{f}"}}"
         end
       end
       true

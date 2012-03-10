@@ -12,10 +12,6 @@ $i_db = 0
 Dir["lib/graders/feature_grader/*.rb"].each { |file| load file }
 $CUKE_RUNNER = File.join(File.expand_path('lib/graders/feature_grader'), 'cuke_runner')
 
-def log(*args)
-  $m_stdout.synchronize { STDOUT.puts *args }
-end
-
 # +AutoGrader+ that scores using cucumber features
 class FeatureGrader < AutoGrader
 
@@ -23,7 +19,7 @@ class FeatureGrader < AutoGrader
     attr_reader :regex
 
     # [+"match"+] +String+ regular expression for matching +cucumber+ output
-    def initialize(h, config={})
+    def initialize(grader, h, config={})
       raise(ArgumentError, "no regex") unless @regex = h["match"]
 
       @config = config
@@ -38,6 +34,7 @@ class FeatureGrader < AutoGrader
 
   attr_accessor :features_archive, :description
   attr_reader   :features
+  attr_reader   :logpath
 
   # Grade the features contained in the +.tar.gz+ archive _features_archive_,
   # using the reference solution _app_.
@@ -49,6 +46,9 @@ class FeatureGrader < AutoGrader
   #   new(features_archive, grading_rules, app) -> FeatureGrader
 
   def initialize(features_archive, grading_rules={})
+    @logpath = "hw3_submission.log"
+    @output = []
+    @m_output = Mutex.new
     @features = []
 
     unless @features_archive = features_archive and File.file? @features_archive and File.readable? @features_archive
@@ -64,6 +64,19 @@ class FeatureGrader < AutoGrader
     @temp = TempArchiveFile.new(@features_archive)
   end
 
+  def log(*args)
+    @m_output.synchronize do
+      @output += [*args]
+    end
+  end
+
+  def dump_output
+    @m_output.synchronize do
+      STDOUT.puts *@output
+      File.open(@logpath, 'a') {|f| f.puts *@output}
+    end
+  end
+
   def grade!
     begin
       load_description
@@ -76,6 +89,7 @@ class FeatureGrader < AutoGrader
       @raw_score, @raw_max = score.points, score.max
 
       log "Completed in #{Time.now-start_time} seconds.".yellow  # TODO remove this
+      dump_output
     ensure
       @temp.destroy if @temp
     end
@@ -95,7 +109,7 @@ class FeatureGrader < AutoGrader
       "features"  => Feature
     }.each_pair do |label,klass|
       raise(ArgumentError, "Unable to find required key '#{label}' in #{@description}") unless y[label]
-      y[label].each {|h| h[:object] = klass.new(h, config)}
+      y[label].each {|h| h[:object] = klass.new(self, h, config)}
     end
 
     objectify = lambda {|arr| arr.collect! {|h| h[:object]}}
@@ -104,7 +118,7 @@ class FeatureGrader < AutoGrader
         f[attr].collect! {|h| h.is_a?(Hash) ? h[:object] : h} if f.has_key?(attr)
       end
 
-      f["if_pass"].collect! {|h| featurize.call(h); Feature.new(h, config)} if f.has_key?("if_pass")
+      f["if_pass"].collect! {|h| featurize.call(h); Feature.new(self, h, config)} if f.has_key?("if_pass")
     end
 
     y["features"].each {|h| featurize.call(h)}
