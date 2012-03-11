@@ -16,19 +16,24 @@ $CUKE_RUNNER = File.join(File.expand_path('lib/graders/feature_grader'), 'cuke_r
 class FeatureGrader < AutoGrader
 
   class ScenarioMatcher
-    attr_reader :regex
+    attr_reader :regex, :desc
 
     # [+"match"+] +String+ regular expression for matching +cucumber+ output
     def initialize(grader, h, config={})
       raise(ArgumentError, "no regex") unless @regex = h["match"]
 
       @config = config
+      @desc = h["desc"] || h["match"]
       @regex = /#{@regex}/
     end
 
     # [+str+] _String_ to match against
     def match?(str)
       !!(str =~ @regex)
+    end
+
+    def to_s
+      @desc
     end
   end
 
@@ -46,7 +51,6 @@ class FeatureGrader < AutoGrader
   #   new(features_archive, grading_rules, app) -> FeatureGrader
 
   def initialize(features_archive, grading_rules={})
-    @logpath = "hw3_submission.log"
     @output = []
     @m_output = Mutex.new
     @features = []
@@ -62,6 +66,7 @@ class FeatureGrader < AutoGrader
     $config = {:mt => grading_rules.has_key?(:mt) ? grading_rules[:mt] : true} # TODO merge all the configs
 
     @temp = TempArchiveFile.new(@features_archive)
+    @logpath = File.expand_path(File.join('.', 'log', "hw3_#{File.basename @temp.path}.log"))
   end
 
   def log(*args)
@@ -71,6 +76,7 @@ class FeatureGrader < AutoGrader
   end
 
   def dump_output
+    self.comments = @output.join("\n")
     @m_output.synchronize do
       STDOUT.puts *@output
       File.open(@logpath, 'a') {|f| f.puts *@output}
@@ -88,7 +94,7 @@ class FeatureGrader < AutoGrader
       score = Feature.total(@features)   # TODO integrate Score
       @raw_score, @raw_max = score.points, score.max
 
-      log "Completed in #{Time.now-start_time} seconds.".yellow  # TODO remove this
+      # log "Completed in #{Time.now-start_time} seconds."
       dump_output
     ensure
       @temp.destroy if @temp

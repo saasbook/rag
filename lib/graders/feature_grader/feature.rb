@@ -11,7 +11,7 @@ class FeatureGrader < AutoGrader
       StepResult = /^(\d+) steps \(.*?(\d+) passed.*\)/
     end
 
-    attr_reader :if_pass, :target_pass, :feature, :score, :output
+    attr_reader :if_pass, :target_pass, :feature, :score, :output, :desc
 
     attr_reader :grader
 
@@ -72,6 +72,7 @@ class FeatureGrader < AutoGrader
       @score = Score.new
       @config = config
       @output = []
+      @desc = feature.delete("desc") # || 'None'
 
       @if_pass = []
       if feature["if_pass"] and feature["if_pass"].is_a? Array
@@ -115,7 +116,7 @@ class FeatureGrader < AutoGrader
         #:unsetenv_others => true     # TODO why does this make cucumber not work?
       }
 
-      log "Cuking with #{h.inspect}"
+      #log "Cuking with #{h.inspect}"
 
       begin
         raise TestFailedError, "Nonexistent feature file #{h["FEATURE"]}" unless File.readable? h["FEATURE"]
@@ -142,12 +143,13 @@ class FeatureGrader < AutoGrader
       end
 
       if self.correct?
-        log "Test #{h.inspect} passed.".green
-        #log lines.collect {|l| "| #{l}"}
+        #log "Test #{h.inspect} passed.".green
+        log "Test passed."
         score.pass
         score += Feature.total(@if_pass)
       else
-        log "Test #{h.inspect} failed".red
+        #log "Test #{h.inspect} failed".red
+        log "Test failed"
         begin
           self.correct!
         rescue TestFailedError, IncorrectAnswer => e
@@ -174,7 +176,11 @@ class FeatureGrader < AutoGrader
     def correct!
       if @failures.any?
         unless @failures.all? {|matcher| @scenarios[:failed].any? {|s| matcher.match? s}}
-          raise IncorrectAnswer, "Not all required failures were detected"
+          missing_failures = @failures.reject {|matcher| @scenarios[:failed].any? {|s| matcher.match? s}}
+          missing_failures = missing_failures.collect{|f| " - #{f.to_s}"}.join("\n")
+          mods = self.desc || "(None)"
+          mods = " - #{mods}"
+          raise IncorrectAnswer, "The following scenarios passed incorrectly (should have failed):\n#{missing_failures}\nwith the following modifications:\n#{mods}"
         end
       else
         unless @scenarios[:failed].empty? or @scenarios[:steps][:total] != @scenarios[:steps][:passed]

@@ -28,7 +28,8 @@ begin
 
   g = AutoGrader.create('3', 'HW3Grader', ARGV[0], options)
   g.grade!
-  puts "Score out of 100: #{g.normalized_score(100)}\n"
+  score_max = 500
+  puts "Score out of #{score_max}: #{g.normalized_score(score_max)}\n"
   puts "---BEGIN cucumber comments---\n#{'-'*80}\n#{g.comments}\n#{'-'*80}\n---END cucumber comments---"
 ensure
   Dir::chdir d

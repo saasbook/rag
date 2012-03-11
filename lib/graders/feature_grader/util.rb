@@ -1,6 +1,6 @@
-class String
-  include Term::ANSIColor
-end
+# class String
+#   include Term::ANSIColor
+# end
 
 class Hash
   # Returns a new +Hash+ containing +to_s+ed keys and values from this +Hash+.

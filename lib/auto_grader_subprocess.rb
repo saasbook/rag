@@ -30,7 +30,7 @@ module AutoGraderSubprocess
       when 'HW3Grader'
         {
           :timeout => 300,
-          :cmd => %Q{./grade3 -a ../rottenpotatoes "#{submission}" "#{spec}"}
+          :cmd => %Q{./grade3 -a ../rottenpotatoes "#{file.path}" "#{spec}"}
         }
       else
         {}
@@ -67,9 +67,9 @@ module AutoGraderSubprocess
   def self.parse_grade(str)
     # Used for parsing the stdout output from running grade as a shell command
     # FIXME: This feels insecure and fragile
-    score_regex = /Score out of 100:\s*(\d+(?:\.\d+)?)$/
+    score_regex = /Score out of \d+:\s*(\d+(?:\.\d+)?)$/
     score = str.match(score_regex, str.rindex(score_regex))[1].to_f
-    comments = str.match(/^---BEGIN rspec comments---\n#{'-'*80}\n(.*)#{'-'*80}\n---END rspec comments---$/m)[1]
+    comments = str.match(/^---BEGIN (?:cucumber|rspec) comments---\n#{'-'*80}\n(.*)#{'-'*80}\n---END (?:cucumber|rspec) comments---$/m)[1]
     comments = comments.split("\n").map do |line|
       line.gsub(/\(FAILED - \d+\)/, "(FAILED)")
     end.join("\n")
