@@ -26,7 +26,7 @@ class TempArchiveFile
     FileUtils.mkdir_p @path
     `tar -xvzf #{@tempfile.path} -C #{@path.inspect}`
     result = $?.to_i
-    raise(ScriptError, "untar failed") unless result == 0
+    raise(ScriptError, "untar failed (submission not in .tar.gz format?)") unless result == 0
     return @path
   end
 

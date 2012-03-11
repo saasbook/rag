@@ -26,8 +26,13 @@ begin
   ENV["RAILS_ROOT"] = Dir::getwd
   options[:description] = ARGV[1]
 
-  g = AutoGrader.create('3', 'HW3Grader', ARGV[0], options)
-  g.grade!
+  begin
+    g = AutoGrader.create('3', 'HW3Grader', ARGV[0], options)
+    g.grade!
+  rescue Object => e
+    STDERR.puts "*** FATAL: #{e.respond_to?(:message) ? e.message : "unspecified error"}"
+    exit 1
+  end
   score_max = 500
   puts "Score out of #{score_max}: #{g.normalized_score(score_max)}\n"
   puts "---BEGIN cucumber comments---\n#{'-'*80}\n#{g.comments}\n#{'-'*80}\n---END cucumber comments---"
