@@ -123,7 +123,6 @@ class FeatureGrader < AutoGrader
 
         raise(TestFailedError, "Failed to find test db") unless File.readable? SOURCE_DB
         FileUtils.cp SOURCE_DB, h["TEST_DB"]
-#        Open3.popen3(h, "bundle exec rake cucumber", popen_opts) do |stdin, stdout, stderr, wait_thr|
         Open3.popen3(h, $CUKE_RUNNER, popen_opts) do |stdin, stdout, stderr, wait_thr|
           exit_status = wait_thr.value
 
@@ -133,7 +132,7 @@ class FeatureGrader < AutoGrader
         end
 
       rescue => e
-        log "test failed: #{e.inspect}".red.bold
+        log "test failed: #{e.inspect}"#.red.bold
         log e.backtrace
         raise TestFailedError, "test failed to run b/c #{e.inspect}"
 
@@ -144,12 +143,15 @@ class FeatureGrader < AutoGrader
 
       if self.correct?
         #log "Test #{h.inspect} passed.".green
-        log "Test passed."
-        score.pass
+        if self.desc           # XXX hack to indicate a mod
+          score.pass
+        else
+          score += 26.0/8.0    # XXX give happy paths are worth 20% of total
+        end
+        log "Test passed. (+#{score.max})"
         score += Feature.total(@if_pass)
       else
         #log "Test #{h.inspect} failed".red
-        log "Test failed"
         begin
           self.correct!
         rescue TestFailedError, IncorrectAnswer => e
@@ -157,6 +159,7 @@ class FeatureGrader < AutoGrader
         end
         log lines.collect {|l| "| #{l}"}
         score.fail
+        log "Test failed. (-#{score.max})"
       end
 
       return score

@@ -64,6 +64,8 @@ class FeatureGrader < AutoGrader
     end
 
     $config = {:mt => grading_rules.has_key?(:mt) ? grading_rules[:mt] : true} # TODO merge all the configs
+    $config[:mt] = (ENV["AG_MT"] =~ /1|true/i) if ENV.has_key?("AG_MT")
+    $config[:mt] = false
 
     @temp = TempArchiveFile.new(@features_archive)
     @logpath = File.expand_path(File.join('.', 'log', "hw3_#{File.basename @temp.path}.log"))
@@ -92,9 +94,11 @@ class FeatureGrader < AutoGrader
       start_time = Time.now
 
       score = Feature.total(@features)   # TODO integrate Score
+
       @raw_score, @raw_max = score.points, score.max
 
-      # log "Completed in #{Time.now-start_time} seconds."
+      log "Total score: #{@raw_score} / #{@raw_max}"
+      log "Completed in #{Time.now-start_time} seconds."
       dump_output
     ensure
       @temp.destroy if @temp

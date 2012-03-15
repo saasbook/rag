@@ -29,7 +29,7 @@ module AutoGraderSubprocess
         }
       when 'HW3Grader'
         {
-          :timeout => 300,
+          :timeout => 400,
           :cmd => %Q{./grade3 -a ../rottenpotatoes "#{file.path}" "#{spec}"}
         }
       else

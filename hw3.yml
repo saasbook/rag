@@ -21,14 +21,14 @@ features:
       - &step2
         FEATURE: features/filter_movie_list.feature
         version: 1
-        desc: "results -= Amelie"
+        desc: "results -= R movies"
         failures:
           - *restrict_pg_r
           - *all_x_selected
       - &step3
         FEATURE: features/filter_movie_list.feature
         version: 2
-        desc: "results -= Raiders of the Lost Ark"
+        desc: "results -= PG movies"
         failures:
           - *restrict_pg_r
           - *all_x_selected
@@ -51,13 +51,13 @@ features:
       - &step6
         FEATURE: features/filter_movie_list.feature
         version: 5
-        desc: "results += Aladdin"
+        desc: "results += G movies"
         failures:
           - *restrict_pg_r
       - &step7
         FEATURE: features/filter_movie_list.feature
         version: 6
-        desc: "results += Chocolat"
+        desc: "results += PG-13 movies"
         failures:
           - *restrict_pg_r
 #======= Same as step6
@@ -70,7 +70,7 @@ features:
       - &step9
         FEATURE: features/filter_movie_list.feature
         version: 8
-        desc: "results += The Help"
+        desc: "results += PG-13 movies"
         failures:
           - *restrict_pg_r
 #======= Same as step2
@@ -84,13 +84,13 @@ features:
       - &step11
         FEATURE: features/filter_movie_list.feature
         version: 10
-        desc: "results -= Chicken Run"
+        desc: "results -= G movies"
         failures:
           - *all_x_selected
       - &step12
         FEATURE: features/filter_movie_list.feature
         version: 11
-        desc: "results -= Chocolat"
+        desc: "results -= PG-13 movies"
         failures:
           - *all_x_selected
       - &step13
@@ -221,8 +221,8 @@ features:
   - &step34
     FEATURE: features/sort_movie_list.feature
     version: 28
-    desc: "results = [The Help]"
-  - &step35
-    FEATURE: features/sort_movie_list.feature
-    version: 29
-    desc: "results = [Chocolat]"
+    desc: "results = [PG-13 movies]"
+#  - &step35
+#    FEATURE: features/sort_movie_list.feature
+#    version: 29
+#    desc: "results = [PG-13 movies]"

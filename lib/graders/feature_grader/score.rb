@@ -10,7 +10,7 @@ class Score
     case other
     when Score
       Score.new(@points+other.points, @max+other.max)
-    when Integer
+    when Numeric
       Score.new(@points+other, @max+other)
     else
       raise ArgumentError
