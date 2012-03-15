@@ -11,7 +11,7 @@ class FeatureGrader < AutoGrader
       StepResult = /^(\d+) steps \(.*?(\d+) passed.*\)/
     end
 
-    attr_reader :if_pass, :target_pass, :feature, :score, :output, :desc
+    attr_reader :if_pass, :target_pass, :feature, :score, :output, :desc, :weight
 
     attr_reader :grader
 
@@ -41,7 +41,7 @@ class FeatureGrader < AutoGrader
               result = f.run!
               m.synchronize { s += result }
             rescue TestFailedError, IncorrectAnswer
-              m.synchronize { s.fail }
+              m.synchronize { s += -result }
             end
           end
           t.join unless $config[:mt]
@@ -73,6 +73,7 @@ class FeatureGrader < AutoGrader
       @config = config
       @output = []
       @desc = feature.delete("desc") # || 'None'
+      @weight = feature.delete("weight").to_f || 1.0
 
       @if_pass = []
       if feature["if_pass"] and feature["if_pass"].is_a? Array
@@ -143,11 +144,13 @@ class FeatureGrader < AutoGrader
 
       if self.correct?
         #log "Test #{h.inspect} passed.".green
-        if self.desc           # XXX hack to indicate a mod
-          score.pass
+
+        if self.weight
+          score += @weight
         else
-          score += 26.0/8.0    # XXX give happy paths are worth 20% of total
+          score.pass @weight
         end
+
         log "Test passed. (+#{score.max})"
         score += Feature.total(@if_pass)
       else
@@ -158,7 +161,7 @@ class FeatureGrader < AutoGrader
           log e.message
         end
         log lines.collect {|l| "| #{l}"}
-        score.fail
+        score.fail @weight
         log "Test failed. (-#{score.max})"
       end
 

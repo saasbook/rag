@@ -14,215 +14,52 @@ features:
   #############################
   # filter_movie_list.feature #
   #############################
-  - &step1
+  - &step1-1
     FEATURE: features/filter_movie_list.feature
     pass: true
+    weight: 0.2
     if_pass:
-      - &step2
-        FEATURE: features/filter_movie_list.feature
-        version: 1
-        desc: "results -= R movies"
-        failures:
-          - *restrict_pg_r
-          - *all_x_selected
-      - &step3
+      - &step1-3
         FEATURE: features/filter_movie_list.feature
         version: 2
-        desc: "results -= PG movies"
+        weight: 0.075
+        desc: "results = [G, PG-13] movies"
         failures:
           - *restrict_pg_r
           - *all_x_selected
-#======= Same as step3
-#      - &step4
-#        FEATURE: features/filter_movie_list.feature
-#        version: 3
-#        desc: "results -= The Incredibles"
-#        failures:
-#          - *restrict_pg_r
-#          - *all_x_selected
-#======= Same as step2
-#      - &step5
-#        FEATURE: features/filter_movie_list.feature
-#        version: 4
-#        desc: "results -= The Terminator"
-#        failures:
-#          - *restrict_pg_r
-#          - *all_x_selected
-      - &step6
+      - &step1-4
         FEATURE: features/filter_movie_list.feature
-        version: 5
-        desc: "results += G movies"
-        failures:
-          - *restrict_pg_r
-      - &step7
-        FEATURE: features/filter_movie_list.feature
-        version: 6
-        desc: "results += PG-13 movies"
-        failures:
-          - *restrict_pg_r
-#======= Same as step6
-#      - &step8
-#        FEATURE: features/filter_movie_list.feature
-#        version: 7
-#        desc: "results += Chicken Run"
-#        failures:
-#          - *restrict_pg_r
-      - &step9
-        FEATURE: features/filter_movie_list.feature
-        version: 8
-        desc: "results += PG-13 movies"
-        failures:
-          - *restrict_pg_r
-#======= Same as step2
-#      - &step10
-#        FEATURE: features/filter_movie_list.feature
-#        version: 9
-#        desc: "results -= Amelie"
-#        failures:
-#          - *restrict_pg_r
-#          - *all_x_selected
-      - &step11
-        FEATURE: features/filter_movie_list.feature
-        version: 10
-        desc: "results -= G movies"
-        failures:
-          - *all_x_selected
-      - &step12
-        FEATURE: features/filter_movie_list.feature
-        version: 11
-        desc: "results -= PG-13 movies"
-        failures:
-          - *all_x_selected
-      - &step13
-        FEATURE: features/filter_movie_list.feature
-        version: 12
-        desc: "results are empty"
+        version: 3
+        weight: 0.075
+        desc: "results = []"
         failures:
           - *restrict_pg_r
           - *all_x_selected
-
-#  - &step14
-#    FEATURE: features/filter_movie_list.feature
-#    version: 13
-#    desc: "results are rotated"
-  - &step15
+      - &step1-5
+        FEATURE: features/filter_movie_list.feature
+        version: 4
+        weight: 0.075
+        desc: "results = [G, PG, PG-13, R] movies"
+        failures:
+          - *restrict_pg_r
+  - &step1-6
     FEATURE: features/filter_movie_list.feature
-    version: 16
+    version: 10
+    weight: 0.075
     desc: "results reversed"
-  - &step16
-    FEATURE: features/filter_movie_list.feature
-    version: 17
-    desc: "results shuffled"
-#  - &step17
-#    FEATURE: features/filter_movie_list.feature
-#    version: 20
-#    desc: "first two results swapped"
 
   ###########################
   # sort_movie_list.feature #
   ###########################
-  - &step18
+  - &step2-1
     FEATURE: features/sort_movie_list.feature
+    weight: 0.25
     if_pass:
-      - &step19
+      - &step2-2
         FEATURE: features/sort_movie_list.feature
-        version: 13
-        desc: "results rotated"
-        failures:
-          - *sort_alpha
-          - *sort_date
-      - &step20
-        FEATURE: features/sort_movie_list.feature
-        version: 14
-        desc: "results rotated by 2"
-        failures:
-          - *sort_alpha
-          - *sort_date
-      - &step21
-        FEATURE: features/sort_movie_list.feature
-        version: 15
-        desc: "results rotated by -1"
-        failures:
-          - *sort_alpha
-          - *sort_date
-      - &step22
-        FEATURE: features/sort_movie_list.feature
-        version: 16
+        version: 10
+        weight: 0.25
         desc: "results reversed"
         failures:
           - *sort_alpha
           - *sort_date
-      - &step23
-        FEATURE: features/sort_movie_list.feature
-        version: 17
-        desc: "results shuffled"
-        failures:
-          - *sort_alpha
-          - *sort_date
-      - &step24
-        FEATURE: features/sort_movie_list.feature
-        version: 18
-        desc: "results shuffled"
-        failures:
-          - *sort_alpha
-          - *sort_date
-      - &step25
-        FEATURE: features/sort_movie_list.feature
-        version: 19
-        desc: "results shuffled"
-        failures:
-          - *sort_alpha
-          - *sort_date
-      - &step26
-        FEATURE: features/sort_movie_list.feature
-        version: 20
-        desc: "first two results swapped"
-        failures:
-          - *sort_alpha
-          - *sort_date
-      - &step27
-        FEATURE: features/sort_movie_list.feature
-        version: 21
-        desc: "third and fifth results swapped"
-        failures:
-          - *sort_alpha
-          - *sort_date
-      - &step28
-        FEATURE: features/sort_movie_list.feature
-        version: 22
-        desc: "last two results swapped"
-        failures:
-          - *sort_alpha
-          - *sort_date
-      - &step29
-        FEATURE: features/sort_movie_list.feature
-        version: 23
-        desc: "results ordered by release date"
-        failures:
-          - *sort_alpha
-      - &step30
-        FEATURE: features/sort_movie_list.feature
-        version: 24
-        desc: "results ordered by title"
-        failures:
-          - *sort_date
-  - &step31
-    FEATURE: features/sort_movie_list.feature
-    version: 25
-    desc: "second result removed"
-  - &step32
-    FEATURE: features/sort_movie_list.feature
-    version: 26
-    desc: "last result removed"
-  - &step33
-    FEATURE: features/sort_movie_list.feature
-    version: 27
-    desc: "fourth result removed"
-  - &step34
-    FEATURE: features/sort_movie_list.feature
-    version: 28
-    desc: "results = [PG-13 movies]"
-#  - &step35
-#    FEATURE: features/sort_movie_list.feature
-#    version: 29
-#    desc: "results = [PG-13 movies]"

@@ -17,13 +17,15 @@ class Score
     end
   end
 
-  def pass()
-    @points += 1
-    @max += 1
+  def pass(n)
+    n ||= 1
+    @points += n
+    @max += n
   end
 
-  def fail()
-    @max += 1
+  def fail(n)
+    n ||= 1
+    @max += n
   end
 
   def to_s

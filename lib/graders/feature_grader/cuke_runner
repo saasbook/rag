@@ -8,7 +8,7 @@ def main
   opts = [
     "--no-color",
     "--no-profile",
-    "--backtrace",
+#    "--backtrace",
     "--require=#{File.join(fpath, 'support/')}",
     "--require=#{File.join(fpath, 'step_definitions/')}",
     "--require=#{File.join('features', 'support', 'env.rb')}",  # the bootstrapped one
