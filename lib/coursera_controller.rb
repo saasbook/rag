@@ -98,7 +98,16 @@ class CourseraController
     request.set_form_data(params) if mode == :post
     request['X-api-key'] = @api_key
 
-    response = http.request(request)
+    logged_eof = false
+    begin
+      response = http.request(request)
+    rescue EOFError  # invalid url?
+      sleep 10
+      logger.error "Invalid response (EOFError): #{path}" unless logged_eof
+      logged_eof = true
+      retry
+    end
+
     begin
       JSON.parse(response.body)
     rescue StandardError => e
