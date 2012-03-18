@@ -135,7 +135,7 @@ class FeatureGrader < AutoGrader
       rescue => e
         log "test failed: #{e.inspect}"#.red.bold
         log e.backtrace
-        raise TestFailedError, "test failed to run b/c #{e.inspect}"
+        raise StandardError, "test failed to run because #{e.message}"
 
       ensure
         FileUtils.rm h["TEST_DB"] if File.exists? h["TEST_DB"]
@@ -216,7 +216,7 @@ class FeatureGrader < AutoGrader
         result_lines = output.grep Regex::StepResult
         unless result_lines.count == 1
           log output
-          raise TestFailedError, "Invalid cucumber results" 
+          raise TestFailedError, "invalid cucumber results"
         end
         num_steps, num_passed = result_lines.first.scan(Regex::StepResult).first
         @scenarios[:steps] = {:total => num_steps, :passed => num_passed}
