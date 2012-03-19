@@ -92,6 +92,9 @@ class HW4Grader < AutoGrader
 
       start_time = Time.now
 
+      @raw_score = 0
+      @raw_max = 500
+
       Dir.mktmpdir('hw4_grader', '/tmp') do |tmpdir|
         # Copy base app
         FileUtils.cp_r Dir.glob(File.join(@base_app_path,"*")), tmpdir
@@ -108,10 +111,10 @@ class HW4Grader < AutoGrader
           "rake db:migrate db:test:prepare",
         ]
         Dir.chdir(tmpdir) do 
+          env = {
+            'RAILS_ROOT' => tmpdir
+          }
           setup_cmds.each do |cmd|
-            env = {
-              'RAILS_ROOT' => tmpdir
-            }
             Open3.popen3(env, cmd) do |stdin, stdout, stderr, wait_thr|
               exitstatus = wait_thr.value.exitstatus
               out = stdout.read
@@ -120,25 +123,21 @@ class HW4Grader < AutoGrader
                 raise err
               end
             end
-            Open3.popen3(env, "rake saas:grade") do |stdin, stdout, stderr, wait_thr|
-              exitstatus = wait_thr.value.exitstatus
-              out = stdout.read
-              err = stderr.read
-              if exitstatus != 0
-                raise err
-              end
-              #"rake cucumber",
-              #"rake spec",
+          end
+          Open3.popen3(env, "rake saas:run_student_tests") do |stdin, stdout, stderr, wait_thr|
+            exitstatus = wait_thr.value.exitstatus
+            out = stdout.read
+            err = stderr.read
+            if exitstatus != 0
+              raise err
             end
+            #"rake cucumber",
+            #"rake spec",
           end
         end
 
         # Check coverage
       end
-
-      #@raw_score, @raw_max = score.points, score.max
-      @raw_score = 0
-      @raw_max = 0
 
       log "Total score: #{@raw_score} / #{@raw_max}"
       log "Completed in #{Time.now-start_time} seconds."
