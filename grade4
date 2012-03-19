@@ -23,7 +23,7 @@ d = Dir::getwd
 begin
   ARGV.collect! {|p| File.expand_path p}
   #Dir::chdir options.delete(:app)
-  ENV["RAILS_ROOT"] = Dir::getwd
+  #ENV["RAILS_ROOT"] = Dir::getwd
   options[:description] = ARGV[1]
 
   begin

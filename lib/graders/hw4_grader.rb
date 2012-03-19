@@ -95,7 +95,7 @@ class HW4Grader < AutoGrader
       @raw_max = 0
       start_time = Time.now
 
-      Dir.mktmpdir('hw4_grader') do |tmpdir|
+      Dir.mktmpdir('hw4_grader', '/tmp') do |tmpdir|
         # Copy base app
         FileUtils.cp_r Dir.glob(File.join(@base_app_path,"*")), tmpdir
 
@@ -106,31 +106,32 @@ class HW4Grader < AutoGrader
         # Cleanup things
         FileUtils.rm_rf File.join(tmpdir, "coverage")
 
-#        puts "Go #{tmpdir}"
-#        STDIN.gets
-
         setup_cmds = [
           "bundle install --without production",
           "rake db:migrate db:test:prepare",
-          "rake cucumber spec",
-#          "rake spec",
         ]
         Dir.chdir(tmpdir) do 
-          puts `pwd`
-          # Run raketask?
           setup_cmds.each do |cmd|
-#            puts "go #{cmd}"
-#            STDIN.gets
             env = {
               'RAILS_ROOT' => tmpdir
             }
             Open3.popen3(env, cmd) do |stdin, stdout, stderr, wait_thr|
               exitstatus = wait_thr.value.exitstatus
-              puts stdout.read
-              puts stderr.read
+              out = stdout.read
+              err = stderr.read
               if exitstatus != 0
-                #raise stderr.read
+                raise err
               end
+            end
+            Open3.popen3(env, "rake saas:grade") do |stdin, stdout, stderr, wait_thr|
+              exitstatus = wait_thr.value.exitstatus
+              out = stdout.read
+              err = stderr.read
+              if exitstatus != 0
+                raise err
+              end
+              #"rake cucumber",
+              #"rake spec",
             end
           end
         end
