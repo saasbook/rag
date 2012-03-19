@@ -1,5 +1,5 @@
 namespace :saas do 
-  task : => :environment do
+  task :run_student_tests => :environment do
     desc "Runs all tasks for grading"
 
     errors = []
