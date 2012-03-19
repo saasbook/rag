@@ -128,11 +128,16 @@ class HW4Grader < AutoGrader
             exitstatus = wait_thr.value.exitstatus
             out = stdout.read
             err = stderr.read
+            puts out
+            puts err
             if exitstatus != 0
               raise err
             end
-            #"rake cucumber",
-            #"rake spec",
+            cuke, rspec = parse_student_test_output(out)
+            cuke_score = score_cuke_output(cuke)
+            rspec_score = score_rspec_output(rspec)
+            @raw_score += (cuke_score * 100).to_i
+            @raw_score += (rspec_score * 100).to_i
           end
         end
 
@@ -155,6 +160,48 @@ class HW4Grader < AutoGrader
     # Load stuff we would need
     # Directory of base app to copy over
     @base_app_path = y['base_app_path']
+  end
+
+  def parse_student_test_output(text)
+    cuke = text.match(/^----BEGIN CUCUMBER----\n#{'-'*80}\n(.*)#{'-'*80}\n----END CUCUMBER----$/m)[1]
+    rspec = text.match(/^----BEGIN RSPEC----\n#{'-'*80}\n(.*)#{'-'*80}\n----END RSPEC----$/m)[1]
+    [cuke, rspec]
+  end
+
+  def score_cuke_output(text)
+    matches = text.match(/(\d+) scenarios \((.*)\)/)
+    total, details = matches[1..2]
+    total = total.to_i
+    if details.match(/(\d+) passed/)
+      passed = $1.to_i
+    else
+      passed = 0
+    end
+    Rational(passed, total)
+  rescue Error => e
+    puts e.to_s
+    0
+  end
+
+  def score_rspec_output(text)
+    matches = text.match(/(\d+) examples?, (.*)$/)
+    total, details = matches[1..2]
+    total = total.to_i
+    if details.match(/(\d+) failures?/)
+      failed = $1.to_i
+    else
+      failed = 0
+    end
+    if details.match(/(\d+) pending/)
+      pending = $1.to_i
+    else
+      pending = 0
+    end
+    passed = total - failed - pending
+    Rational(passed, total - pending)
+  rescue Error => e
+    puts e.to_s
+    0
   end
 
 end
