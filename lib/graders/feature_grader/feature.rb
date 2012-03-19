@@ -106,10 +106,11 @@ class FeatureGrader < AutoGrader
       passed = false
       lines = []
 
-      h["FEATURE"] = File.join(@config[:temp].path, h["FEATURE"])
+      base_path = @config[:base_path] || @config[:temp].path
+      h["FEATURE"] = File.join(base_path, h["FEATURE"])
 
       $m_db.synchronize do
-        h["TEST_DB"] = File.join(@config[:temp].path, "test_#{$i_db}.sqlite3")
+        h["TEST_DB"] = File.join(base_path, "test_#{$i_db}.sqlite3")
         $i_db += 1
       end
 
@@ -216,7 +217,7 @@ class FeatureGrader < AutoGrader
         result_lines = output.grep Regex::StepResult
         unless result_lines.count == 1
           log output
-          raise TestFailedError, "invalid cucumber results"
+          raise TestFailedError, "invalid cucumber results" + output.collect{|l| "#{l}\n"}.inspect
         end
         num_steps, num_passed = result_lines.first.scan(Regex::StepResult).first
         @scenarios[:steps] = {:total => num_steps, :passed => num_passed}

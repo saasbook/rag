@@ -17,6 +17,16 @@ class Score
     end
   end
 
+  def *(scalar)
+    raise ArgumentError unless scalar.is_a? Numeric
+    Score.new(@points*scalar, @max*scalar)
+  end
+
+  def normalize(max_points=nil)
+    max_points ||= 1.0
+    self * (max_points/@max)
+  end
+
   def pass(n)
     n ||= 1
     @points += n

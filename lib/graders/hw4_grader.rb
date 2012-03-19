@@ -95,9 +95,6 @@ class HW4Grader < AutoGrader
       @raw_max = 0
       start_time = Time.now
 
-      @raw_score = 0
-      @raw_max = 500
-
       Dir.mktmpdir('hw4_grader', '/tmp') do |tmpdir|
         # Copy base app
         FileUtils.cp_r Dir.glob(File.join(@base_app_path,"*")), tmpdir
@@ -137,10 +134,13 @@ class HW4Grader < AutoGrader
             #"rake cucumber",
             #"rake spec",
           end
-        end
 
-        # Check coverage
-        check_code_coverage(tmpdir)
+          # Check coverage
+          check_code_coverage
+
+          # Check reference cucumber
+          check_ref_cucumber
+        end
       end
 
       log "Total score: #{@raw_score} / #{@raw_max}"
@@ -159,13 +159,22 @@ class HW4Grader < AutoGrader
     # Load stuff we would need
     # Directory of base app to copy over
     @base_app_path = y['base_app_path']
+
+    # Coverage
     @cov_opts = y['coverage']
       raise ArgumentError, "No 'coverage' configuration found" unless @cov_opts
       @cov_pts = @cov_opts.delete('points').to_f
     @cov_opts = @cov_opts.convert_keys
+
+    # Ref cucumber
+    @cucumber_config = {
+      :ref => y['ref_cucumber'],
+      :student => y['student_cucumber']
+    }.convert_keys
+
   end
 
-  def check_code_coverage(tmpdir)
+  def check_code_coverage
     @raw_max += @cov_pts
     separator = '-'*40  # TODO move this
 
@@ -175,7 +184,7 @@ class HW4Grader < AutoGrader
     log @cov_opts[:pass_threshold].collect {|g,t| "  #{g} >= #{format '%.2f%%', t*100}"}.join("\n")
     log separator
 
-    c = CovHelper.new(File.join(tmpdir, 'coverage', 'index.html'), @cov_opts)
+    c = CovHelper.new(File.join(Dir::getwd, 'coverage', 'index.html'), @cov_opts)
     c.parse!
 
     log c.details.collect {|line| "  #{line}"}
@@ -186,10 +195,51 @@ class HW4Grader < AutoGrader
       @raw_score += @cov_pts
     else
       log "Failed coverage test (#{c.failures.join(', ')} coverage too low)."
+      @raw_score += @cov_pts * (c.passes.count / (c.passes.count + c.failures.count))
     end
 
     log separator
     log ''
+  end
+
+  def check_ref_cucumber
+    process_ref_cucumber_config
+    ENV['DRB'] = '0'  # disable drb
+    ENV['FEATURE_PATH'] = File.join( Dir::getwd, 'features' )
+    max_score = @cucumber_config[:ref].delete :points
+    score = FeatureGrader::Feature.total(@cucumber_config[:ref][:features])
+    score = score.normalize(max_score)
+    @raw_score += score.points
+    @raw_max   += score.max
+  end
+
+  def process_ref_cucumber_config
+    y = @cucumber_config[:ref]
+
+    # This does some hacky stuff to get references to work properly
+    feature_config = {
+      :base_path => Dir::getwd    # Feature base path
+    }
+
+    { :scenarios => FeatureGrader::ScenarioMatcher,
+      :features  => FeatureGrader::Feature
+    }.each_pair do |label,klass|
+      raise(ArgumentError, "Unable to find required key '#{label}' in #{@description}") unless y[label]
+      y[label].each {|h| h[:object] = klass.new(self, h, feature_config)}
+    end
+
+    objectify = lambda {|arr| arr.collect! {|h| h[:object]}}
+    featurize = lambda do |f|
+      %w( failures ).each do |attr|
+        f[attr].collect! {|h| h.is_a?(Hash) ? h[:object] : h} if f.has_key?(attr)
+      end
+
+      f[:if_pass].collect! {|h| featurize.call(h); FeatureGrader::Feature.new(self, h, feature_config)} if f.has_key?(:if_pass)
+    end
+
+    y[:features].each {|h| featurize.call(h)}
+
+    y[:features] = y[:features].collect {|h| h[:object]}
   end
 
 end
