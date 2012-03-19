@@ -5,6 +5,8 @@ require 'thread'
 require 'fileutils'
 require 'tempfile'
 require 'tmpdir'
+require './lib/cov_helper.rb'
+require './lib/util.rb'
 
 $m_stdout = Mutex.new
 $m_db = Mutex.new
@@ -40,6 +42,7 @@ class HW4Grader < AutoGrader
 
   attr_accessor :submission_archive, :description
   attr_reader   :logpath
+  attr_reader   :cov_opts
 
   # Grade the features contained in the +.tar.gz+ archive _submission_archive_,
   # using the reference solution _app_.
@@ -88,8 +91,8 @@ class HW4Grader < AutoGrader
     begin
       load_description
 
-      #ENV['RAILS_ENV'] = 'test'
-
+      @raw_score = 0
+      @raw_max = 0
       start_time = Time.now
 
       Dir.mktmpdir('hw4_grader') do |tmpdir|
@@ -103,23 +106,25 @@ class HW4Grader < AutoGrader
         # Cleanup things
         FileUtils.rm_rf File.join(tmpdir, "coverage")
 
-        puts "Go #{tmpdir}"
-        STDIN.gets
+#        puts "Go #{tmpdir}"
+#        STDIN.gets
 
         setup_cmds = [
           "bundle install --without production",
           "rake db:migrate db:test:prepare",
-          "rake cucumber",
-          "rake spec",
+          "rake cucumber spec",
+#          "rake spec",
         ]
         Dir.chdir(tmpdir) do 
           puts `pwd`
-          puts `echo $RAILS_ENV`
           # Run raketask?
           setup_cmds.each do |cmd|
-            puts "go #{cmd}"
-            STDIN.gets
-            Open3.popen3(cmd) do |stdin, stdout, stderr, wait_thr|
+#            puts "go #{cmd}"
+#            STDIN.gets
+            env = {
+              'RAILS_ROOT' => tmpdir
+            }
+            Open3.popen3(env, cmd) do |stdin, stdout, stderr, wait_thr|
               exitstatus = wait_thr.value.exitstatus
               puts stdout.read
               puts stderr.read
@@ -131,11 +136,8 @@ class HW4Grader < AutoGrader
         end
 
         # Check coverage
+        check_code_coverage(tmpdir)
       end
-
-      #@raw_score, @raw_max = score.points, score.max
-      @raw_score = 0
-      @raw_max = 0
 
       log "Total score: #{@raw_score} / #{@raw_max}"
       log "Completed in #{Time.now-start_time} seconds."
@@ -153,6 +155,37 @@ class HW4Grader < AutoGrader
     # Load stuff we would need
     # Directory of base app to copy over
     @base_app_path = y['base_app_path']
+    @cov_opts = y['coverage']
+      raise ArgumentError, "No 'coverage' configuration found" unless @cov_opts
+      @cov_pts = @cov_opts.delete('points').to_f
+    @cov_opts = @cov_opts.convert_keys
+  end
+
+  def check_code_coverage(tmpdir)
+    @raw_max += @cov_pts
+    separator = '-'*40  # TODO move this
+
+    log ''
+    log separator
+    log "Checking coverage for:"
+    log @cov_opts[:pass_threshold].collect {|g,t| "  #{g} >= #{format '%.2f%%', t*100}"}.join("\n")
+    log separator
+
+    c = CovHelper.new(File.join(tmpdir, 'coverage', 'index.html'), @cov_opts)
+    c.parse!
+
+    log c.details.collect {|line| "  #{line}"}
+    log ''
+
+    if c.correct?
+      log "Passed coverage test."
+      @raw_score += @cov_pts
+    else
+      log "Failed coverage test (#{c.failures.join(', ')} coverage too low)."
+    end
+
+    log separator
+    log ''
   end
 
 end

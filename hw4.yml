@@ -1,1 +1,6 @@
 base_app_path: hw4_grader_stuff/hw4_rottenpotatoes/
+coverage:
+  points: 10
+  pass_threshold:
+    controllers: 0.9
+    models: 0.9
