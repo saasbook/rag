@@ -24,7 +24,7 @@ class TempArchiveFile
 
     @path = File.join(File.dirname(@tempfile.path), File.basename(@tempfile.path, '.tar.gz'))
     FileUtils.mkdir_p @path
-    `tar -xvzf #{@tempfile.path} -C #{@path.inspect}`
+    `tar -xzf #{@tempfile.path} -C #{@path.inspect}`
     result = $?.to_i
     raise(ScriptError, "untar failed (submission not in .tar.gz format?)") unless result == 0
     return @path

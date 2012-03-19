@@ -32,6 +32,11 @@ module AutoGraderSubprocess
           :timeout => 400,
           :cmd => %Q{./grade3 -a ../rottenpotatoes "#{file.path}" "#{spec}"}
         }
+      when 'HW4Grader'
+        {
+          :timeout => 100,
+          :cmd => %Q{./grade4 "#{file.path}" "#{spec}"}
+        }
       else
         {}
       end
