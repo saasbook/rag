@@ -208,8 +208,8 @@ class HW4Grader < AutoGrader
     end
     cuke_passed, cuke_max = score_cuke_output(cuke)
     rspec_passed, rspec_max = score_rspec_output(rspec)
-    cuke_score = Rational(cuke_passed, cuke_max)
-    rspec_score = Rational(rspec_passed, rspec_max)
+    cuke_score = cuke_max > 0 ? Rational(cuke_passed, cuke_max) : 0
+    rspec_score = rspec_max > 0 ? Rational(rspec_passed, rspec_max) : 1
     section_score = (cuke_score * max_score/2.0).to_i + (rspec_score * max_score/2.0).to_i
 
     log cuke if cuke_score != 1
@@ -301,9 +301,9 @@ class HW4Grader < AutoGrader
       passed = 0
     end
     [passed, total]
-  rescue Error => e
+  rescue StandardError => e
     puts e.to_s
-    [0, 0]
+    [0,0]
   end
 
   def score_rspec_output(text)
@@ -322,7 +322,7 @@ class HW4Grader < AutoGrader
     end
     passed = total - failed - pending
     [passed, (total - pending)]
-  rescue Error => e
+  rescue StandardError => e
     puts e.to_s
     [0,0]
   end
