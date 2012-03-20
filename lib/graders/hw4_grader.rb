@@ -106,45 +106,27 @@ class HW4Grader < AutoGrader
         # Cleanup things
         FileUtils.rm_rf File.join(tmpdir, "coverage")
 
-        setup_cmds = [
-          "bundle install --without production",
-          "rake db:migrate db:test:prepare",
-        ]
         Dir.chdir(tmpdir) do 
           env = {
             'RAILS_ROOT' => tmpdir
           }
-          setup_cmds.each do |cmd|
-            Open3.popen3(env, cmd) do |stdin, stdout, stderr, wait_thr|
-              exitstatus = wait_thr.value.exitstatus
-              out = stdout.read
-              err = stderr.read
-              if exitstatus != 0
-                raise err
-              end
-            end
+          time_operation 'setup' do
+            setup_rails_app(env)
           end
-          Open3.popen3(env, "rake saas:run_student_tests") do |stdin, stdout, stderr, wait_thr|
-            exitstatus = wait_thr.value.exitstatus
-            out = stdout.read
-            err = stderr.read
-            puts out
-            puts err
-            if exitstatus != 0
-              raise err
-            end
-            cuke, rspec = parse_student_test_output(out)
-            cuke_score = score_cuke_output(cuke)
-            rspec_score = score_rspec_output(rspec)
-            @raw_score += (cuke_score * 100).to_i
-            @raw_score += (rspec_score * 100).to_i
+
+          time_operation 'student tests' do
+            check_student_tests(env)
           end
 
           # Check coverage
-          check_code_coverage
+          time_operation 'coverage' do
+            check_code_coverage
+          end
 
           # Check reference cucumber
-          check_ref_cucumber
+          time_operation 'reference cucumber' do
+            check_ref_cucumber
+          end
         end
       end
 
@@ -177,6 +159,43 @@ class HW4Grader < AutoGrader
       :student => y['student_cucumber']
     }.convert_keys
 
+  end
+
+  def setup_rails_app(env)
+    setup_cmds = [
+      "bundle install --without production",
+      "rake db:migrate",# db:test:prepare",
+    ]
+    setup_cmds.each do |cmd|
+      Open3.popen3(env, cmd) do |stdin, stdout, stderr, wait_thr|
+        exitstatus = wait_thr.value.exitstatus
+        out = stdout.read
+        err = stderr.read
+        if exitstatus != 0
+          raise err
+        end
+      end
+    end
+  end
+
+  def check_student_tests(env)
+    max_score = @cucumber_config[:student].delete :points
+    Open3.popen3(env, "rake saas:run_student_tests") do |stdin, stdout, stderr, wait_thr|
+      exitstatus = wait_thr.value.exitstatus
+      out = stdout.read
+      err = stderr.read
+      puts out
+      puts err
+      if exitstatus != 0
+        raise err
+      end
+      cuke, rspec = parse_student_test_output(out)
+      cuke_score = score_cuke_output(cuke)
+      rspec_score = score_rspec_output(rspec)
+      @raw_score += (cuke_score * max_score/2.0).to_i
+      @raw_score += (rspec_score * max_score/2.0).to_i
+      @raw_max += max_score
+    end
   end
 
   def check_code_coverage
@@ -289,4 +308,10 @@ class HW4Grader < AutoGrader
     0
   end
 
+  def time_operation(name=nil)
+    start_time = Time.now.to_f
+    yield
+    end_time = Time.now.to_f
+    puts "#{name}: #{end_time - start_time}s"
+  end
 end
