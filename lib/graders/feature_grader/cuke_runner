@@ -3,7 +3,7 @@
 def main
   require 'rubygems'
   require 'cucumber'
-  fpath = File.dirname(ENV["FEATURE"])
+  fpath = ENV["FEATURE_PATH"] || File.dirname(ENV["FEATURE"])
 
   opts = [
     "--no-color",

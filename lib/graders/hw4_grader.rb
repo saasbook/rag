@@ -5,6 +5,8 @@ require 'thread'
 require 'fileutils'
 require 'tempfile'
 require 'tmpdir'
+require './lib/cov_helper.rb'
+require './lib/util.rb'
 
 $m_stdout = Mutex.new
 $m_db = Mutex.new
@@ -40,6 +42,7 @@ class HW4Grader < AutoGrader
 
   attr_accessor :submission_archive, :description
   attr_reader   :logpath
+  attr_reader   :cov_opts
 
   # Grade the features contained in the +.tar.gz+ archive _submission_archive_,
   # using the reference solution _app_.
@@ -88,12 +91,9 @@ class HW4Grader < AutoGrader
     begin
       load_description
 
-      #ENV['RAILS_ENV'] = 'test'
-
-      start_time = Time.now
-
       @raw_score = 0
-      @raw_max = 500
+      @raw_max = 0
+      start_time = Time.now
 
       Dir.mktmpdir('hw4_grader', '/tmp') do |tmpdir|
         # Copy base app
@@ -139,9 +139,13 @@ class HW4Grader < AutoGrader
             @raw_score += (cuke_score * 100).to_i
             @raw_score += (rspec_score * 100).to_i
           end
-        end
 
-        # Check coverage
+          # Check coverage
+          check_code_coverage
+
+          # Check reference cucumber
+          check_ref_cucumber
+        end
       end
 
       log "Total score: #{@raw_score} / #{@raw_max}"
@@ -160,6 +164,87 @@ class HW4Grader < AutoGrader
     # Load stuff we would need
     # Directory of base app to copy over
     @base_app_path = y['base_app_path']
+
+    # Coverage
+    @cov_opts = y['coverage']
+      raise ArgumentError, "No 'coverage' configuration found" unless @cov_opts
+      @cov_pts = @cov_opts.delete('points').to_f
+    @cov_opts = @cov_opts.convert_keys
+
+    # Ref cucumber
+    @cucumber_config = {
+      :ref => y['ref_cucumber'],
+      :student => y['student_cucumber']
+    }.convert_keys
+
+  end
+
+  def check_code_coverage
+    @raw_max += @cov_pts
+    separator = '-'*40  # TODO move this
+
+    log ''
+    log separator
+    log "Checking coverage for:"
+    log @cov_opts[:pass_threshold].collect {|g,t| "  #{g} >= #{format '%.2f%%', t*100}"}.join("\n")
+    log separator
+
+    c = CovHelper.new(File.join(Dir::getwd, 'coverage', 'index.html'), @cov_opts)
+    c.parse!
+
+    log c.details.collect {|line| "  #{line}"}
+    log ''
+
+    if c.correct?
+      log "Passed coverage test."
+      @raw_score += @cov_pts
+    else
+      log "Failed coverage test (#{c.failures.join(', ')} coverage too low)."
+      @raw_score += @cov_pts * (c.passes.count / (c.passes.count + c.failures.count))
+    end
+
+    log separator
+    log ''
+  end
+
+  def check_ref_cucumber
+    process_ref_cucumber_config
+    ENV['DRB'] = '0'  # disable drb
+    ENV['FEATURE_PATH'] = File.join( Dir::getwd, 'features' )
+    max_score = @cucumber_config[:ref].delete :points
+    score = FeatureGrader::Feature.total(@cucumber_config[:ref][:features])
+    score = score.normalize(max_score)
+    @raw_score += score.points
+    @raw_max   += score.max
+  end
+
+  def process_ref_cucumber_config
+    y = @cucumber_config[:ref]
+
+    # This does some hacky stuff to get references to work properly
+    feature_config = {
+      :base_path => Dir::getwd    # Feature base path
+    }
+
+    { :scenarios => FeatureGrader::ScenarioMatcher,
+      :features  => FeatureGrader::Feature
+    }.each_pair do |label,klass|
+      raise(ArgumentError, "Unable to find required key '#{label}' in #{@description}") unless y[label]
+      y[label].each {|h| h[:object] = klass.new(self, h, feature_config)}
+    end
+
+    objectify = lambda {|arr| arr.collect! {|h| h[:object]}}
+    featurize = lambda do |f|
+      %w( failures ).each do |attr|
+        f[attr].collect! {|h| h.is_a?(Hash) ? h[:object] : h} if f.has_key?(attr)
+      end
+
+      f[:if_pass].collect! {|h| featurize.call(h); FeatureGrader::Feature.new(self, h, feature_config)} if f.has_key?(:if_pass)
+    end
+
+    y[:features].each {|h| featurize.call(h)}
+
+    y[:features] = y[:features].collect {|h| h[:object]}
   end
 
   def parse_student_test_output(text)
