@@ -113,19 +113,33 @@ class HW4Grader < AutoGrader
           time_operation 'setup' do
             setup_rails_app(env)
           end
+          separator = '-'*40  # TODO move this
 
           time_operation 'student tests' do
+            log separator
+            log "Running student tests found in features/ spec/:"
             check_student_tests(env)
+            log separator
           end
+
+          log ''
 
           # Check coverage
           time_operation 'coverage' do
+            log separator
+            log "Checking coverage for:"
             check_code_coverage
+            log separator
           end
+
+          log ''
 
           # Check reference cucumber
           time_operation 'reference cucumber' do
+            log separator
+            log 'Running reference Cucumber scenarios:'
             check_ref_cucumber
+            log separator
           end
         end
       end
@@ -180,50 +194,54 @@ class HW4Grader < AutoGrader
 
   def check_student_tests(env)
     max_score = @cucumber_config[:student].delete :points
+    cuke = rspec = ''
+    @raw_max += max_score
     Open3.popen3(env, "rake saas:run_student_tests") do |stdin, stdout, stderr, wait_thr|
       exitstatus = wait_thr.value.exitstatus
       out = stdout.read
       err = stderr.read
-      puts out
-      puts err
       if exitstatus != 0
-        raise err
+        log err
+        return
       end
       cuke, rspec = parse_student_test_output(out)
-      cuke_score = score_cuke_output(cuke)
-      rspec_score = score_rspec_output(rspec)
-      @raw_score += (cuke_score * max_score/2.0).to_i
-      @raw_score += (rspec_score * max_score/2.0).to_i
-      @raw_max += max_score
     end
+    cuke_passed, cuke_max = score_cuke_output(cuke)
+    rspec_passed, rspec_max = score_rspec_output(rspec)
+    cuke_score = Rational(cuke_passed, cuke_max)
+    rspec_score = Rational(rspec_passed, rspec_max)
+    section_score = (cuke_score * max_score/2.0).to_i + (rspec_score * max_score/2.0).to_i
+
+    log cuke if cuke_score != 1
+    log rspec if rspec_score != 1
+    log "  Cucumber: #{cuke_passed} out of #{cuke_max} scenarios passed"
+    log "  RSpec: #{rspec_passed} out of #{rspec_max} tests passed"
+    log "  Score: #{section_score}/#{max_score}"
+    @raw_score += section_score
   end
 
   def check_code_coverage
     @raw_max += @cov_pts
-    separator = '-'*40  # TODO move this
 
-    log ''
-    log separator
-    log "Checking coverage for:"
     log @cov_opts[:pass_threshold].collect {|g,t| "  #{g} >= #{format '%.2f%%', t*100}"}.join("\n")
-    log separator
 
     c = CovHelper.new(File.join(Dir::getwd, 'coverage', 'index.html'), @cov_opts)
     c.parse!
 
+    separator = '-'*40  # TODO move this
+    log separator
     log c.details.collect {|line| "  #{line}"}
     log ''
 
     if c.correct?
       log "Passed coverage test."
+      log "  Score: #{@cov_pts}/#{@cov_pts}"
       @raw_score += @cov_pts
     else
       log "Failed coverage test (#{c.failures.join(', ')} coverage too low)."
+      log "  Score: 0/#{@cov_pts}"
       @raw_score += @cov_pts * (c.passes.count / (c.passes.count + c.failures.count))
     end
-
-    log separator
-    log ''
   end
 
   def check_ref_cucumber
@@ -233,6 +251,7 @@ class HW4Grader < AutoGrader
     max_score = @cucumber_config[:ref].delete :points
     score = FeatureGrader::Feature.total(@cucumber_config[:ref][:features])
     score = score.normalize(max_score)
+    log "  Score: #{score.points}/#{score.max}"
     @raw_score += score.points
     @raw_max   += score.max
   end
@@ -281,10 +300,10 @@ class HW4Grader < AutoGrader
     else
       passed = 0
     end
-    Rational(passed, total)
+    [passed, total]
   rescue Error => e
     puts e.to_s
-    0
+    [0, 0]
   end
 
   def score_rspec_output(text)
@@ -302,16 +321,17 @@ class HW4Grader < AutoGrader
       pending = 0
     end
     passed = total - failed - pending
-    Rational(passed, total - pending)
+    [passed, (total - pending)]
   rescue Error => e
     puts e.to_s
-    0
+    [0,0]
   end
 
   def time_operation(name=nil)
     start_time = Time.now.to_f
     yield
     end_time = Time.now.to_f
-    puts "#{name}: #{end_time - start_time}s"
+    # TODO: Make this a debug mode setting
+    #puts "#{name}: #{end_time - start_time}s"
   end
 end

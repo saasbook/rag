@@ -36,7 +36,7 @@ begin
   end
   score_max = 500
   puts "Score out of #{score_max}: #{g.normalized_score(score_max)}\n"
-  puts "---BEGIN comments---\n#{'-'*80}\n#{g.comments}\n#{'-'*80}\n---END comments---"
+  puts "---BEGIN grader comments---\n#{'-'*80}\n#{g.comments}\n#{'-'*80}\n---END grader comments---"
 ensure
   Dir::chdir d
 end
