@@ -242,6 +242,9 @@ class HW4Grader < AutoGrader
       log "  Score: 0/#{@cov_pts}"
       @raw_score += @cov_pts * (c.passes.count / (c.passes.count + c.failures.count))
     end
+  rescue StandardError => e
+    log "Failed coverage test (#{e.messages.inspect})."
+    log "  Score: 0/#{@cov_pts}"
   end
 
   def check_ref_cucumber
@@ -332,6 +335,6 @@ class HW4Grader < AutoGrader
     yield
     end_time = Time.now.to_f
     # TODO: Make this a debug mode setting
-    #puts "#{name}: #{end_time - start_time}s"
+    puts "#{name}: #{end_time - start_time}s"
   end
 end
