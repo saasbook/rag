@@ -24,6 +24,6 @@ namespace :saas do
     puts "-"*80
     puts "----END RSPEC----"
 
-    raise StandardError, errors.join("\n") if errors.size > 0
+    puts errors.join("\n") if errors.any?
   end
 end

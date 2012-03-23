@@ -12,7 +12,7 @@ $m_stdout = Mutex.new
 $m_db = Mutex.new
 $i_db = 0
 
-Dir["lib/graders/feature_grader/*.rb"].each { |file| load file }
+Dir[".lib/graders/feature_grader/*.rb"].each { |file| require file }
 $CUKE_RUNNER = File.join(File.expand_path('lib/graders/feature_grader'), 'cuke_runner')
 
 # +AutoGrader+ that scores using weird stuff
