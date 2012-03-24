@@ -2,6 +2,15 @@ class FeatureGrader < AutoGrader
   class Feature
     class TestFailedError < StandardError; end   # Internal error
     class IncorrectAnswer < StandardError; end   # Incorrect answer encountered
+    # FIXME: This is terrible to do, I'm using an exception to immediately return
+    class FastReturn < StandardError
+      attr_reader :steps
+      attr_reader :failures
+      def initialize(steps, failures)
+        @steps = steps
+        @failures = failures
+      end
+    end
 
     SOURCE_DB = "db/test.sqlite3"
 
@@ -9,7 +18,7 @@ class FeatureGrader < AutoGrader
       BlankLine = /^$/
       FailingScenarios = /^Failing Scenarios:$/
       StepResult = /^(\d+) steps \(.*?(\d+) passed.*\)/
-      StepResultFull = /^(\d+) steps \((?:(\d+) passed)?,?\s*(?:(\d+) failed)?,?\s*(?:(\d+) skipped)?\)$/
+      StepResultFull = /^(\d+) scenarios \((?:(\d+) failed)?,?\s*(?:(\d+) skipped)?,?\s*(?:(\d+) passed)?\)$/
     end
 
     attr_reader :if_pass, :target_pass, :feature, :score, :output, :desc, :weight
@@ -134,6 +143,9 @@ class FeatureGrader < AutoGrader
           self.send :process_output, lines
         end
 
+      # FIXME: This is terrible
+      rescue FastReturn => e
+        raise e
       rescue => e
         log "test failed: #{e.inspect}"#.red.bold
         log e.backtrace
@@ -227,9 +239,22 @@ class FeatureGrader < AutoGrader
           log output
           raise TestFailedError, "invalid cucumber results" + output.collect{|l| "#{l}\n"}.inspect
         end
-        num_steps, num_passed, num_failed, num_skipped = result_lines.first.scan(Regex::StepResultFull).first
+        num_steps, num_failed, num_skipped, num_passed = result_lines.first.scan(Regex::StepResultFull).first
         num_passed ||= 0
+        num_skipped ||= 0
+        num_failed ||= 0
+        num_passed = num_passed.to_i
+        num_skipped = num_skipped.to_i
+        num_failed = num_failed.to_i
+        num_steps = num_steps.to_i
+        #puts "#{num_steps}: #{num_failed} #{num_skipped} #{num_passed}"
+        # FIXME: This is terrible
+        if num_failed > 0 or num_passed < num_steps
+          log output
+        end
+        num_steps -= num_skipped
         @scenarios[:steps] = {:total => num_steps, :passed => num_passed}
+        raise FastReturn.new(@scenarios[:steps], output)
       rescue => e
         raise
       end

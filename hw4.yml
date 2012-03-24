@@ -17,15 +17,14 @@ ref_cucumber:
       FEATURE: required_features/director.feature
       pass: true
       weight: 0.5
-      if_pass:
-        - &step2
-          FEATURE: required_features/director.feature
-          pass: true
-          weight: 0.25
-        - &step3
-          FEATURE: required_features/director.feature
-          pass: true
-          weight: 0.25
+    - &step2
+      FEATURE: required_features/director.feature
+      pass: true
+      weight: 0.25
+    - &step3
+      FEATURE: required_features/director.feature
+      pass: true
+      weight: 0.25
 
 coverage:
   points: 20

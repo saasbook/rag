@@ -252,11 +252,26 @@ class HW4Grader < AutoGrader
     ENV['DRB'] = '0'  # disable drb
     ENV['FEATURE_PATH'] = File.join( Dir::getwd, 'features' )
     max_score = @cucumber_config[:ref].delete :points
-    score = FeatureGrader::Feature.total(@cucumber_config[:ref][:features])
-    score = score.normalize(max_score)
-    log "  Score: #{score.points}/#{score.max}"
-    @raw_score += score.points
-    @raw_max   += score.max
+    begin
+      score = FeatureGrader::Feature.total(@cucumber_config[:ref][:features])
+    rescue FeatureGrader::Feature::FastReturn => e
+      steps = e.steps
+      if steps[:passed] != steps[:total]
+        separator = '-'*40  # TODO move this
+        log e.failures
+        log separator
+      end
+      log "  #{steps[:passed]} out of #{steps[:total]} scenarios passed"
+      log "  Score: #{max_score * steps[:passed]/steps[:total]}/#{max_score}"
+      @raw_score += max_score * steps[:passed]/steps[:total]
+      @raw_max += max_score
+    else
+      raise "This error should not happen"
+    end
+    #score = score.normalize(max_score)
+    #log "  Score: #{score.points}/#{score.max}"
+    #@raw_score += score.points
+    #@raw_max   += score.max
   end
 
   def process_ref_cucumber_config
