@@ -186,7 +186,7 @@ class HW4Grader < AutoGrader
         out = stdout.read
         err = stderr.read
         if exitstatus != 0
-          raise err
+          raise out + err
         end
       end
     end
