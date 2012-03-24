@@ -243,7 +243,7 @@ class HW4Grader < AutoGrader
       @raw_score += @cov_pts * (c.passes.count / (c.passes.count + c.failures.count))
     end
   rescue StandardError => e
-    log "Failed coverage test (#{e.messages.inspect})."
+    log "Failed coverage test (#{e.message.inspect})."
     log "  Score: 0/#{@cov_pts}"
   end
 
