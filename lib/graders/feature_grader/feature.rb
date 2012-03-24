@@ -18,7 +18,7 @@ class FeatureGrader < AutoGrader
       BlankLine = /^$/
       FailingScenarios = /^Failing Scenarios:$/
       StepResult = /^(\d+) steps \(.*?(\d+) passed.*\)/
-      StepResultFull = /^(\d+) scenarios \((?:(\d+) failed)?,?\s*(?:(\d+) skipped)?,?\s*(?:(\d+) passed)?\)$/
+      StepResultFull = /^(\d+) scenarios \((?:(\d+) failed)?,?\s*(?:(\d+) skipped)?,?\s*(?:(\d+) undefined)?,?\s*(?:(\d+) passed)?\)$/
     end
 
     attr_reader :if_pass, :target_pass, :feature, :score, :output, :desc, :weight
@@ -239,17 +239,19 @@ class FeatureGrader < AutoGrader
           log output
           raise TestFailedError, "invalid cucumber results" + output.collect{|l| "#{l}\n"}.inspect
         end
-        num_steps, num_failed, num_skipped, num_passed = result_lines.first.scan(Regex::StepResultFull).first
+        num_steps, num_failed, num_skipped, num_undefined, num_passed = result_lines.first.scan(Regex::StepResultFull).first
         num_passed ||= 0
         num_skipped ||= 0
         num_failed ||= 0
+        num_undefined ||= 0
         num_passed = num_passed.to_i
         num_skipped = num_skipped.to_i
         num_failed = num_failed.to_i
         num_steps = num_steps.to_i
-        #puts "#{num_steps}: #{num_failed} #{num_skipped} #{num_passed}"
+        num_undefined = num_undefined.to_i
         # FIXME: This is terrible
-        if num_failed > 0 or num_passed < num_steps
+        #puts "#{num_steps}: #{num_failed} #{num_skipped} #{num_passed} #{num_undefined}"
+        if num_failed + num_undefined > 0 or num_passed < num_steps
           log output
         end
         num_steps -= num_skipped
