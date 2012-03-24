@@ -30,5 +30,5 @@ Scenario: can't find similar movies if we don't know director (sad path)
   Given I am on the details page for "Alien"
   Then  I should not see "Ridley Scott"
   When  I follow "Find Movies With Same Director"
-  Then  I should be on the RottenPotatoes home page
+  Then  I should be on the home page
   And   I should see "'Alien' has no director info"
