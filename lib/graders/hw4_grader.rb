@@ -138,6 +138,7 @@ class HW4Grader < AutoGrader
           time_operation 'reference cucumber' do
             log separator
             log 'Running reference Cucumber scenarios:'
+            test_prepare(env)
             check_ref_cucumber
             log separator
           end
@@ -179,6 +180,22 @@ class HW4Grader < AutoGrader
     setup_cmds = [
       "bundle install --without production",
       "rake db:migrate",# db:test:prepare",
+    ]
+    setup_cmds.each do |cmd|
+      Open3.popen3(env, cmd) do |stdin, stdout, stderr, wait_thr|
+        exitstatus = wait_thr.value.exitstatus
+        out = stdout.read
+        err = stderr.read
+        if exitstatus != 0
+          raise out + err
+        end
+      end
+    end
+  end
+
+  def test_prepare(env)
+    setup_cmds = [
+      "rake db:test:prepare"
     ]
     setup_cmds.each do |cmd|
       Open3.popen3(env, cmd) do |stdin, stdout, stderr, wait_thr|
