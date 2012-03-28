@@ -108,7 +108,8 @@ class HW4Grader < AutoGrader
 
         Dir.chdir(tmpdir) do 
           env = {
-            'RAILS_ROOT' => tmpdir
+            'RAILS_ROOT' => tmpdir,
+            'RAILS_ENV' => 'test'
           }
           time_operation 'setup' do
             setup_rails_app(env)
