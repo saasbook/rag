@@ -3,6 +3,9 @@ Then /^(?:|I )should either be on (.+) or (.+)$/ do |page_name, page_name2|
   paths = []
   begin
     paths << path_to(page_name)
+  rescue RuntimeError
+  end
+  begin
     paths << path_to(page_name2)
   rescue RuntimeError
   end
