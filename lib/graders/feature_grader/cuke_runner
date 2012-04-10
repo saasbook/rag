@@ -2,6 +2,7 @@
 
 def main
   require 'rubygems'
+  require 'bundler/setup'
   require 'cucumber'
   fpath = File.dirname(ENV["FEATURE"])
 
