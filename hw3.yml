@@ -1,7 +1,8 @@
 ---
 scenarios:
   - &restrict_pg_r
-    match: "restrict to movies with 'PG' or 'R' ratings"
+    match: "restrict to movies with [\"\']PG[\"\'] or [\"\']R[\"\'] ratings"
+    desc:  "restrict to movies with 'PG' or 'R' ratings"
   - &all_x_selected
     match: "all (ratings|checkboxes) selected"
     desc: "all ratings or checkboxes selected"

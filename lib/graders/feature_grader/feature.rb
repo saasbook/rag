@@ -20,7 +20,8 @@ class FeatureGrader < AutoGrader
     attr_reader :failures
 
     # +Hash+ with
-    # [+:failed+] [_String_] +cucumber+ scenarios that failed
+    # [+:failed+] _Array_<_String_> +cucumber+ scenarios that failed
+    # [+:missing+] _Array_<_ScenarioMatcher_> +cucumber+ scenarios that weren't seen running
     # [+:steps+] [_Hash_] +:total+, +:passed+
     attr_reader :scenarios
 
@@ -83,7 +84,10 @@ class FeatureGrader < AutoGrader
       @target_pass = feature.has_key?("pass") ? feature.delete("pass") : true
 
       @failures = feature.delete("failures") || []
-      @scenarios = {:failed => []}
+      @scenarios = {
+        :failed  => [],
+        :missing => []
+      }
 
       @env = feature.envify  # whatever's left over
     end
@@ -131,6 +135,16 @@ class FeatureGrader < AutoGrader
           lines.each(&:chomp!)
           self.send :process_output, lines
         end
+
+      ##
+      # XXX Can only raise StandardError in these rescue clauses.
+      # Any other subclass will give incorrect results ("undefined method `-@'").
+      ##
+
+      rescue TestFailedError => e
+        log "test failed: #{e.inspect}"
+        log e.backtrace
+        raise StandardError, e.message
 
       rescue => e
         log "test failed: #{e.inspect}"#.red.bold
@@ -180,13 +194,21 @@ class FeatureGrader < AutoGrader
     # This step is correct if:
     #   any +failures+ +?+ all +failures+ have failed +:+ it passed in cucumber
     def correct!
+
+      if @scenarios[:missing].any?
+        raise IncorrectAnswer, "Could not find required scenario(s): #{@scenarios[:missing].collect(&:desc).join(", ")}"
+      end
+
       if @failures.any?
         unless @failures.all? {|matcher| @scenarios[:failed].any? {|s| matcher.match? s}}
           missing_failures = @failures.reject {|matcher| @scenarios[:failed].any? {|s| matcher.match? s}}
           missing_failures = missing_failures.collect{|f| " - #{f.to_s}"}.join("\n")
           mods = self.desc || "(None)"
           mods = " - #{mods}"
-          raise IncorrectAnswer, "The following scenarios passed incorrectly (should have failed):\n#{missing_failures}\nwith the following modifications:\n#{mods}"
+          raise IncorrectAnswer, [
+            "The following required failures were not detected:", missing_failures,
+            "with the following modifications:", mods
+          ].join("\n")
         end
       else
         unless @scenarios[:failed].empty? or @scenarios[:steps][:total] != @scenarios[:steps][:passed]
@@ -204,6 +226,17 @@ class FeatureGrader < AutoGrader
 
       begin # parse failing scenarios (between FailingScenarios and BlankLine)
         if i = output.find_index {|line| line =~ Regex::FailingScenarios}
+
+          begin # check for required scenarios
+            temp = output[0..i]
+            @scenarios[:missing] = @failures
+            temp.each do |line|
+              if failure = @failures.detect {|f| f.present_on?(line)}
+                @scenarios[:missing] -= [failure]
+              end
+            end
+          end
+
           temp = output[i+1..-1]
           i = temp.find_index {|line| line =~ Regex::BlankLine}
           @scenarios[:failed] = temp.first(i)

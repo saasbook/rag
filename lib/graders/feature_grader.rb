@@ -32,6 +32,11 @@ class FeatureGrader < AutoGrader
       !!(str =~ @regex)
     end
 
+    # Checks whether the given str represents the presence of this feature
+    def present_on?(str)
+      !!(str =~ /^\s*Scenario: #{@regex}/)
+    end
+
     def to_s
       @desc
     end
