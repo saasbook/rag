@@ -35,20 +35,20 @@ class FeatureGrader < AutoGrader
       def total(features=[])
         s = Score.new
         m = Mutex.new
-        threads = []
+        #threads = []
         features.each do |f|
-          t = Thread.new do
+          #t = Thread.new do
             begin
               result = f.run!
               m.synchronize { s += result }
             rescue TestFailedError, IncorrectAnswer
               m.synchronize { s += -result }
             end
-          end
-          t.join unless $config[:mt]
-          threads << t
+          #end
+          #t.join unless $config[:mt]
+          #threads << t
         end
-        threads.each(&:join)
+        #threads.each(&:join)
 
         # Dump output. TODO: better way to do this?
         features.each { |f| f.dump_output }
@@ -129,7 +129,7 @@ class FeatureGrader < AutoGrader
         raise(TestFailedError, "Failed to find test db") unless File.readable? SOURCE_DB
         FileUtils.cp SOURCE_DB, h["TEST_DB"]
         Open3.popen3(h, $CUKE_RUNNER, popen_opts) do |stdin, stdout, stderr, wait_thr|
-          exit_status = wait_thr.value
+          #exit_status = wait_thr.value
 
           lines = stdout.readlines
           lines.each(&:chomp!)
