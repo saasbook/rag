@@ -1,6 +1,10 @@
-class ClassXController
-  class ClassXController::InvalidHTTPMethodError < StandardError ; end
-  class ClassXController::BadStatusCodeError < StandardError ; end
+require_relative 'rag_logger'
+
+class CourseraController
+  include RagLogger
+
+  class CourseraController::InvalidHTTPMethodError < StandardError ; end
+  class CourseraController::BadStatusCodeError < StandardError ; end
 
   require 'net/https'
   require 'json'
@@ -26,9 +30,19 @@ class ClassXController
   # from get_queue_length() doesn't mean you are guaranteed to receive a
   # submission from get_pending_submission()
   def get_queue_length(queue_name)
-    params = {:queue => queue_name}
-    response = send_request("assignment/api/queue_length/", params, :get)
-    response['queue_length']
+    begin
+      params = {:queue => queue_name}
+      response = send_request("assignment/api/queue_length/", params, :get)
+      if response['status'] =~ /[3-5]\d\d/
+        logger.error "Bad queue length response: #{response['status']}"
+        raise CourseraController::BadStatusCodeError, "Bad queue length response: #{response['status']}"
+      end
+      response['queue_length']
+    #rescue EOFError => e
+    #  logger.error e.to_s
+    #  logger.error "Retrying"
+    #  retry
+    end
   end
 
   # Returns either nil or 
@@ -40,8 +54,9 @@ class ClassXController
   #   "submission_encoding": ... (will be set to ‘base64’)
   #   "submission": (actual user submission in Base64 format) }
   # }
-  def get_pending_submission(queue_name)
+  def get_pending_submission(queue_name, peek=nil)
     params = {:queue => queue_name}
+    params[:peek] = true if peek
     response = send_request("assignment/api/pending_submission/", params, :get)
     response['submission']
   end
@@ -58,7 +73,8 @@ class ClassXController
     params = {:api_state => api_state, :score => score, :feedback => feedback, :options => options.to_json}
     response = send_request("assignment/api/score/", params, :post)
     if response['status'] !~ /2\d\d/
-      raise ClassXController::BadStatusCode, "Bad post score response: #{response['status']}"
+      logger.error "Bad post score response: #{response['status']}"
+      raise CourseraController::BadStatusCodeError, "Bad post score response: #{response['status']}"
     end
   end
 
@@ -68,7 +84,8 @@ class ClassXController
   # Returns a Hash representing the JSON-encoded response.
   def send_request(path, params={}, mode=:get)
     unless HTTP_MODES.include? mode
-      raise ClassXController::InvalidHTTPMethodError, "Invalid mode: #{mode}"
+      logger.fatal "Invalid mode: #{mode}"
+      raise CourseraController::InvalidHTTPMethodError, "Invalid mode: #{mode}"
     end
     uri = URI.join(@base_uri, path)
     uri.query = URI.encode_www_form(params) if mode == :get
@@ -81,7 +98,21 @@ class ClassXController
     request.set_form_data(params) if mode == :post
     request['X-api-key'] = @api_key
 
-    response = http.request(request)
-    JSON.parse(response.body)
+    logged_eof = false
+    begin
+      response = http.request(request)
+    rescue EOFError  # invalid url?
+      sleep 10
+      logger.error "Invalid response (EOFError): #{path}" unless logged_eof
+      logged_eof = true
+      retry
+    end
+
+    begin
+      JSON.parse(response.body)
+    rescue StandardError => e
+      logger.error "Invalid JSON in response body #{response.body}"
+      raise e
+    end
   end
 end

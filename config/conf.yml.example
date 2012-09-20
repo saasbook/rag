@@ -1,0 +1,9 @@
+# Default configuration name
+default: saas-staging
+# Each configuration must have endpoint_uri, api_key, and autograders_yml
+saas-staging:
+  endpoint_uri: https://berkeley.campus-class.org/saas-staging/
+  api_key: 
+  autograders_yml: autograders.yml
+  halt: true # default: true, exit when all submission queues are empty
+  sleep_duration: 300 # default 300, time in seconds to sleep when all queues are empty, only valid when halt == false

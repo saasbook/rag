@@ -1,0 +1,66 @@
+---
+scenarios:
+  - &restrict_pg_r
+    match: "restrict to movies with [\"\']PG[\"\'] or [\"\']R[\"\'] ratings"
+    desc:  "restrict to movies with 'PG' or 'R' ratings"
+  - &all_x_selected
+    match: "all (ratings|checkboxes) selected"
+    desc: "all ratings or checkboxes selected"
+  - &sort_alpha
+    match: "sort movies alphabetically"
+  - &sort_date
+    match: "sort movies in increasing order of release date"
+
+features:
+  #############################
+  # filter_movie_list.feature #
+  #############################
+  - &step1-1
+    FEATURE: features/filter_movie_list.feature
+    pass: true
+    weight: 0.2
+    if_pass:
+      - &step1-3
+        FEATURE: features/filter_movie_list.feature
+        version: 2
+        weight: 0.075
+        desc: "results = [G, PG-13] movies"
+        failures:
+          - *restrict_pg_r
+          - *all_x_selected
+      - &step1-4
+        FEATURE: features/filter_movie_list.feature
+        version: 3
+        weight: 0.075
+        desc: "results = []"
+        failures:
+          - *restrict_pg_r
+          - *all_x_selected
+      - &step1-5
+        FEATURE: features/filter_movie_list.feature
+        version: 4
+        weight: 0.075
+        desc: "results = [G, PG, PG-13, R] movies"
+        failures:
+          - *restrict_pg_r
+  - &step1-6
+    FEATURE: features/filter_movie_list.feature
+    version: 10
+    weight: 0.075
+    desc: "results reversed"
+
+  ###########################
+  # sort_movie_list.feature #
+  ###########################
+  - &step2-1
+    FEATURE: features/sort_movie_list.feature
+    weight: 0.25
+    if_pass:
+      - &step2-2
+        FEATURE: features/sort_movie_list.feature
+        version: 10
+        weight: 0.25
+        desc: "results reversed"
+        failures:
+          - *sort_alpha
+          - *sort_date

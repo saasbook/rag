@@ -1,7 +1,9 @@
-require 'Base64'
+require_relative 'rag_logger'
+
+require 'base64'
 require 'json'
-class ClassXSubmission
-  # sid that corresponds to an assignment part on ClassX
+class CourseraSubmission
+  # sid that corresponds to an assignment part on Coursera
   attr_accessor :assignment_part_sid
   # login email address of submitter
   attr_accessor :email_address

@@ -1,0 +1,10 @@
+# This does not support http URIs yet
+
+assignment-part-sid: 
+  uri: http://example.com/spec.rb
+  type: WeightedRspecGrader
+
+# specify a relative path if you have a local spec
+assignment-part-sid2:
+  uri: local_path/spec.rb
+  type: HerokuRspecGrader

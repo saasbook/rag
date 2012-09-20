@@ -1,0 +1,42 @@
+#!/usr/bin/env ruby
+
+def main
+  require 'rubygems'
+  require 'bundler/setup'
+  require 'cucumber'
+  fpath = File.dirname(ENV["FEATURE"])
+
+  opts = [
+    "--no-color",
+    "--no-profile",
+#    "--backtrace",
+    "--require=#{File.join(fpath, 'support/')}",
+    "--require=#{File.join(fpath, 'step_definitions/')}",
+    "--require=#{File.join('features', 'support', 'env.rb')}",  # the bootstrapped one
+    #"--require=#{File.join('features', 'support', '_rag.rb')}",
+    "TEST_DB=#{ENV['TEST_DB']}",
+    "version=#{ENV['version']}",   # XXX envvars have to be explicitly passed to drb...
+    ENV["FEATURE"]
+  ]
+
+  opts.unshift "--drb" if ENV.has_key?("DRB") ? (ENV["DRB"] =~ /1|true/i) : true
+  opts.unshift "--port=#{ENV["DRB_PORT"]}" if ENV.has_key?("DRB_PORT")
+
+#  config = Cucumber::Cli::Configuration.new
+#  config.parse! opts
+#  runner = Cucumber::Runtime.new(config)
+#  runner.run!
+
+  #out, err = File.open("out_#{File.basename ENV['TEST_DB']}",'w+'), File.open("err_#{File.basename ENV['TEST_DB']}",'w+')
+#  m = Cucumber::Cli::Main.new(opts, out, err)
+#  m.execute!
+
+  Cucumber::Cli::Main.execute(opts)
+end
+
+begin
+  main
+rescue Object => e
+  puts "*** ERROR: #{e.inspect}"
+  #puts e.backtrace
+end
