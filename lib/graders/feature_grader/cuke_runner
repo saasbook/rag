@@ -4,7 +4,7 @@ def main
   require 'rubygems'
   require 'bundler/setup'
   require 'cucumber'
-  fpath = File.dirname(ENV["FEATURE"])
+  fpath = ENV["FEATURE_PATH"] || File.dirname(ENV["FEATURE"])
 
   opts = [
     "--no-color",

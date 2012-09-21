@@ -32,6 +32,10 @@
 #   uri: http://s3.amazonaws.com/saasbook/assign2/part5_spec.rb
 #   type: HerokuRspecGrader
 
-assign-3-part-1:
-  uri: hw3.yml
-  type: HW3Grader
+#assign-3-part-1:
+#  uri: hw3.yml
+#  type: HW3Grader
+
+assign-4-part-1:
+  uri: hw4.yml
+  type: HW4Grader

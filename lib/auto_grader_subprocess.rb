@@ -32,6 +32,11 @@ module AutoGraderSubprocess
           :timeout => 400,
           :cmd => %Q{./grade3 -a ../rottenpotatoes "#{file.path}" "#{spec}"}
         }
+      when 'HW4Grader'
+        {
+          :timeout => 300,
+          :cmd => %Q{./grade4 "#{file.path}" "#{spec}"}
+        }
       else
         {}
       end
@@ -73,7 +78,7 @@ module AutoGraderSubprocess
     # FIXME: This feels insecure and fragile
     score_regex = /Score out of \d+:\s*(\d+(?:\.\d+)?)$/
     score = str.match(score_regex, str.rindex(score_regex))[1].to_f
-    comments = str.match(/^---BEGIN (?:cucumber|rspec) comments---\n#{'-'*80}\n(.*)#{'-'*80}\n---END (?:cucumber|rspec) comments---$/m)[1]
+    comments = str.match(/^---BEGIN (?:cucumber|rspec|grader) comments---\n#{'-'*80}\n(.*)#{'-'*80}\n---END (?:cucumber|rspec|grader) comments---$/m)[1]
     comments = comments.split("\n").map do |line|
       line.gsub(/\(FAILED - \d+\)/, "(FAILED)")
     end.join("\n")

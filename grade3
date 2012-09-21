@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 require './lib/auto_grader'
 require 'optparse'
-load 'lib/graders/feature_grader/feature_grader.rb'
+require './lib/graders/feature_grader/hw3_grader.rb'
 
 options = {:mt => true}
 o = nil
