@@ -53,7 +53,7 @@ class FeatureGrader < AutoGrader
         #threads.each(&:join)
 
         # Dump output. TODO: better way to do this?
-        features.each { |f| f.dump_output }
+        # features.each { |f| f.dump_output }
 
         return s
       end
