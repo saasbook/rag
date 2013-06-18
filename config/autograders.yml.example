@@ -1,10 +1,11 @@
-# This does not support http URIs yet
+Queue_name for looping:
+  name: "BerkeleyX-cs169x" Matches the queuename entered on edX
+  type: GraderType should be in lib/graders
+  due:  yyyymmddhhmmss
+  grace_period: grace period in days, used for latescaling/ currently disabled to handle multiple iterations using the
+                same queue
+  parts: #name of assignment, this gets sent in the submission payload
+    assign-1-part-1:
+      uri: Path to solution, from the base rag directory eg: ./solutions/....
+      type: HW5Grader
 
-assignment-part-sid: 
-  uri: http://example.com/spec.rb
-  type: WeightedRspecGrader
-
-# specify a relative path if you have a local spec
-assignment-part-sid2:
-  uri: local_path/spec.rb
-  type: HerokuRspecGrader
