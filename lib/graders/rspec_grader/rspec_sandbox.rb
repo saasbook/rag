@@ -4,7 +4,7 @@
 require 'timeout'
 RSpec.configure do |cfg|
   cfg.around(:each) do |ex|
-    time_limit = 2
+    time_limit = 300
     Timeout::timeout(time_limit, RspecRunner::ExampleTimeoutError) do
       ex.run
     end
