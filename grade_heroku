@@ -11,23 +11,18 @@ end
 
 def usage
   STDERR.puts <<EndOfHelp
-Usage: #{$0} submission.rb specfile.rb
+Usage: #{$0} submission_uri specfile.rb
 
-Creates an autograder of the RspecGrader subclass (which evaluates student
-code based solely on RSpec output) and grades the submission.rb file with it.
-
-For example, try these, where PREFIX=rag/spec/fixtures:
-
-#{$0} $PREFIX/correct_example.rb $PREFIX/correct_example.spec.rb
-#{$0} $PREFIX/example_with_syntax_error.rb $PREFIX/correct_example.spec.rb
-#{$0} $PREFIX/example_with_runtime_exception.rb $PREFIX/correct_example.spec.rb
+Creates an autograder of the HerokuRspecGrader subclass (which evaluates
+student code based solely on RSpec output) and grades the Heroku submission URI
+with it.
 
 EndOfHelp
   exit
 end
 
 usage() if (ARGV.length!=2 || ARGV[0] =~ /^-?-h/)
-g = AutoGrader.create('1', 'WeightedRspecGrader', IO.read(ARGV[0]), :spec => ARGV[1])
+g = AutoGrader.create('1', 'HerokuRspecGrader', ARGV[0], :spec => ARGV[1])
 g.grade!
 puts "Score out of 100: #{g.normalized_score(100)}\n"
 puts "---BEGIN rspec comments---\n#{'-'*80}\n#{g.comments}\n#{'-'*80}\n---END rspec comments---"
