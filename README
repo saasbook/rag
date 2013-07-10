@@ -59,6 +59,36 @@ Just because the grader can crash, this starts it up again.
 
 More to come.
 
+===============================
+Commands to do all the grading:
+
+HW1
+
+Sanity specs:
+
+./grade ../hw/ruby-calisthenics/skeletons/part1.rb ../hw/ruby-calisthenics/sanity_specs/part1_spec.rb
+./grade ../hw/ruby-calisthenics/skeletons/part2.rb ../hw/ruby-calisthenics/sanity_specs/part2_spec.rb
+./grade ../hw/ruby-calisthenics/skeletons/part3.rb ../hw/ruby-calisthenics/sanity_specs/part3_spec.rb
+./grade ../hw/ruby-calisthenics/skeletons/part4.rb ../hw/ruby-calisthenics/sanity_specs/part4_spec.rb
+./grade ../hw/ruby-calisthenics/skeletons/part5.rb ../hw/ruby-calisthenics/sanity_specs/part5_spec.rb
+./grade ../hw/ruby-calisthenics/skeletons/part6.rb ../hw/ruby-calisthenics/sanity_specs/part6_spec.rb
+./grade ../hw/ruby-calisthenics/skeletons/part7.rb ../hw/ruby-calisthenics/sanity_specs/part7_spec.rb
+
+Full Specs:
+
+./grade ../hw-solutions/ruby-calisthenics/lib/part1.rb ../hw-solutions/ruby-calisthenics/specs/part1_spec.rb
+./grade ../hw-solutions/ruby-calisthenics/lib/part1.rb ../hw-solutions/ruby-calisthenics/spec/part1_spec.rb
+./grade ../hw-solutions/ruby-calisthenics/lib/part2.rb ../hw-solutions/ruby-calisthenics/spec/part2_spec.rb
+./grade ../hw-solutions/ruby-calisthenics/lib/part3.rb ../hw-solutions/ruby-calisthenics/spec/part3_spec.rb
+./grade ../hw-solutions/ruby-calisthenics/lib/part4.rb ../hw-solutions/ruby-calisthenics/spec/part4_spec.rb
+./grade ../hw-solutions/ruby-calisthenics/lib/part5.rb ../hw-solutions/ruby-calisthenics/spec/part5_spec.rb
+./grade ../hw-solutions/ruby-calisthenics/lib/part6.rb ../hw-solutions/ruby-calisthenics/spec/part6_spec.rb
+./grade ../hw-solutions/ruby-calisthenics/lib/part7.rb ../hw-solutions/ruby-calisthenics/spec/part7_spec.rb
+
+There is also checking the skeletons against the full specs, and the sanity specs against the full solutions?
+
+
+
 
 
 
