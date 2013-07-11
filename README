@@ -76,7 +76,6 @@ Sanity specs:
 
 Full Specs:
 
-./grade ../hw-solutions/ruby-calisthenics/lib/part1.rb ../hw-solutions/ruby-calisthenics/specs/part1_spec.rb
 ./grade ../hw-solutions/ruby-calisthenics/lib/part1.rb ../hw-solutions/ruby-calisthenics/spec/part1_spec.rb
 ./grade ../hw-solutions/ruby-calisthenics/lib/part2.rb ../hw-solutions/ruby-calisthenics/spec/part2_spec.rb
 ./grade ../hw-solutions/ruby-calisthenics/lib/part3.rb ../hw-solutions/ruby-calisthenics/spec/part3_spec.rb
