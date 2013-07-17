@@ -8,6 +8,7 @@ gem 'term-ansicolor'
 
 group :development, :testing do
   gem 'ZenTest'
-  gem "debugger"
+  gem 'debugger'
+  gem 'simplecov'
 end
 
