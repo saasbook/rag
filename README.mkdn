@@ -1,0 +1,99 @@
+SAAS Autograder
+==============
+
+####Berkeley SAAS  w/ [edX](https://www.edx.org/)
+
+* Berkeley folks
+  * There is an AMI (id ami-df77a8b6) that includes latest version of the autograder.
+* Other folks
+  * the autograder code is at [github:saasbook/rag](https://github.com/saasbook/rag).
+
+Usage
+--------------------
+
+1. Launch an EC2 instance (micro is fine) with autograder AMI
+
+2. hw6Grader1 has the latest version of rag, so move the content from it to the new instance.
+   * You might want to move the logs before you copy as they take up a lot of space.
+
+    NOTE: <i>Somebody should make a new AMI with the updated connection code, and enabled to pull from the saasbook repos</i>
+
+Configuration
+------------------------
+
+There are two files which control the autograder: ```config/autograders.yml``` and  ```config/conf.yml```.
+
+* ```conf.yml``` includes the following:
+
+          live:
+            queue_uri: 'uri'
+            autograders_yml: ./config/autograders.yml
+            django_auth:
+              username: 'username'
+              password: 'password'
+            user_auth: #may be unnecessary
+              user_name: 'username'
+              user_pass: 'password'
+            halt: false # default: true, exit when all submission queues are empty
+            sleep_duration: 30
+
+     * ```live``` : the name that will be given on the command line when calling the autograder command
+     * The rest of the information should be filled in appropriately.
+
+  NOTE: ```autograders_yml``` _gives the path from the_ ```rag/``` _directory._
+
+
+* ```autograders.yml``` describes the actual autograder that will be running. An example is:
+
+          assign-6-queue:
+            name: "BerkeleyX-cs169x-p3"
+            type: HW5Grader
+            due:  20121217120100
+            grace_period: 0
+            parts:
+              assign-2-part-1:
+                uri: ./hw6.yml
+                type: MigrationGrader
+
+    * ```name``` : the name of the queue that will be pulled from, this must match what edX is submitting assignments to
+    * ```due``` : in YYYYMMDDHHMMSS format
+    * ```parts``` : used to describe the parts of each assignment
+    * ```uri``` : a path to the solutions from the rag base directory
+    * ```type``` : the type of autograder that will be used to grade the assignment
+    * ```grace``` : period is used to give late credit, this should be refactored further to allow specification for late penalties in this config file
+
+Execution and tests
+--------------------------------
+
+####To run the autograder connection program:
+
+        while true ; do ./run_edx_client.rb live ; done
+
+   The grader *can* crash, this starts it up again.
+
+
+####Example Commands to do all the grading for HW1:
+
+######Sanity specs
+
+        ./grade ../hw/ruby-calisthenics/skeletons/part1.rb ../hw/ruby-calisthenics/sanity_specs/part1_spec.rb
+        ./grade ../hw/ruby-calisthenics/skeletons/part2.rb ../hw/ruby-calisthenics/sanity_specs/part2_spec.rb
+        ./grade ../hw/ruby-calisthenics/skeletons/part3.rb ../hw/ruby-calisthenics/sanity_specs/part3_spec.rb
+        ./grade ../hw/ruby-calisthenics/skeletons/part4.rb ../hw/ruby-calisthenics/sanity_specs/part4_spec.rb
+        ./grade ../hw/ruby-calisthenics/skeletons/part5.rb ../hw/ruby-calisthenics/sanity_specs/part5_spec.rb
+        ./grade ../hw/ruby-calisthenics/skeletons/part6.rb ../hw/ruby-calisthenics/sanity_specs/part6_spec.rb
+        ./grade ../hw/ruby-calisthenics/skeletons/part7.rb ../hw/ruby-calisthenics/sanity_specs/part7_spec.rb
+
+######Full Specs
+
+         ./grade ../hw-solutions/ruby-calisthenics/lib/part1.rb ../hw-solutions/ruby-calisthenics/spec/part1_spec.rb
+         ./grade ../hw-solutions/ruby-calisthenics/lib/part2.rb ../hw-solutions/ruby-calisthenics/spec/part2_spec.rb
+         ./grade ../hw-solutions/ruby-calisthenics/lib/part3.rb ../hw-solutions/ruby-calisthenics/spec/part3_spec.rb
+         ./grade ../hw-solutions/ruby-calisthenics/lib/part4.rb ../hw-solutions/ruby-calisthenics/spec/part4_spec.rb
+         ./grade ../hw-solutions/ruby-calisthenics/lib/part5.rb ../hw-solutions/ruby-calisthenics/spec/part5_spec.rb
+         ./grade ../hw-solutions/ruby-calisthenics/lib/part6.rb ../hw-solutions/ruby-calisthenics/spec/part6_spec.rb
+         ./grade ../hw-solutions/ruby-calisthenics/lib/part7.rb ../hw-solutions/ruby-calisthenics/spec/part7_spec.rb
+
+There is also checking the skeletons against the full specs and the sanity specs against the full solutions.
+
+
