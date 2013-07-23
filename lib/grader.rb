@@ -1,22 +1,22 @@
 require './lib/auto_grader.rb'
 
 class Grader
-  def initialize
-    @g = nil
+  def initialize(auto_grader)
+    @g = auto_grader
   end
   def self.cli(args)
     return self.help if args.length != 4
     type = args[1]
     args[2] = IO.read(args[2]) if type == 'WeightedRspecGrader'
-    @g = AutoGrader.create('1', args[1],args[2],args[3])
-    @g.grade!
-    self
+    g = AutoGrader.create('1', args[1] ,args[2] ,:spec => args[3])
+    g.grade!
+    return Grader.new(g)
   end
   def to_s
-    #<<EndOfFeedback
+    <<EndOfFeedback
     "Score out of 100: #{@g.normalized_score(100)}\n"+
     "---BEGIN rspec comments---\n#{'-'*80}\n#{@g.comments}\n#{'-'*80}\n---END rspec comments---"
-#EndOfFeedback
+EndOfFeedback
   end
   def self.help
     <<EndOfHelp

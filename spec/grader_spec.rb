@@ -14,14 +14,14 @@ describe 'Command Line Interface' do
   describe 'should produce appropriate response to correct WeightedRspecGrader arguments' do
     before(:each) do
       IO.should_receive(:read).with("correct_example.rb").and_return("some code")
-      args = '1', 'WeightedRspecGrader',"some code","correct_example.spec.rb"
+      args = '1', 'WeightedRspecGrader',"some code",{:spec => "correct_example.spec.rb"}
       @auto_grader = mock('AutoGrader')
       @auto_grader.should_receive(:grade!)
       AutoGrader.should_receive(:create).with(*args).and_return(@auto_grader)
     end
     it 'should produce appropriate response to correct arguments' do
       grader = Grader.cli(["-t","WeightedRspecGrader","correct_example.rb","correct_example.spec.rb"])
-      expect(grader.class).to eq Class
+      expect(grader.class).to eq Grader
     end
     it 'should produce correctly formatted output' do
       @auto_grader.should_receive(:normalized_score).with(100).and_return(67)
@@ -31,7 +31,7 @@ describe 'Command Line Interface' do
     end
   end
   it 'should be able to handle passing in a github username' do
-    args = '1', 'GithubRspecGrader',"tansaku","github_spec.rb"
+    args = '1', 'GithubRspecGrader',"tansaku",{:spec => "github_spec.rb"}
     auto_grader = mock('AutoGrader')
     auto_grader.should_receive(:grade!)
     AutoGrader.should_receive(:create).with(*args).and_return(auto_grader)
