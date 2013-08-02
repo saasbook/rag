@@ -1,4 +1,4 @@
-require 'coursera_client'
+require 'spec_helper'
 
 class URIMatcher
   def initialize(uri)

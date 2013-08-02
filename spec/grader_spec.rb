@@ -1,5 +1,4 @@
-require 'grader'
-require 'auto_grader'
+require 'spec_helper'
 
 describe 'Command Line Interface' do
   it 'should exist' do

@@ -1,6 +1,5 @@
-require 'coursera_submission'
-require 'base64'
-require 'json'
+require 'spec_helper'
+
 describe CourseraSubmission do
   describe '#to_json' do
     it 'should return a valid JSON object with Base64-encoded attributes' do

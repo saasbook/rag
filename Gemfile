@@ -10,5 +10,6 @@ group :development, :testing do
   gem 'ZenTest'
   gem 'debugger'
   gem 'simplecov'
+  gem 'simplecov-rcov'
 end
 

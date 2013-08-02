@@ -1,7 +1,4 @@
-require 'auto_grader'
-require 'graders/rspec_grader/rspec_grader'
-require 'graders/rspec_grader/weighted_rspec_grader'
-require 'graders/rspec_grader/rspec_runner'
+require 'spec_helper'
 
 describe WeightedRspecGrader do
   def fake_rspec_output(str)
