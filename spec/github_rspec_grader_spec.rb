@@ -6,4 +6,7 @@ describe "GithubRspecGrader" do
     ENV.should_receive(:[]=).with('GITHUB_USERNAME','username')
     GithubRspecGrader.new('username',{:spec => 'github_spec.rb'})
   end
+  xit 'should show up in the test coverage' do
+
+  end
 end
