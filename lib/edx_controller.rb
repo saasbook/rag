@@ -27,7 +27,7 @@ class EdXController
 
   def authenticate
    # begin
-      uri = URI.join(@xqueue_url,'xqueue/login')
+      #uri = URI.join(@xqueue_url,'xqueue/login')
       uri = URI.join(@xqueue_url, 'xqueue/','login/')
       http = Net::HTTP.new(uri.host, uri.port)
       request = Net::HTTP::Post.new(uri.request_uri)
@@ -41,7 +41,7 @@ class EdXController
       end
 
     # response = http.request(request)
-
+      #Should raise an error here since our authentication failed
       all_cookies=response['set-cookie']
 
      # all_cookies=""
@@ -131,7 +131,15 @@ class EdXController
 
   def send_grade_response(correct="True", score="100", msg="good work student")
    # Clobber all non utf-8 characters
+
+   # This is a hack, if it is not UTF-8 or Ascii, clobber the non ascii/utf-8 chracter character
+   if msg.encoding.name == "UTF-8"
+     msg = msg.encode("ASCII-8BIT", :invalid => :replace, :undef =>:replace, :replace => "?")
+   end
    msg = msg.encode("UTF-8", :invalid => :replace, :undef =>:replace, :replace => "?")
+
+   #print new_msg
+   #msg = new_msg.encode("UTF-8", :invalid => :replace, :undef =>:replace, :replace => "?")
    grader_reply= JSON.generate({:correct => correct, :score => score, :msg => msg})
     returnpackage = {'xqueue_header'=> @xheader,'xqueue_body'=> grader_reply}
     reply_uri =URI.join(@xqueue_url, 'xqueue/', 'put_result/')
@@ -144,10 +152,11 @@ class EdXController
 
     response =Net::HTTP.start(reply_uri.host, reply_uri.port, :use_ssl => reply_uri.scheme == 'https', :verify_mode => OpenSSL::SSL::VERIFY_NONE) do |https|
         https.request(reply_request)
-      end
+    end
 
   #  puts "response is #{response}"
    # p response
+   # Not sure what to do here, this means our response to edX is being rejected for some reason.
     if response.code.to_s !~ /2\d\d/
       logger.error "Bad post score response: #{response.code.to_s}"
       raise EdXController::BadStatusCodeError, "Bad post score response: #{response.code}"

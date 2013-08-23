@@ -3,7 +3,7 @@ require 'open3'
 require 'timeout'
 
 require_relative 'rag_logger'
-require_relative 'run_with_timeout'
+require_relative 'escaper'
 
 module AutoGraderSubprocess
   extend RagLogger
@@ -19,9 +19,8 @@ module AutoGraderSubprocess
     Tempfile.open(['test', '.rb']) do |file|
       file.write(submission)
       file.flush
-
       opts = {
-        :timeout => 4,
+        :timeout => 60,
         :cmd => %Q{./grade "#{file.path}" "#{spec}"}
       }.merge case grader_type
       when 'HerokuRspecGrader'
@@ -38,12 +37,29 @@ module AutoGraderSubprocess
           :timeout => 300,
           :cmd => %Q{./grade4 "#{file.path}" "#{spec}"}
         }
+       when 'HW5Grader'
+          submission = escape_all_fields(submission)
+        {
+          :timeout => 300,
+          :cmd => %Q{./grade5 #{submission} "#{spec}"}
+        }
+       when 'MigrationGrader'
+                    #  puts "In migrationGrader"
+       {
+          :timeout => 300,
+          :cmd => %Q{./grade6 "#{file.path}" "#{spec}"}
+       }
       else
         {}
       end
 
       begin
-        stdout_text, stderr_text, exitstatus = run_with_timeout(opts[:cmd], opts[:timeout])
+        Timeout::timeout(opts[:timeout]) do
+          stdin, stdout, stderr, wait_thr = Open3.popen3 opts[:cmd]
+          stdout_text = stdout.read; stderr_text = stderr.read
+          stdin.close; stdout.close; stderr.close
+          exitstatus = wait_thr.value.exitstatus
+        end
       rescue Timeout::Error => e
         exitstatus = -1
         stderr_text = "Program timed out"
