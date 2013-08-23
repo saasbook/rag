@@ -1,6 +1,9 @@
 SAAS Autograder
 ==============
 
+Travis C. I. [![Build Status](https://travis-ci.org/saasbook/rag.png)](https://travis-ci.org/saasbook/rag)
+
+
 ####Berkeley SAAS  w/ [edX](https://www.edx.org/)
 
 * Berkeley folks
