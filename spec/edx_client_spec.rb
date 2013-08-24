@@ -99,4 +99,51 @@ EOF
     autograders['assign-0-queue'][:type].should eq 'WeightedRspecGrader'
   end
 
+  describe "#run" do
+    before :each do
+      EdXController.stub(:new).and_return(controller)
+      autograder = {'test-assignment' => { :uri => 'http://example.com', :type => 'RspecGrader' } }
+      conf = {}
+      conf['queue_uri'] = 'https://test.com/live-queue'
+      conf['autograders_yml'] = './config/autograders.yml'
+      conf['user_auth'] = {"user_name"=>"user-name", "user_pass"=>"user-password"}
+      conf['django_auth'] = {"username"=>"django-user", "password"=>"django-password"}
+      conf['halt'] = false
+      conf['sleep_duration'] = 30
+      EdXClient.stub(:load_configurations).and_return(conf)
+      EdXClient.stub(:init_autograders).and_return(autograder)
+    end
+    let(:controller) { double('fake controller').as_null_object }
+    let(:submission) { double('fake_submission').as_null_object }
+
+
+    context "with one autograder" do
+
+      it 'should exit if the submission queue is empty (under test)' do
+        controller.should_receive(:get_queue_length).and_return(0)
+        client = EdXClient.new()
+        eval("class EdXClient; def continue_running_test(x); x > 0; end; end;")
+        client.run
+      end
+
+      it 'should authenticate with EdX, grab submission and grade it' do
+        controller.should_receive(:get_queue_length).and_return(1,1,0)
+        controller.should_receive(:authenticate)
+        controller.stub(:get_submission).and_return(submission)
+        client = EdXClient.new()
+        client.should_receive(:load_spec)
+        client.should_receive(:load_due_date)
+        client.should_receive(:load_grace_period)
+        client.stub(:generate_late_response).and_return(1,"")
+        client.should_receive(:write_student_submission)
+        client.stub(:run_autograder_subprocess).and_return(100,"woot!")
+        client.should_receive(:format_for_html).and_return("woot!")
+        controller.should_receive(:send_grade_response)
+        eval("class EdXClient; def continue_running_test(x); x > 0; end; end;")
+        client.run
+      end
+
+    end
+  end
+
 end

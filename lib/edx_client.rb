@@ -17,6 +17,8 @@ class EdXClient
   include RagLogger
   include AutoGraderSubprocess
 
+  attr_reader :name
+
   class EdXClient::UnknownAssignmentPart < StandardError ; end
   class EdXClient::SpecNotFound < StandardError ; end
 
@@ -39,7 +41,6 @@ class EdXClient
 
     @autograders = EdXClient.init_autograders(conf['autograders_yml'])
     @name = @autograders.values.first[:name]
-    puts "The queue name is #{@name}"
   end
 
   def run
@@ -65,8 +66,8 @@ class EdXClient
         logger.fatal(submission)
         raise
       end
-      
-      comments= late_comments + " " + comments
+
+      comments= late_comments.to_s + " " + comments.to_s
       get_checkmark=true
  
       if score == 0 or score == 0.0
@@ -204,7 +205,7 @@ class EdXClient
     else
 
     # Loop forever
-      while true
+      while continue_running_test(@controller.get_queue_length())
         all_empty = true
         @autograders.keys.each do |assignment_part_sid|        
           q_name=@autograders[assignment_part_sid][:name]
@@ -271,6 +272,10 @@ class EdXClient
       logger.fatal "could not write submission for user= #{user_id} file_name #{file_name}"
     end
 
+  end
+
+  def continue_running(x)
+    true
   end
 
 

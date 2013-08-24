@@ -18,4 +18,6 @@ require 'coursera_controller'
 require 'coursera_client'
 
 require 'edx_client'
+require 'edx_controller'
+require 'edx_submission'
 
