@@ -11,5 +11,6 @@ group :development, :testing do
   gem 'debugger'
   gem 'simplecov'
   gem 'simplecov-rcov'
+  gem 'addressable'
 end
 
