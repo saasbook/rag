@@ -25,14 +25,11 @@ class EdXClient
   # spec URIs
 
   def initialize(conf_name=nil)
-    conf = load_configurations(conf_name)
+    conf = EdXClient.load_configurations(conf_name)
     @endpoint = conf['queue_uri'] 
 
-    @name =conf[:queue_name]
-    puts "The queue name is #{@name}"
-    @user_auth=conf['user_auth'] .values 
+    @user_auth=conf['user_auth'].values
     @django_auth=conf['django_auth'].values
-    @api_key = conf['api_key']
 
     @controller = EdXController.new(*@django_auth,*@user_auth,@name, @endpoint)
     @halt = conf['halt']
@@ -40,7 +37,9 @@ class EdXClient
 
     # Load configuration file for assignment_id->spec map
 
-    @autograders = init_autograders(conf['autograders_yml'])
+    @autograders = EdXClient.init_autograders(conf['autograders_yml'])
+    @name = @autograders.values.first[:name]
+    puts "The queue name is #{@name}"
   end
 
   def run
@@ -161,7 +160,7 @@ class EdXClient
 
   # Returns hash of assignment_part_ids to hashes containing uri and grader type
   # i.e. { "assign-1-part-1" => {:uri => 'solutions/part1_spec.rb', :type => 'RspecGrader' } }
-  def init_autograders(filename)
+  def self.init_autograders(filename)
     # TODO: Verify file format
     yml = YAML::load(File.open(filename, 'r'))
     yml.each_pair do |id, obj|
@@ -230,7 +229,7 @@ class EdXClient
     end
   end
 
-  def load_configurations(conf_name=nil)
+  def self.load_configurations(conf_name=nil)
     config_path = 'config/conf.yml'
     unless File.file?(config_path)
       puts "Please copy conf.yml.example into conf.yml and configure the parameters"

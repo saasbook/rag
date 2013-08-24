@@ -16,3 +16,6 @@ require 'json'
 
 require 'coursera_controller'
 require 'coursera_client'
+
+require 'edx_client'
+
