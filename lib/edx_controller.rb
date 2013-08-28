@@ -71,6 +71,7 @@ class EdXController
 
       if response.code.to_s =~ /[3-5]\d\d/
         logger.error "Bad queue length response: #{response['status']}"
+        logger.error "response: #{response}"
         raise EdXController::BadStatusCodeError, "Bad queue length response: #{response['status']}"
       end
     end
