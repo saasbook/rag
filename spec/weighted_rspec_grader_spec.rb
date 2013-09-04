@@ -16,6 +16,11 @@ describe WeightedRspecGrader do
       @g.grade!
       @g.normalized_score.should == 100
     end
+    it 'should give 3 points, when 3 points specified, even with exclamation' do
+      fake_rspec_output 'correctly converts currency from euro to dollars! (plural) [3 points]'
+      @g.grade!
+      @g.normalized_score.should == 100
+    end
     it 'should round up to 67% for 2 out of 3' do
       fake_rspec_output "correctly converts currency from yen to dollars (plural) [1 points] (FAILED) \r\n correctly
 converts currency from yen to dollars (plural) [2 points]"
