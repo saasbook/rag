@@ -28,6 +28,10 @@ module AutoGraderSubprocess
         { :timeout => 180,
           :cmd => %Q{./grade_heroku "#{submission}" "#{spec}"}
         }
+      when 'GithubRspecGrader'
+        { :timeout => 180,
+          :cmd => %Q{./new_grader -t GithubRspecGrader "#{submission}" "#{spec}"}
+        }
       when 'HW3Grader'
         {
           :timeout => 400,
