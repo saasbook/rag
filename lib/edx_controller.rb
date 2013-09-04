@@ -39,7 +39,6 @@ class EdXController
       response = Net::HTTP.start(uri.host, uri.port, :use_ssl => uri.scheme == 'https', :verify_mode => OpenSSL::SSL::VERIFY_NONE) do |https|
         https.request(request)
       end
-
     # response = http.request(request)
 
       all_cookies=response['set-cookie']

@@ -175,6 +175,9 @@ class EdXClient
     "<pre>#{CGI::escape_html(text)}</pre>" # sanitize html
   end
 
+  def continue_running_test(x)
+    true
+  end
 
   def each_submission
     if @halt
@@ -205,6 +208,7 @@ class EdXClient
     else
 
     # Loop forever
+    @controller.authenticate
       while continue_running_test(@controller.get_queue_length())
         all_empty = true
         @autograders.keys.each do |assignment_part_sid|        
