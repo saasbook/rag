@@ -14,8 +14,12 @@ class Grader
   end
   def to_s
     <<EndOfFeedback
-    "Score out of 100: #{@g.normalized_score(100)}\n"+
-    "---BEGIN rspec comments---\n#{'-'*80}\n#{@g.comments}\n#{'-'*80}\n---END rspec comments---"
+Score out of 100: #{@g.normalized_score(100)}
+---BEGIN rspec comments---
+#{'-'*80}
+#{@g.comments}
+#{'-'*80}
+---END rspec comments---
 EndOfFeedback
   end
   def self.help
