@@ -3,3 +3,6 @@
 .*.swp
 log/*
 config/conf.yml
+.idea/
+Gemfile.lock
+coverage/
