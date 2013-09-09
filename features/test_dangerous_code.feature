@@ -4,14 +4,15 @@ Feature: test dangerous code
   So that I can grade thousands and thousands of programming hw's efficiently
   I want to fail safely when dangerous code is submitted
 
-Scenario: code with infinite loop
+Scenario Outline: kinds of dangerous code
 
-  Given a submission containing "loop do ; end"
+  Given a submission containing "<dangerous_code>"
   When I run the generic RSpec grader
   Then the message should match /Score out of 100: 0/
-  And the "rspec comments" section should contain "execution expired"
+  And the "rspec comments" section should contain "<comment>"
 
-
-Scenario: code that tries to exhaust resources
-
-Scenario: code that tries to do system operations
+  Examples:
+    | dangerous_code           | comment                    |
+    | loop do ; end            | execution expired          |
+    | File.open('/etc/passwd') | unsafe operation attempted |
+    | # fork while fork        | unsafe operation attempted |
