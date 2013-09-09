@@ -15,8 +15,8 @@ class EdXController
 
   HTTP_MODES = [:get, :post]
 
-  def initialize(django_username, django_pass, user_auth, user_pass,queue_name,queue_uri) 
-    @queue_name = queue_name#move later    
+  def initialize(django_username, django_pass, user_auth, user_pass,queue_name,queue_uri)
+    @queue_name = queue_name#move later
     @xqueue_url = queue_uri
   #  @queue_name ="BerkeleyX-cs169x"
     @django_auth = {'username' => django_username, 'password'=>django_pass}
@@ -25,8 +25,8 @@ class EdXController
     @pull_params=@length_params
   end
 
-  def authenticate 
-   # begin 
+  def authenticate
+   # begin
       uri = URI.join(@xqueue_url,'xqueue/login')
       uri = URI.join(@xqueue_url, 'xqueue/','login/')
       http = Net::HTTP.new(uri.host, uri.port)
@@ -39,26 +39,25 @@ class EdXController
       response = Net::HTTP.start(uri.host, uri.port, :use_ssl => uri.scheme == 'https', :verify_mode => OpenSSL::SSL::VERIFY_NONE) do |https|
         https.request(request)
       end
-
     # response = http.request(request)
 
       all_cookies=response['set-cookie']
 
      # all_cookies=""
       @session_cookie=all_cookies.split(/;/)[0]
-    
+
   end
 
   def set_queue_name(queue_name)
    # puts "queue_name is #{queue_name}"
-    @queue_name=queue_name    
+    @queue_name=queue_name
     @length_params={'queue_name' => @queue_name}
     @pull_params=@length_params
   end
-  
+
   def get_queue_length(name="")
     begin
-      length_uri= URI.join(@xqueue_url, 'xqueue/', 'get_queuelen/') 
+      length_uri= URI.join(@xqueue_url, 'xqueue/', 'get_queuelen/')
       length_uri.query = URI.encode_www_form(@length_params)
       length_http = Net::HTTP.new(length_uri.host, length_uri.port)
       length_http.use_ssl = true
@@ -71,6 +70,7 @@ class EdXController
 
       if response.code.to_s =~ /[3-5]\d\d/
         logger.error "Bad queue length response: #{response['status']}"
+        logger.error "response: #{response}"
         raise EdXController::BadStatusCodeError, "Bad queue length response: #{response['status']}"
       end
     end
@@ -87,12 +87,12 @@ class EdXController
     pull_request= Net::HTTP::Get.new(pull_uri.request_uri)
    # pull_request.basic_auth(*@requests_auth)
     pull_request['cookie']=@session_cookie
-    
+
     pull_response=Net::HTTP.start(pull_uri.host, pull_uri.port,:use_ssl => pull_uri.scheme == 'https',:verify_mode => OpenSSL::SSL::VERIFY_NONE) do |https|
       https.request(pull_request)
     end
 #      pull_response = pull_http.request(pull_request)
- 
+
     if pull_response.code.to_s =~ /[3-5]\d\d/
         logger.error "Another queue already downloaded this file: #{pull_response['status']}"
        return nil# raise EdXController::BadStatusCodeError, "Concurrent grading error: #{pull_response['status']}"
@@ -121,15 +121,17 @@ class EdXController
       https.request(file_request)
     end
    # file_response = file_http.request(file_request)
-   
+
     file=file_response.body
 
     {:file => file, :part_name => @xbody['grader_payload'], :student_info=>student_info}#:submission_time => student_info["submission_time"]} #lot of redundancy now but no problem
   end
   #this is where we will send the response back to edX
   #should be called from EdXClient
-  
+
   def send_grade_response(correct="True", score="100", msg="good work student")
+   # Clobber all non utf-8 characters
+   msg = msg.encode("UTF-8", :invalid => :replace, :undef =>:replace, :replace => "?")
    grader_reply= JSON.generate({:correct => correct, :score => score, :msg => msg})
     returnpackage = {'xqueue_header'=> @xheader,'xqueue_body'=> grader_reply}
     reply_uri =URI.join(@xqueue_url, 'xqueue/', 'put_result/')
@@ -144,14 +146,14 @@ class EdXController
         https.request(reply_request)
       end
 
-  #  puts "response is #{response}"   
+  #  puts "response is #{response}"
    # p response
-    if response.code.to_s !~ /2\d\d/  
+    if response.code.to_s !~ /2\d\d/
       logger.error "Bad post score response: #{response.code.to_s}"
       raise EdXController::BadStatusCodeError, "Bad post score response: #{response.code}"
     end
   end
 
 end
- 
+
 

@@ -1,5 +1,4 @@
-require 'auto_grader'
-require 'graders/rspec_grader/rspec_grader'
+require 'spec_helper'
 
 describe RspecGrader do
   def fake_rspec_output(str)
@@ -8,7 +7,7 @@ describe RspecGrader do
   it 'should give error when initializing with no specs' do
     lambda { RspecGrader.new('foo', {}) }.should raise_error RspecGrader::NoSpecsGivenError
   end
-  describe 'running valid specfile' do
+  describe 'running valid specfile should be able to correctly parse rspec text output' do
     before :each do
       @g = RspecGrader.new('foo', :spec => 'spec/fixtures/correct_example.spec.rb')
     end

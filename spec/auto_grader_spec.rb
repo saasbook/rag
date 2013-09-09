@@ -1,4 +1,5 @@
-require 'auto_grader'
+require 'spec_helper'
+
 describe AutoGrader do
   describe 'initializing with valid grader' do
     subject { AutoGrader.create('1-1', 'MultipleChoiceGrader', 'b', {}) }

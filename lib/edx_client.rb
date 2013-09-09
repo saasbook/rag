@@ -17,6 +17,8 @@ class EdXClient
   include RagLogger
   include AutoGraderSubprocess
 
+  attr_reader :name
+
   class EdXClient::UnknownAssignmentPart < StandardError ; end
   class EdXClient::SpecNotFound < StandardError ; end
 
@@ -25,14 +27,11 @@ class EdXClient
   # spec URIs
 
   def initialize(conf_name=nil)
-    conf = load_configurations(conf_name)
+    conf = EdXClient.load_configurations(conf_name)
     @endpoint = conf['queue_uri'] 
 
-    @name =conf[:queue_name]
-    puts "The queue name is #{@name}"
-    @user_auth=conf['user_auth'] .values 
+    @user_auth=conf['user_auth'].values
     @django_auth=conf['django_auth'].values
-    @api_key = conf['api_key']
 
     @controller = EdXController.new(*@django_auth,*@user_auth,@name, @endpoint)
     @halt = conf['halt']
@@ -40,7 +39,8 @@ class EdXClient
 
     # Load configuration file for assignment_id->spec map
 
-    @autograders = init_autograders(conf['autograders_yml'])
+    @autograders = EdXClient.init_autograders(conf['autograders_yml'])
+    @name = @autograders.values.first[:name]
   end
 
   def run
@@ -66,8 +66,8 @@ class EdXClient
         logger.fatal(submission)
         raise
       end
-      
-      comments= late_comments + " " + comments
+
+      comments= late_comments.to_s + " " + comments.to_s
       get_checkmark=true
  
       if score == 0 or score == 0.0
@@ -161,7 +161,7 @@ class EdXClient
 
   # Returns hash of assignment_part_ids to hashes containing uri and grader type
   # i.e. { "assign-1-part-1" => {:uri => 'solutions/part1_spec.rb', :type => 'RspecGrader' } }
-  def init_autograders(filename)
+  def self.init_autograders(filename)
     # TODO: Verify file format
     yml = YAML::load(File.open(filename, 'r'))
     yml.each_pair do |id, obj|
@@ -175,6 +175,9 @@ class EdXClient
     "<pre>#{CGI::escape_html(text)}</pre>" # sanitize html
   end
 
+  def continue_running_test(x)
+    true
+  end
 
   def each_submission
     if @halt
@@ -205,7 +208,8 @@ class EdXClient
     else
 
     # Loop forever
-      while true
+    @controller.authenticate
+      while continue_running_test(@controller.get_queue_length())
         all_empty = true
         @autograders.keys.each do |assignment_part_sid|        
           q_name=@autograders[assignment_part_sid][:name]
@@ -230,7 +234,7 @@ class EdXClient
     end
   end
 
-  def load_configurations(conf_name=nil)
+  def self.load_configurations(conf_name=nil)
     config_path = 'config/conf.yml'
     unless File.file?(config_path)
       puts "Please copy conf.yml.example into conf.yml and configure the parameters"
@@ -272,6 +276,10 @@ class EdXClient
       logger.fatal "could not write submission for user= #{user_id} file_name #{file_name}"
     end
 
+  end
+
+  def continue_running(x)
+    true
   end
 
 
