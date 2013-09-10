@@ -16,12 +16,6 @@ describe "AutoGraderSubprocess" do
 	let(:asg_runner) {ASGBase.new}
 	before :each do
 		Tempfile.stub(:open).and_yield(double.as_null_object)
-		FakeFS.activate!
-	end
-
-	after :each do
-		FakeFS::FileSystem.clear
-		FakeFS.deactivate!
 	end
 
 	it 'If the output does not contain a score it should raise output parse error' do
