@@ -5,7 +5,7 @@ require 'timeout'
 # Runs a specified shell command in a separate thread.
 # If it exceeds the given timeout in seconds, kills it.
 # Returns any output produced by the command (stdout or stderr) as a String.
-# Uses Kernel.select to wait up to the tick length (in seconds) between 
+# Uses Kernel.select to wait up to the tick length (in seconds) between
 # checks on the command's status
 #
 # If you've got a cleaner way of doing this, I'd be interested to see it.

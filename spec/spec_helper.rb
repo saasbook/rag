@@ -5,6 +5,7 @@ end
 
 require 'grader'
 require 'auto_grader'
+require 'auto_grader_subprocess'
 require 'graders/rspec_grader/rspec_grader'
 require 'graders/rspec_grader/weighted_rspec_grader'
 require 'graders/rspec_grader/rspec_runner'
@@ -20,5 +21,7 @@ require 'coursera_client'
 require 'edx_client'
 require 'edx_controller'
 require 'edx_submission'
+
+require 'fakefs/safe'
 require 'run_with_timeout'
 
