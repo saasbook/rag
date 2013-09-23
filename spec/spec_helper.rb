@@ -5,6 +5,7 @@ end
 
 require 'grader'
 require 'auto_grader'
+require 'auto_grader_subprocess'
 require 'graders/rspec_grader/rspec_grader'
 require 'graders/rspec_grader/weighted_rspec_grader'
 require 'graders/rspec_grader/rspec_runner'

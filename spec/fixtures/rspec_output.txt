@@ -1,0 +1,20 @@
+Score out of 100: 100
+---BEGIN rspec comments---
+--------------------------------------------------------------------------------
+
+#hello
+  should be defined
+  The hello method prints the correct string [30 points]
+
+#starts_with_consonant?
+  should be defined
+  The starts_with_consonant? method returns the correct boolean [30 points]
+
+#binary_multiple_of_4?
+  should be defined
+  The binary_multiple_of_4? method returns the correct boolean [40 points]
+
+Finished in 0.12109 seconds
+6 examples, 0 failures
+--------------------------------------------------------------------------------
+---END rspec comments---

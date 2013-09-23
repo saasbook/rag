@@ -78,7 +78,7 @@ module AutoGraderSubprocess
     # FIXME: This feels insecure and fragile
     score_regex = /Score out of \d+:\s*(\d+(?:\.\d+)?)$/
     score = str.match(score_regex, str.rindex(score_regex))[1].to_f
-    comments = str.match(/^---BEGIN (?:cucumber|rspec|grader) comments---\n#{'-'*80}\n(.*)#{'-'*80}\n---END (?:cucumber|rspec|grader) comments---$/m)[1]
+    comments = str.match(/---BEGIN (?:cucumber|rspec|grader) comments---\n#{'-'*80}\n(.*)#{'-'*80}\n---END (?:cucumber|rspec|grader) comments---/m)[1]
     comments = comments.split("\n").map do |line|
       line.gsub(/\(FAILED - \d+\)/, "(FAILED)")
     end.join("\n")
@@ -87,7 +87,7 @@ module AutoGraderSubprocess
     logger.error "Error running parse_grade: #{e.to_s}; #{str}"
     [0, e.to_s]
   rescue StandardError => e
-    logger.fatal "Failed to parse autograder output: #{str}"
+    logger.fatal "Failed to parse autograder output: #{e.to_s}; #{str}"
     raise OutputParseError, "Failed to parse autograder output: #{str}"
   end
 
