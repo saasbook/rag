@@ -1,4 +1,4 @@
-describe 'Ruby intro part 1' do
+describe 'Ruby intro part 1', :sandbox => true do
   describe "#sum" do
     it "should be defined" do
       expect { sum([1,3,4]) }.not_to raise_error
