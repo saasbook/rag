@@ -15,7 +15,6 @@ describe 'Due Dates' do
     end
 
     it "Should not raise an error if the entry for assignment_part_sid does not have :due as a key" do
-      puts "the ag hash is: " + client.instance_eval{@autograders}.to_s
       lambda { client.instance_eval{load_due_date("assignment_part_sid_1")} }.should_not raise_error
     end
 
@@ -47,7 +46,6 @@ describe 'Due Dates' do
     end
 
     it "Should not raise an error if the entry for assignment_part_sid does not have :grace_period as a key" do
-      puts "the ag hash is: " + client.instance_eval{@autograders}.to_s
       lambda { client.instance_eval{load_grace_period("assignment_part_without_grace_period")} }.should_not raise_error
     end
 
@@ -108,6 +106,60 @@ describe "generate_late_response" do
       specify{subject[0].should eq 0.0}
       specify{subject[1].should match(/no points awarded/)}
 
+    end
+
+  end
+
+  describe "Writing out student assignments" do
+    let(:client){ EdXClient.new }
+
+    before(:each) do
+      EdXClient.any_instance.stub(:initialize)
+    end
+
+    specify "When the log directory does not exist it should be created" do
+
+      FakeFS do
+        FileUtils.rm_rf("log") if (File.exists?("log") and File.directory?("log"))
+        client.send(:write_student_submission, "12345", "puts 'hello world'", "part-1")
+        File.exists?("log").should be_true
+        File.directory?("log").should be_true
+      end
+
+    end
+
+    it "Should create a new directory for the submission part if it does not exist" do
+      FakeFS do
+        FileUtils.rm_rf("log") if (File.exists?("log") and File.directory?("log"))
+        client.send(:write_student_submission, "12345", "puts 'hello world'", "part-1")
+        File.exists?("log/part-1-submissions").should be_true
+        File.directory?("log/part-1-submissions").should be_true
+      end
+
+    end
+
+    it "Should write out a file for each students students submission" do
+      FakeFS do
+        FileUtils.rm_rf("log") if (File.exists?("log") and File.directory?("log"))
+        client.send(:write_student_submission, "12345", "puts 'hello world'", "part-1")
+        client.send(:write_student_submission, "67890", "puts 'hello world'", "part-1")
+        File.exists?("log/part-1-submissions/12345_attempt_1").should be_true
+        File.exists?("log/part-1-submissions/67890_attempt_1").should be_true
+      end
+    end
+
+    it "Should write out a new file for each students attempts" do
+      FakeFS do
+        FileUtils.rm_rf("log") if (File.exists?("log") and File.directory?("log"))
+        10.times do |i|
+          client.send(:write_student_submission, "12345", "puts 'hello world'", "part-1")
+        end
+
+        (1..10).each do |i|
+          File.exists?("log/part-1-submissions/12345_attempt_#{i}").should be_true
+        end
+
+      end
     end
 
   end
