@@ -34,10 +34,10 @@ def run_with_timeout(command, timeout, tick=1, buffer_size=1024)
       rescue IO::WaitReadable => e
         # A read would block, so loop around for another select
         # TODO lets have some logging in here ...
-        RagLogger.logger.info "waiting for IO: #{e.to_s}; #{command}"
+        #RagLogger.logger.info "waiting for IO: #{e.to_s}; #{command}"
       rescue EOFError => e
         # Command has completed, not really an error...
-        RagLogger.logger.info "command completed: #{e.to_s}; #{command}"
+        #RagLogger.logger.info "command completed: #{e.to_s}; #{command}"
         break
       end
     end
