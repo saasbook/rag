@@ -1,6 +1,7 @@
 # Courtesy of https://gist.github.com/1032297
 require 'open3'
 require 'timeout'
+require_relative 'rag_logger'
 
 # Runs a specified shell command in a separate thread.
 # If it exceeds the given timeout in seconds, kills it.
@@ -10,13 +11,12 @@ require 'timeout'
 #
 # If you've got a cleaner way of doing this, I'd be interested to see it.
 # If you think you can do it with Ruby's Timeout module, think again.
-def run_with_timeout(command, timeout,tick=1)
-  #debugger
+
+def run_with_timeout(command, timeout, tick=1, buffer_size=1024)
   # I wonder if 'tick' this is the problem - that we don't wait long enough to get output/error data, but we loop
   # is it possible that we accidentally overwrite the output somehow ... however we are just appending to output ...
   output = ''
   erroutput = ''
-  buffer_size = 256
   begin
     # Start task in another thread, which spawns a process
     stdin, stdout, stderrout, thread = Open3.popen3(command)
@@ -31,11 +31,13 @@ def run_with_timeout(command, timeout,tick=1)
       begin
         output << stdout.read_nonblock(buffer_size)
         erroutput << stderrout.read_nonblock(buffer_size)
-      rescue IO::WaitReadable
+      rescue IO::WaitReadable => e
         # A read would block, so loop around for another select
         # TODO lets have some logging in here ...
-      rescue EOFError
+        RagLogger.logger.info "waiting for IO: #{e.to_s}; #{command}"
+      rescue EOFError => e
         # Command has completed, not really an error...
+        RagLogger.logger.info "command completed: #{e.to_s}; #{command}"
         break
       end
     end
@@ -55,3 +57,4 @@ def run_with_timeout(command, timeout,tick=1)
   #debugger
   return [output, erroutput, thread.value.exitstatus]
 end
+
