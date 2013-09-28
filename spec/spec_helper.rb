@@ -3,6 +3,10 @@ SimpleCov.start do
   add_filter "/spec/"
 end
 
+RSpec.configure do |c|
+  c.filter_run_excluding :sandbox => true
+end
+
 require 'grader'
 require 'auto_grader'
 require 'auto_grader_subprocess'
@@ -21,4 +25,6 @@ require 'coursera_client'
 require 'edx_client'
 require 'edx_controller'
 require 'edx_submission'
+
+require 'run_with_timeout'
 
