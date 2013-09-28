@@ -100,3 +100,84 @@ Execution and tests
 There is also checking the skeletons against the full specs and the sanity specs against the full solutions.
 
 
+## The mutation testing/feature grader (HW 3)
+
+At a high level HW3 and others that use `FeatureGrader` work by running
+student-submitted Cucumber scenarios against modified versions of a
+instructor-provided app. 
+
+The Following Diagram roughly describes the flow of the autograder :
+
+<img src="./feature_grader.png"/>
+
+Each step defined in the .yml file can have scenarios to run iff that step passes.
+
+Example from hw3.yml:
+
+    - &step1-1
+          FEATURE: features/filter_movie_list.feature
+          pass: true
+          weight: 0.2
+          if_pass:
+          - &step1-3
+          FEATURE: features/filter_movie_list.feature
+          version: 2
+          weight: 0.075
+          desc: "results = [G, PG-13] movies"
+          failures:
+          - *restrict_pg_r
+          - *all_x_selected
+
+In this case if step1-1 passes, Step 1-3 will be run. If step1-1 fails
+then step1-3 will not run and the student will not receive points for
+it. It is important that the outer step be less restrictive than the
+inner step (If the outer one fails, there should be no way that the
+inner one could pass). 
+
+Step1-3 has two scenarios specified as failures; this indicates that
+when the cucumber features are run, both of those scenarios should
+fail. In other words, when the mutation for this step is added to the
+app, the student’s tests should detect the change and fail. (Example: If
+the test is to ensure that data is sorted, and the mutation is that the
+data is in reverse order, the student’s test should fail because the app
+is not behaving as expected) 
+
+### Defining a new step:
+
+In order to add a new step the following must be done:
+
+1. Add an entry to the .yml file.
+
+2. The new entry should be a hash  with the following properties:
+	1. `FEATURE`, a relative path to the Cucumber feature that will be run for this step.
+	2. `weight`, the fraction of total points on this homework
+        represented by this feature
+	3. `version`: This sets an environment variable that the
+ mutation-test app can  use to add any modifications desired to the app before the feature is run.
+	4. `desc`: A string describing the step, used when providing feedback
+
+3. Optional properties:
+	1. `failures` (list): scenarios that should fail in this step
+	2. `if_pass` (list): steps to run iff this step passes.
+
+### Defining a new Scenario:
+
+To define a new scenario add a new entry to the "scenarios" hash in the
+.yml file. 
+It is a good idea to set an alias for the scenario so it can be
+referenced later inside of steps. 
+
+The entry should contain:
+
+1. `match`: A regular expression that will identify the name of this
+scenario. (Used when parsing cucumber output to see if this scenario
+passed or failed) 
+
+2. `desc`: A description of the scenario. (Used to give feedback to the student)
+
+### Adding a mutation to the app:
+
+When a feature is run, the environment variable `version` will be set to
+the value of the `version` property for that feature.  Use this as a
+feature flag in the app (by checking `ENV["version"]`) to trigger a
+"bug", e.g. reversing sort order/not returning all data. 
