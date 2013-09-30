@@ -1,24 +1,11 @@
 require 'tempfile'
 
 Given(/^The solution file "(.*?)"$/) do |solution_file|
-
-  f = File.open("#{$APP}/#{solution_file}")
-  solution_text = f.read
-  f.close
-  testable_solution = Tempfile.new('solution')
-  testable_solution.write(solution_text)
-  testable_solution.flush
-  @solution_path = testable_solution.path
+  @solution_path = solution_file
 end
 
 Given(/^The spec file "(.*)"$/) do |spec_file|
-  f = File.open("#{$APP}/#{spec_file}")
-  spec_text = f.read
-  f.close
-  testable_spec = Tempfile.new('spec')
-  testable_spec.write(spec_text)
-  testable_spec.flush
-  @spec_path = testable_spec.path
+  @spec_path = spec_file
 end
 
 When(/^I run the local_autograder with "(.*)"$/) do |grader_type|
