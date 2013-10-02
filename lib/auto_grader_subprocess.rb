@@ -4,6 +4,7 @@ require 'timeout'
 
 require_relative 'rag_logger'
 require_relative 'run_with_timeout'
+require_relative 'escaper'
 
 module AutoGraderSubprocess
   extend RagLogger
@@ -41,6 +42,12 @@ module AutoGraderSubprocess
         {
           :timeout => 300,
           :cmd => %Q{./grade4 "#{file.path}" "#{spec}"}
+        }
+       when 'HW5Grader'
+          submission = escape_all_fields(submission)
+        {
+          :timeout => 300,
+          :cmd => %Q{./grade5 #{submission} "#{spec}"}
         }
       else
         {}
