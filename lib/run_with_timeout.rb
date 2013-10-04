@@ -30,6 +30,18 @@ def run_with_timeout(command, timeout, tick=1, buffer_size=1024)
       # Try to read the data
       begin
         output << stdout.read_nonblock(buffer_size)
+      rescue IO::WaitReadable => e
+        # A read would block, so loop around for another select
+        # TODO lets have some logging in here ...
+        #RagLogger.logger.info "waiting for IO: #{e.to_s}; #{command}"
+      rescue EOFError => e
+        # Command has completed, not really an error...
+        #RagLogger.logger.info "command completed: #{e.to_s}; #{command}"
+#        pid, status = Process.wait2(pid)
+#        RagLogger.logger.info "Process(##{pid}) exit status: #{status.exitstatus}"
+        break
+      end
+      begin
         erroutput << stderrout.read_nonblock(buffer_size)
       rescue IO::WaitReadable => e
         # A read would block, so loop around for another select
@@ -38,7 +50,8 @@ def run_with_timeout(command, timeout, tick=1, buffer_size=1024)
       rescue EOFError => e
         # Command has completed, not really an error...
         #RagLogger.logger.info "command completed: #{e.to_s}; #{command}"
-        break
+#        pid, status = Process.wait2(pid)
+#        RagLogger.logger.info "Process(##{pid}) exit status: #{status.exitstatus}"
       end
     end
     # Give Ruby time to clean up the other thread
