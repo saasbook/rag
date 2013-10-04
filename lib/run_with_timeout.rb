@@ -37,8 +37,6 @@ def run_with_timeout(command, timeout, tick=1, buffer_size=1024)
       rescue EOFError => e
         # Command has completed, not really an error...
         #RagLogger.logger.info "command completed: #{e.to_s}; #{command}"
-#        pid, status = Process.wait2(pid)
-#        RagLogger.logger.info "Process(##{pid}) exit status: #{status.exitstatus}"
         break
       end
       begin
@@ -50,8 +48,6 @@ def run_with_timeout(command, timeout, tick=1, buffer_size=1024)
       rescue EOFError => e
         # Command has completed, not really an error...
         #RagLogger.logger.info "command completed: #{e.to_s}; #{command}"
-#        pid, status = Process.wait2(pid)
-#        RagLogger.logger.info "Process(##{pid}) exit status: #{status.exitstatus}"
       end
     end
     # Give Ruby time to clean up the other thread
