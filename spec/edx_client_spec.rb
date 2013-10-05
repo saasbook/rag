@@ -125,6 +125,29 @@ EOF
         eval("class EdXClient; def continue_running_test(x); x > 0; end; end;")
         client.run
       end
+      
+      it 'should reload the autograders\' config after each sleep' do
+        wrong_autograder = {'test-assignment2' => { :uri => 'foo.com', :type => 'RspecGrader' } }
+        autograder = {'test-assignment' => { :uri => 'http://example.com', :type => 'RspecGrader' } }
+        EdXClient.stub(:init_autograders).and_return(wrong_autograder,autograder)
+        EdXClient.any_instance.stub(:continue_running_test).and_return(true,true,false)
+        EdXClient.any_instance.stub(:sleep)
+        controller.should_receive(:get_queue_length).and_return(0,0,1,1)
+        controller.should_receive(:authenticate)
+        controller.stub(:get_submission).and_return(submission)
+        client = EdXClient.new()
+        client.should_receive(:load_spec)
+        client.should_receive(:load_due_date)
+        client.should_receive(:load_grace_period)
+        client.stub(:generate_late_response).and_return(1,"")
+        client.should_receive(:write_student_submission)
+        client.stub(:run_autograder_subprocess).and_return(100,"woot!")
+        client.should_receive(:format_for_html).and_return("woot!")
+        controller.should_receive(:send_grade_response)
+        expect {client.run}.to change {client.autograders}.from(wrong_autograder).to(autograder)
+
+      end
+
 
       it 'should authenticate with EdX, grab submission and grade it' do
         controller.should_receive(:get_queue_length).and_return(1,1,0)
