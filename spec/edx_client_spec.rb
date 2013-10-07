@@ -125,7 +125,61 @@ EOF
         eval("class EdXClient; def continue_running_test(x); x > 0; end; end;")
         client.run
       end
-      
+
+      describe "#due date and grace period" do
+        before :each do
+          autograder = {
+            'test-assignment' => {
+              :uri => 'http://example.com',
+              :type => 'RspecGrader',
+              :due => 14921012060000,
+              :grace_period => 31,
+              :parts => {
+                'test-part-1' => {
+                  :uri => "../hw/solutions/test_part1_spec.rb",
+                  :type => 'RspecGrader',
+                  :due => 17760704120000,
+                  :grace_period => 1
+                },
+                'test-part-2' => {
+                  :uri => "../hw/solutions/test_part2_spec.rb",
+                  :type => 'RspecGrader',
+                  :due => 18630101130000,
+                  :grace_period => 8
+                }
+              }
+            }
+          }
+          EdXClient.stub(:init_autograders).and_return(autograder)
+        end
+
+        it 'should use part specific due date and grace period if available' do
+          client.send(:load_due_date, 'test-assignment', 'test-part-1').should eq 17760704120000
+          client.send(:load_due_date, 'test-assignment', 'test-part-2').should eq 18630101130000
+          client.send(:load_grace_period, 'test-assignment', 'test-part-1').should eq 1
+          client.send(:load_grace_period, 'test-assignment', 'test-part-2').should eq 8
+        end
+
+        it 'should fall back to queue specific due date and grace period if part specific not available' do
+          client = EdXClient.new()
+          client.autograders['test-assignment'].delete(:parts)
+          client.send(:load_due_date, 'test-assignment', 'test-part-1').should eq 14921012060000
+          client.send(:load_due_date, 'test-assignment', 'test-part-2').should eq 14921012060000
+          client.send(:load_grace_period, 'test-assignment', 'test-part-1').should eq 31
+          client.send(:load_grace_period, 'test-assignment', 'test-part-2').should eq 31
+        end
+
+        it 'should fall back to default values if queue and part specific are not available' do
+          client = EdXClient.new()
+          client.autograders['test-assignment'].delete(:parts)
+          client.autograders['test-assignment'].delete(:due)
+          client.autograders['test-assignment'].delete(:grace_period)
+          client.send(:load_due_date, 'test-assignment', 'test-part-1').should eq 20250910031500
+          client.send(:load_due_date, 'test-assignment', 'test-part-2').should eq 20250910031500
+          client.send(:load_grace_period, 'test-assignment', 'test-part-1').should eq 8
+          client.send(:load_grace_period, 'test-assignment', 'test-part-2').should eq 8
+        end
+      end
       it 'should reload the autograders\' config after each sleep' do
         wrong_autograder = {'test-assignment2' => { :uri => 'foo.com', :type => 'RspecGrader' } }
         autograder = {'test-assignment' => { :uri => 'http://example.com', :type => 'RspecGrader' } }
