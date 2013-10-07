@@ -154,6 +154,7 @@ EOF
         end
 
         it 'should use part specific due date and grace period if available' do
+          client = EdXClient.new()
           client.send(:load_due_date, 'test-assignment', 'test-part-1').should eq 17760704120000
           client.send(:load_due_date, 'test-assignment', 'test-part-2').should eq 18630101130000
           client.send(:load_grace_period, 'test-assignment', 'test-part-1').should eq 1
@@ -162,22 +163,32 @@ EOF
 
         it 'should fall back to queue specific due date and grace period if part specific not available' do
           client = EdXClient.new()
-          client.autograders['test-assignment'].delete(:parts)
+          client.autograders['test-assignment'][:parts]['test-part-1'].delete(:due)
+          client.autograders['test-assignment'][:parts]['test-part-1'].delete(:grace_period)
+          client.autograders['test-assignment'][:parts]['test-part-2'].delete(:due)
+          client.autograders['test-assignment'][:parts]['test-part-2'].delete(:grace_period)
           client.send(:load_due_date, 'test-assignment', 'test-part-1').should eq 14921012060000
           client.send(:load_due_date, 'test-assignment', 'test-part-2').should eq 14921012060000
+          client.send(:load_due_date, 'test-assignment').should eq 14921012060000
           client.send(:load_grace_period, 'test-assignment', 'test-part-1').should eq 31
           client.send(:load_grace_period, 'test-assignment', 'test-part-2').should eq 31
+          client.send(:load_grace_period, 'test-assignment').should eq 31
         end
 
         it 'should fall back to default values if queue and part specific are not available' do
           client = EdXClient.new()
-          client.autograders['test-assignment'].delete(:parts)
+          client.autograders['test-assignment'][:parts]['test-part-1'].delete(:due)
+          client.autograders['test-assignment'][:parts]['test-part-1'].delete(:grace_period)
+          client.autograders['test-assignment'][:parts]['test-part-2'].delete(:due)
+          client.autograders['test-assignment'][:parts]['test-part-2'].delete(:grace_period)
           client.autograders['test-assignment'].delete(:due)
           client.autograders['test-assignment'].delete(:grace_period)
           client.send(:load_due_date, 'test-assignment', 'test-part-1').should eq 20250910031500
           client.send(:load_due_date, 'test-assignment', 'test-part-2').should eq 20250910031500
+          client.send(:load_due_date, 'test-assignment').should eq 20250910031500
           client.send(:load_grace_period, 'test-assignment', 'test-part-1').should eq 8
           client.send(:load_grace_period, 'test-assignment', 'test-part-2').should eq 8
+          client.send(:load_grace_period, 'test-assignment').should eq 8
         end
       end
       it 'should reload the autograders\' config after each sleep' do
