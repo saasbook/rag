@@ -17,7 +17,7 @@ class EdXClient
   include RagLogger
   include AutoGraderSubprocess
 
-  attr_reader :name
+  attr_reader :name, :autograders
 
   class EdXClient::UnknownAssignmentPart < StandardError ; end
   class EdXClient::SpecNotFound < StandardError ; end
@@ -37,9 +37,10 @@ class EdXClient
     @halt = conf['halt']
     @sleep_duration = conf['sleep_duration'].nil? ? 5*60 : conf['sleep_duration'] # in seconds
 
+    @autograders_conf = conf['autograders_yml']
     # Load configuration file for assignment_id->spec map
 
-    @autograders = EdXClient.init_autograders(conf['autograders_yml'])
+    @autograders = EdXClient.init_autograders(@autograders_conf)
     @name = @autograders.values.first[:name]
   end
 
@@ -229,6 +230,7 @@ class EdXClient
         if all_empty
           logger.info "sleeping for #{@sleep_duration} seconds"
           sleep @sleep_duration
+          @autograders = EdXClient.init_autograders(@autograders_conf)
         end
       end
     end
