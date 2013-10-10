@@ -4,7 +4,7 @@ describe "Run With Timeout" do
 
   [1].each do |tick|
     [4].each do |timeout|
-      [128].each do |buffer_size|
+      [1,50,128].each do |buffer_size|
         it "should return output, error, and thread status with a timeout of #{timeout} and tick #{tick} and buffer_size #{buffer_size} " do
           run_test timeout, tick, buffer_size
         end
