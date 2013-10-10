@@ -106,7 +106,7 @@ class HW4Grader < AutoGrader
         # Cleanup things
         FileUtils.rm_rf File.join(tmpdir, "coverage")
 
-        Dir.chdir(tmpdir) do 
+        Dir.chdir(tmpdir) do
           env = {
             'RAILS_ROOT' => tmpdir,
             'RAILS_ENV' => 'test'
@@ -180,7 +180,7 @@ class HW4Grader < AutoGrader
   def setup_rails_app(env)
     setup_cmds = [
       "bundle install --without production",
-      "rake db:migrate",# db:test:prepare",
+      "bundle exec rake db:migrate",# db:test:prepare",
     ]
     setup_cmds.each do |cmd|
       Open3.popen3(env, cmd) do |stdin, stdout, stderr, wait_thr|
@@ -196,7 +196,7 @@ class HW4Grader < AutoGrader
 
   def test_prepare(env)
     setup_cmds = [
-      "rake db:test:prepare"
+      "bundle exec rake db:test:prepare"
     ]
     setup_cmds.each do |cmd|
       Open3.popen3(env, cmd) do |stdin, stdout, stderr, wait_thr|
@@ -214,7 +214,7 @@ class HW4Grader < AutoGrader
     max_score = @cucumber_config[:student].delete :points
     cuke = rspec = ''
     @raw_max += max_score
-    Open3.popen3(env, "rake saas:run_student_tests") do |stdin, stdout, stderr, wait_thr|
+    Open3.popen3(env, "bundle exec rake saas:run_student_tests") do |stdin, stdout, stderr, wait_thr|
       exitstatus = wait_thr.value.exitstatus
       out = stdout.read
       err = stderr.read
