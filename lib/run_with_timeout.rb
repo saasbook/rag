@@ -1,7 +1,7 @@
 # Courtesy of https://gist.github.com/1032297
 require 'open3'
 require 'timeout'
-require_relative 'rag_logger'
+require 'ruby-debug'
 
 # Runs a specified shell command in a separate thread.
 # If it exceeds the given timeout in seconds, kills it.
@@ -23,14 +23,14 @@ def run_with_timeout(command, timeout, tick=1, buffer_size=1024)
     # Get the pid of the spawned process
     pid = thread[:pid]
     start = Time.now
+    stderr_empty = false
 
-    while (Time.now - start) < timeout and thread.alive?
+    while (Time.now - start) < timeout #and thread.alive?
       # Wait up to `tick` seconds for output/error data
       Kernel.select([stdout, stderrout], nil, nil, tick)
       # Try to read the data
       begin
         output << stdout.read_nonblock(buffer_size)
-        erroutput << stderrout.read_nonblock(buffer_size)
       rescue IO::WaitReadable => e
         # A read would block, so loop around for another select
         # TODO lets have some logging in here ...
@@ -39,6 +39,17 @@ def run_with_timeout(command, timeout, tick=1, buffer_size=1024)
         # Command has completed, not really an error...
         #RagLogger.logger.info "command completed: #{e.to_s}; #{command}"
         break
+      end
+      begin
+        erroutput << stderrout.read_nonblock(buffer_size) unless stderr_empty
+      rescue IO::WaitReadable => e
+        # A read would block, so loop around for another select
+        # TODO lets have some logging in here ...
+        #RagLogger.logger.info "waiting for IO: #{e.to_s}; #{command}"
+      rescue EOFError => e
+        stderr_emtpy = true
+        # Command has completed, not really an error...
+        #RagLogger.logger.info "command completed: #{e.to_s}; #{command}"
       end
     end
     # Give Ruby time to clean up the other thread
