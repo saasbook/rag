@@ -50,10 +50,8 @@ class EdXClient
       submission_time=student_info["submission_time"]
       user_id=student_info["anonymous_student_id"]
       spec,grader_type = load_spec(assignment_part_sid,part_name)
-      due_date =load_due_date(assignment_part_sid)
-      #due_date =load_due_date(assignment_part_sid,part_name)
-      grace_period=load_grace_period(assignment_part_sid)
-      #grace_period=load_grace_period(assignment_part_sid,part_name)
+      due_date =load_due_date(assignment_part_sid,part_name)
+      grace_period=load_grace_period(assignment_part_sid,part_name)
       late_scale,late_comments=generate_late_response(submission_time,due_date,grace_period)
       logger.info "Lateness scaling factor is #{late_scale}"
       write_student_submission(user_id,submission,part_name)
@@ -107,7 +105,7 @@ class EdXClient
         logger.fatal "Part name #{part_name} not found!"
         raise "Part name #{part_name} not found!"
       end
-      due = @autograders[assignment_part_sid][:parts][part_name][:due] 
+      due = @autograders[assignment_part_sid][:parts][part_name]['due'] 
       #Use the queue specific due date, if no assignment specific is given
       due ||= @autograders[assignment_part_sid][:due]
     end
