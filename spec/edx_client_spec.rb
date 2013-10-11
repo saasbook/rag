@@ -159,16 +159,16 @@ EOF
               :grace_period => 31,
               :parts => {
                 'test-part-1' => {
-                  :uri => "../hw/solutions/test_part1_spec.rb",
-                  :type => 'RspecGrader',
-                  :due => 17760704120000,
-                  :grace_period => 1
+                  'uri' => "../hw/solutions/test_part1_spec.rb",
+                  'type' => 'RspecGrader',
+                  'due' => 17760704120000,
+                  'grace_period' => 1
                 },
                 'test-part-2' => {
-                  :uri => "../hw/solutions/test_part2_spec.rb",
-                  :type => 'RspecGrader',
-                  :due => 18630101130000,
-                  :grace_period => 8
+                  'uri' => "../hw/solutions/test_part2_spec.rb",
+                  'type' => 'RspecGrader',
+                  'due' => 18630101130000,
+                  'grace_period' => 8
                 }
               }
             }
@@ -186,10 +186,10 @@ EOF
 
         it 'should fall back to queue specific due date and grace period if part specific not available' do
           client = EdXClient.new()
-          client.autograders['test-assignment'][:parts]['test-part-1'].delete(:due)
-          client.autograders['test-assignment'][:parts]['test-part-1'].delete(:grace_period)
-          client.autograders['test-assignment'][:parts]['test-part-2'].delete(:due)
-          client.autograders['test-assignment'][:parts]['test-part-2'].delete(:grace_period)
+          client.autograders['test-assignment'][:parts]['test-part-1'].delete('due')
+          client.autograders['test-assignment'][:parts]['test-part-1'].delete('grace_period')
+          client.autograders['test-assignment'][:parts]['test-part-2'].delete('due')
+          client.autograders['test-assignment'][:parts]['test-part-2'].delete('grace_period')
           client.send(:load_due_date, 'test-assignment', 'test-part-1').should eq 14921012060000
           client.send(:load_due_date, 'test-assignment', 'test-part-2').should eq 14921012060000
           client.send(:load_due_date, 'test-assignment').should eq 14921012060000
@@ -200,10 +200,10 @@ EOF
 
         it 'should fall back to default values if queue and part specific are not available' do
           client = EdXClient.new()
-          client.autograders['test-assignment'][:parts]['test-part-1'].delete(:due)
-          client.autograders['test-assignment'][:parts]['test-part-1'].delete(:grace_period)
-          client.autograders['test-assignment'][:parts]['test-part-2'].delete(:due)
-          client.autograders['test-assignment'][:parts]['test-part-2'].delete(:grace_period)
+          client.autograders['test-assignment'][:parts]['test-part-1'].delete('due')
+          client.autograders['test-assignment'][:parts]['test-part-1'].delete('grace_period')
+          client.autograders['test-assignment'][:parts]['test-part-2'].delete('due')
+          client.autograders['test-assignment'][:parts]['test-part-2'].delete('grace_period')
           client.autograders['test-assignment'].delete(:due)
           client.autograders['test-assignment'].delete(:grace_period)
           client.send(:load_due_date, 'test-assignment', 'test-part-1').should eq 20250910031500

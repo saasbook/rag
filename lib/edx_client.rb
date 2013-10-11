@@ -130,7 +130,7 @@ class EdXClient
         logger.fatal "Part name #{part_name} not found!"
         raise "Part name #{part_name} not found!"
       end
-      grace = @autograders[assignment_part_sid][:parts][part_name][:grace_period] 
+      grace = @autograders[assignment_part_sid][:parts][part_name]['grace_period']
       #Use the queue specific grace period, if no assignment specific is given
       grace ||= @autograders[assignment_part_sid][:grace_period]
     end
