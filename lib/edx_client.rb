@@ -51,7 +51,9 @@ class EdXClient
       user_id=student_info["anonymous_student_id"]
       spec,grader_type = load_spec(assignment_part_sid,part_name)
       due_date =load_due_date(assignment_part_sid)
+      #due_date =load_due_date(assignment_part_sid,part_name)
       grace_period=load_grace_period(assignment_part_sid)
+      #grace_period=load_grace_period(assignment_part_sid,part_name)
       late_scale,late_comments=generate_late_response(submission_time,due_date,grace_period)
       logger.info "Lateness scaling factor is #{late_scale}"
       write_student_submission(user_id,submission,part_name)
@@ -88,23 +90,52 @@ class EdXClient
 #begin private functions
   private
   #this works for grouped assignments
-  def load_due_date(assignment_part_sid)
-    
+  #def load_due_date(assignment_part_sid)
+  def load_due_date(assignment_part_sid, part_name=nil)  
     unless @autograders.include?(assignment_part_sid)
       logger.fatal "Assignment part #{assignment_part_sid} not found!"
       raise "Assignment part #{assignment_part_sid} not found!"
     end
-    due= @autograders[assignment_part_sid][:due]   
+    if part_name.nil?
+      due = @autograders[assignment_part_sid][:due]
+    else
+      unless @autograders[assignment_part_sid].include?(:parts)
+        logger.fatal ":parts not found!"
+        raise ":parts not found!"
+      end
+      unless @autograders[assignment_part_sid][:parts].include?(part_name)
+        logger.fatal "Part name #{part_name} not found!"
+        raise "Part name #{part_name} not found!"
+      end
+      due = @autograders[assignment_part_sid][:parts][part_name][:due] 
+      #Use the queue specific due date, if no assignment specific is given
+      due ||= @autograders[assignment_part_sid][:due]
+    end
     due ||= 20250910031500 #if no due date is given choose one in 2025 FIX Before 2025
   end
 
-  def load_grace_period(assignment_part_sid)
-    
+  #def load_grace_period(assignment_part_sid)
+  def load_grace_period(assignment_part_sid, part_name=nil)
+
     unless @autograders.include?(assignment_part_sid)
       logger.fatal "Assignment part #{assignment_part_sid} not found!"
       raise "Assignment part #{assignment_part_sid} not found!"
     end
-    grace= @autograders[assignment_part_sid][:grace_period]
+    if part_name.nil?
+      grace = @autograders[assignment_part_sid][:grace_period]
+    else
+      unless @autograders[assignment_part_sid].include?(:parts)
+        logger.fatal ":parts not found!"
+        raise ":parts not found!"
+      end
+      unless @autograders[assignment_part_sid][:parts].include?(part_name)
+        logger.fatal "Part name #{part_name} not found!"
+        raise "Part name #{part_name} not found!"
+      end
+      grace = @autograders[assignment_part_sid][:parts][part_name][:grace_period] 
+      #Use the queue specific grace period, if no assignment specific is given
+      grace ||= @autograders[assignment_part_sid][:grace_period]
+    end
     grace=grace.to_i unless grace.nil?   
     grace ||= 8 #if no grace period is found choose 1 week +24 hours
   end
