@@ -187,7 +187,13 @@ EOF
         end
       end
 
-
+      describe "#generate_late_response" do
+        it 'should generate a late response' do
+          client = EdXClient.new()
+          client.send(:generate_late_response, 20131014060000, 20131015050000, 0, 1)
+        end
+      end
+      
 
       describe "#due date and grace period" do
         before :each do
