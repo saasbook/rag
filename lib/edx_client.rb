@@ -168,7 +168,7 @@ class EdXClient
   
   
   
-  def generate_late_response(received_date, due_date,grace_period)
+  def generate_late_response(received_date, due_date,grace_period,late_period)
     received_time=DateTime.parse(received_date.to_s)
     due_time=DateTime.parse(due_date.to_s)
     lateness=received_time-due_time
