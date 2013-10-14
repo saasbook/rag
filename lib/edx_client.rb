@@ -138,6 +138,36 @@ class EdXClient
     grace ||= 8 #if no grace period is found choose 1 week +24 hours
   end
   
+  def load_late_period(assignment_part_sid, part_name=nil)
+
+    unless @autograders.include?(assignment_part_sid)
+      logger.fatal "Assignment part #{assignment_part_sid} not found!"
+      raise "Assignment part #{assignment_part_sid} not found!"
+    end
+    if part_name.nil?
+      late = @autograders[assignment_part_sid][:late_period]
+    else
+      unless @autograders[assignment_part_sid].include?(:parts)
+        logger.fatal ":parts not found!"
+        raise ":parts not found!"
+      end
+      unless @autograders[assignment_part_sid][:parts].include?(part_name)
+        logger.fatal "Part name #{part_name} not found!"
+        raise "Part name #{part_name} not found!"
+      end
+      late = @autograders[assignment_part_sid][:parts][part_name]['late_period']
+      #Use the queue specific late period, if no assignment specific is given
+      late ||= @autograders[assignment_part_sid][:late_period]
+    end
+    late=late.to_i unless late.nil?   
+    late ||= 0 #if no late period is found choose 1 week +24 hours
+  end
+  
+  
+  
+  
+  
+  
   def generate_late_response(received_date, due_date,grace_period)
     received_time=DateTime.parse(received_date.to_s)
     due_time=DateTime.parse(due_date.to_s)
