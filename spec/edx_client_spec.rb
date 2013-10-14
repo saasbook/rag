@@ -98,7 +98,7 @@ EOF
     autograders = EdXClient.init_autograders('./config/autograders.yml')
     autograders['assign-0-queue'][:name].should eq 'test-pull'
     autograders['assign-0-queue'][:type].should eq 'WeightedRspecGrader'
-    autograders['assign-0-queue'][:late_period].should eq '2'
+    autograders['assign-0-queue'][:late_period].should eq 2
   end
 
 
