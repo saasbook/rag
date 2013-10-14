@@ -152,6 +152,42 @@ EOF
 
       end
 
+      describe "#late period" do
+         before :each do
+          autograder = {
+            'test-assignment' => {
+              :uri => 'http://example.com',
+              :type => 'RspecGrader',
+              :due => 14921012060000,
+              :grace_period => 31,
+              :late_period => 2,
+              :parts => {
+                'test-part-1' => {
+                  'uri' => "../hw/solutions/test_part1_spec.rb",
+                  'type' => 'RspecGrader',
+                  'due' => 17760704120000,
+                  'grace_period' => 1,
+                  'late_period' => 3,
+                },
+                'test-part-2' => {
+                  'uri' => "../hw/solutions/test_part2_spec.rb",
+                  'type' => 'RspecGrader',
+                  'due' => 18630101130000,
+                  'grace_period' => 8
+                }
+              }
+            }
+          }
+        EdXClient.stub(:init_autograders).and_return(autograder)
+        end
+
+        it 'should load default late period' do
+          client = EdXClient.new()
+          client.send(:load_late_period, 'test-assignment').should eq 2
+        end
+      end
+
+
 
       describe "#due date and grace period" do
         before :each do
@@ -161,12 +197,14 @@ EOF
               :type => 'RspecGrader',
               :due => 14921012060000,
               :grace_period => 31,
+              :late_period => 2,
               :parts => {
                 'test-part-1' => {
                   'uri' => "../hw/solutions/test_part1_spec.rb",
                   'type' => 'RspecGrader',
                   'due' => 17760704120000,
-                  'grace_period' => 1
+                  'grace_period' => 1,
+                  'late_period' => 3,
                 },
                 'test-part-2' => {
                   'uri' => "../hw/solutions/test_part2_spec.rb",
