@@ -82,6 +82,7 @@ assign-0-queue:
   type: WeightedRspecGrader
   due:  20130822205959
   grace_period: 7
+  late_period: 2
   parts:
     assign-0-part-1:
       uri: ../hw/solutions/part1_spec.rb
@@ -97,7 +98,10 @@ EOF
     autograders = EdXClient.init_autograders('./config/autograders.yml')
     autograders['assign-0-queue'][:name].should eq 'test-pull'
     autograders['assign-0-queue'][:type].should eq 'WeightedRspecGrader'
+    autograders['assign-0-queue'][:late_period].should eq '2'
   end
+
+
 
   describe "#run" do
     before :each do
