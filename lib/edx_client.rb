@@ -6,6 +6,7 @@ require 'net/http'
 require 'base64'
 require 'cgi'
 require 'date'
+require 'ruby-debug'
 
 require_relative 'rag_logger'
 require_relative 'edx_controller'
@@ -52,7 +53,9 @@ class EdXClient
       spec,grader_type = load_spec(assignment_part_sid,part_name)
       due_date =load_due_date(assignment_part_sid,part_name)
       grace_period=load_grace_period(assignment_part_sid,part_name)
-      late_scale,late_comments=generate_late_response(submission_time,due_date,grace_period)
+      late_period=load_late_period(assignment_part_sid,part_name)
+      
+      late_scale,late_comments=generate_late_response(submission_time,due_date,grace_period,late_period)
       logger.info "Lateness scaling factor is #{late_scale}"
       write_student_submission(user_id,submission,part_name)
       begin
@@ -139,7 +142,6 @@ class EdXClient
   end
   
   def load_late_period(assignment_part_sid, part_name=nil)
-
     unless @autograders.include?(assignment_part_sid)
       logger.fatal "Assignment part #{assignment_part_sid} not found!"
       raise "Assignment part #{assignment_part_sid} not found!"
@@ -178,9 +180,9 @@ class EdXClient
     
     return [0.75, "Late assignment: score scaled by .75\n"] unless lateness > grace_period
     
-    return [0.5, "Between one and two days late: score scaled by: .5\n"] unless lateness > (grace_period +1)
+    return [0.5, "It's less than #{late_period} day(s) late: score scaled by: .5\n"] unless lateness > (grace_period + late_period)
     
-    return [0.0, "More than two days late: no points awarded\n"]
+    return [0.0, "More than #{late_period} day(s) late: no points awarded\n"]
   end
 
   def load_spec(assignment_part_sid,part_id)
