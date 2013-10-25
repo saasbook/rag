@@ -1,0 +1,40 @@
+# Epic stuff taken from https://bbs.archlinux.org/viewtopic.php?id=55618
+
+# Basic config
+vbell off                # annoying
+startup_message off      # also annoying
+altscreen on             # don't leave garbage on screen after quitting
+nonblock on              # don't block on fail processes
+
+# Pretty colors
+term screen-256color
+attrcolor b ".I"
+  # Tell screen how to set colors. AB = background, AF=foreground 
+termcapinfo xterm 'Co#256:AB=\E[48;5;%dm:AF=\E[38;5;%dm'
+
+# change the hardstatus settings to give an window list at the bottom of the
+# screen, with the time and date and with the current window highlighted
+hardstatus alwayslastline
+#hardstatus string '%{= kG}%-Lw%{= kW}%50> %n%f* %t%{= kG}%+Lw%< %{= kG}%-=%c:%s%{-}'
+hardstatus string '%{= kG}[ %{G}%H %{g}][%= %{= kw}%?%-Lw%?%{r}(%{W}%n*%f%t%?(%u)%?%{r})%{w}%?%+Lw%?%?%= %{g}][%{B} %m-%d %{W}%c %{g}]'
+
+# Enable SHIFT-PGUP / SHIFT-PGDOWN scroll
+termcapinfo rxvt-unicode ti@:te@
+#termcapinfo wy* CS=\E[?1h:CE=\E[?1l:vi=\E[?25l:ve=\E[?25h:VR=\E[?5h:VN=\E[?5l:cb=\E[1K:CD=\E[1J
+terminfo rxvt-unicode ti@:te@:
+setenv LC_CTYPE en_US.UTF-8
+defutf8 on
+
+# Hotkeys to change windows
+# bindkey ";6C" next  # ctrl+right    # wtf these make bells all over the place
+# bindkey ";6D" prev  # ctrl+left
+bindkey "^l" next
+bindkey "^h" prev
+
+# Reload screenrc. useful!
+bindkey "4;5~" eval 'source ~/.screenrc' 'echo "screenrc reloaded."'   # ctrl+f12
+
+bindkey "^n" screen
+
+# Copy screen-exchange to system clipboard
+bind b eval writebuf 'exec /bin/sh -c "xclip -i -sel c < /tmp/screen-exchange"'
