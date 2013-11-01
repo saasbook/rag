@@ -33,3 +33,4 @@ Feature: Test Simple Ruby Code
   Examples:
     | buggy_code             | comment                                      | expected | got |
     | def hello(name); name; end | Failure/Error: hello("Dan").should eq('Hello, Dan'), "Incorrect results for input: \"Dan\"" |||
+    | def starts_with_consonant?(s); false; end |  Failure/Error: starts_with_consonant?("Veeeeeeee").should be_true, "Incorrect results for input: \"Veeeeeeee\""|||
