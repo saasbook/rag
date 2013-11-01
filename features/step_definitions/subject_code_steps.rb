@@ -52,6 +52,8 @@ When /^I run the ruby intro grader for "(.*?)"$/ do |homework_number|
       specfile = './spec/fixtures/ruby_intro_part1_spec.rb'
     when "HW0-2"
       specfile= './spec/fixtures/ruby_intro_part2_spec.rb'
+    when "HW0-3"
+      specfile= './spec/fixtures/ruby_intro_part3_spec.rb'
   end
 
   @output = `ruby #{$APP}/grade #{@codefile} #{specfile}`
