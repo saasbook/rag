@@ -44,6 +44,15 @@ Then /^the "(.*)" section should contain "(.*)"$/ do |section, str|
 end
 
 When /^I run the ruby intro grader for "(.*?)"$/ do |homework_number|
-  specfile = './spec/fixtures/ruby_intro_part1_spec.rb'
+
+
+  case  homework_number
+
+    when "HW0-1"
+      specfile = './spec/fixtures/ruby_intro_part1_spec.rb'
+    when "HW0-2"
+      specfile='./spec/fixtures/ruby_intro_part2_spec.rb'
+  end
+
   @output = `ruby #{$APP}/grade #{@codefile} #{specfile}`
 end

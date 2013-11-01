@@ -21,3 +21,15 @@ Feature: Test Simple Ruby Code
     |def sum_to_n?(array, p); false; end|Failure/Error: sum_to_n?([1,2,3,4,5], 5).should be_true|  expected: true value| got: false|
     |def sum_to_n?(array, p); false; end|Failure/Error: sum_to_n?([], 0).should be_true|expected: true value| got: false|
 
+
+  Scenario Outline: check buggy code in Hw0-2
+
+    Given a simple ruby submission containing "<buggy_code>"
+    When I run the ruby intro grader for "HW0-2"
+    And the "rspec comments" section should contain "<comment>"
+    And the "rspect comments" section should contain "<expected>"
+    And the "rspect comments" section should contain "<got>"
+  #TODO: Rework these examples to support more than one comment/expectation/got per example of code
+  Examples:
+    | buggy_code             | comment                                      | expected | got |
+    | def hello(name) name; end | Failure/Error: hello("Dan").should eq('Hello, Dan'), "Incorrect results for input: \"Dan\"" |||
