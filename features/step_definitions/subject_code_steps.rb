@@ -37,6 +37,6 @@ Then /^the "(.*)" section should contain "(.*)"$/ do |section, str|
 end
 
 When /^I run the ruby intro grader for "(.*?)"$/ do |homework_number|
-  @specfile = 'spec/fixtures/ruby_intro_part1.rb'
-  @output = `ruby #{$APP}/grade #{@codefile} #{@specfile}`
+  specfile = './spec/fixtures/ruby_intro_part1_spec.rb'
+  @output = `ruby #{$APP}/grade #{@codefile} #{specfile}`
 end
