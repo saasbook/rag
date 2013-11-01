@@ -34,3 +34,4 @@ Feature: Test Simple Ruby Code
     | buggy_code             | comment                                      | expected | got |
     | def hello(name); name; end | Failure/Error: hello("Dan").should eq('Hello, Dan'), "Incorrect results for input: \"Dan\"" |||
     | def starts_with_consonant?(s); false; end |  Failure/Error: starts_with_consonant?("Veeeeeeee").should be_true, "Incorrect results for input: \"Veeeeeeee\""|||
+    | def binary_multiple_of_4?(s); false end | Failure/Error: binary_multiple_of_4?("1010101010100").should be_true, "Incorrect results for input: \"1010101010100\""|||
