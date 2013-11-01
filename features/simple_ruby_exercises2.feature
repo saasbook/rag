@@ -6,10 +6,10 @@ Feature: test dangerous code
 
   Scenario Outline: kinds of dangerous code
 
-    Given a submission containing "<dangerous_code>"
+    Given a simple ruby submission containing "<buggy_code>"
     When I run the ruby intro grader for "HW0-1"
     And the "rspec comments" section should contain "<comment>"
 
   Examples:
-    | dangerous_code         | comment                    |
+    | buggy_code         | comment                    |
     | def sum(array); 0; end | Failure/Error: sum([1,2,3,4,5]).should == 15 |

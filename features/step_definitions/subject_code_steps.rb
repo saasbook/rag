@@ -13,7 +13,14 @@ Given /^a submission containing "(.*)"$/ do |code|
   file.flush
   @codefile = file.path
 end
-
+Given /^a simple ruby submission containing "(.*)"$/ do |code|
+  file = Tempfile.new('cucumber-code')
+  file.write %Q{
+        #{code}
+}
+  file.flush
+  @codefile = file.path
+end
 When /^I run the generic RSpec grader$/ do
   specfile = Tempfile.new('cucumber-spec')
   specfile.write %Q{
