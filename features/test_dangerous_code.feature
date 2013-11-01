@@ -12,7 +12,7 @@ Scenario Outline: kinds of dangerous code
   And the "rspec comments" section should contain "<comment>"
 
   Examples:
-    | dangerous_code           | comment                    |
-    | loop do ; end            | execution expired          |
+    | buggy_code               | comment                    |
+    #| loop do ; end            | execution expired          |
     | File.open('/etc/passwd') | unsafe operation attempted |
     | # fork while fork        | unsafe operation attempted |
