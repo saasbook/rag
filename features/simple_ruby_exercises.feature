@@ -1,10 +1,10 @@
-Feature: test dangerous code
+Feature: Test Simple Ruby Code
 
-  As a course instructor
-  So that I can grade thousands and thousands of programming hw's efficiently
-  I want to fail safely when dangerous code is submitted
+  As a beginning rubyist
+  So that I can improve my ruby skills 
+  I want to receive feedback on my errors
 
-  Scenario Outline: kinds of dangerous code
+  Scenario Outline: kinds of buggy code
 
     Given a simple ruby submission containing "<buggy_code>"
     When I run the ruby intro grader for "HW0-1"
