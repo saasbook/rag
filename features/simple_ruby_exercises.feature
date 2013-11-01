@@ -32,4 +32,4 @@ Feature: Test Simple Ruby Code
   #TODO: Rework these examples to support more than one comment/expectation/got per example of code
   Examples:
     | buggy_code             | comment                                      | expected | got |
-    | def hello(name) name; end | Failure/Error: hello("Dan").should eq('Hello, Dan'), "Incorrect results for input: \"Dan\"" |||
+    | def hello(name); name; end | Failure/Error: hello("Dan").should eq('Hello, Dan'), "Incorrect results for input: \"Dan\"" |||
