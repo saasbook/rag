@@ -4,7 +4,7 @@ Feature: Test Simple Ruby Code
   So that I can improve my ruby skills 
   I want to receive feedback on my errors
 
-  Scenario Outline: kinds of buggy code
+  Scenario Outline: check buggy code in HW0-1
 
     Given a simple ruby submission containing "<buggy_code>"
     When I run the ruby intro grader for "HW0-1"
@@ -36,7 +36,7 @@ Feature: Test Simple Ruby Code
     | def starts_with_consonant?(s); false; end |  Failure/Error: starts_with_consonant?("Veeeeeeee").should be_true, "Incorrect results for input: \"Veeeeeeee\""|||
     | def binary_multiple_of_4?(s); false end | Failure/Error: binary_multiple_of_4?("1010101010100").should be_true, "Incorrect results for input: \"1010101010100\""|||
 
-  Scenario Outline: check buggy code in Hw0-2
+  Scenario Outline: check buggy code in Hw0-3
 
     Given a simple ruby submission containing "<buggy_code>"
     When I run the ruby intro grader for "HW0-3"
