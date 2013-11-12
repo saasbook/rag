@@ -180,7 +180,7 @@ class HW4Grader < AutoGrader
   def setup_rails_app(env)
     setup_cmds = [
       "bundle install --without production",
-      "rake db:migrate",# db:test:prepare",
+      "bundle exec rake db:migrate",# db:test:prepare",
     ]
     setup_cmds.each do |cmd|
       Open3.popen3(env, cmd) do |stdin, stdout, stderr, wait_thr|
@@ -196,7 +196,7 @@ class HW4Grader < AutoGrader
 
   def test_prepare(env)
     setup_cmds = [
-      "rake db:test:prepare"
+      "bundle exec rake db:test:prepare"
     ]
     setup_cmds.each do |cmd|
       Open3.popen3(env, cmd) do |stdin, stdout, stderr, wait_thr|
@@ -214,7 +214,7 @@ class HW4Grader < AutoGrader
     max_score = @cucumber_config[:student].delete :points
     cuke = rspec = ''
     @raw_max += max_score
-    Open3.popen3(env, "rake saas:run_student_tests") do |stdin, stdout, stderr, wait_thr|
+    Open3.popen3(env, "bundle exec rake saas:run_student_tests") do |stdin, stdout, stderr, wait_thr|
       exitstatus = wait_thr.value.exitstatus
       out = stdout.read
       err = stderr.read
@@ -274,8 +274,8 @@ class HW4Grader < AutoGrader
     # I don't know why we only care about the first one, but the FastReturn
     # mess was only grading 1 feature anyways. Ask Richard Xia.
     feature = @cucumber_config[:ref][:features][0]
-    score = FeatureGrader::Feature.total([feature])
-    # score = FeatureGrader::Feature.total(@cucumber_config[:ref][:features])
+    score = HW4Grader::Feature.total([feature])
+    # score = HW4Grader::Feature.total(@cucumber_config[:ref][:features])
     steps = feature.scenarios[:steps]
     if steps[:passed] != steps[:total]
       separator = '-'*40  # TODO move this
@@ -301,7 +301,7 @@ class HW4Grader < AutoGrader
     }
 
     { :scenarios => FeatureGrader::ScenarioMatcher,
-      :features  => FeatureGrader::Feature
+      :features  => HW4Grader::Feature
     }.each_pair do |label,klass|
       raise(ArgumentError, "Unable to find required key '#{label}' in #{@description}") unless y[label]
       y[label].each {|h| h[:object] = klass.new(self, h, feature_config)}
@@ -313,7 +313,7 @@ class HW4Grader < AutoGrader
         f[attr].collect! {|h| h.is_a?(Hash) ? h[:object] : h} if f.has_key?(attr)
       end
 
-      f[:if_pass].collect! {|h| featurize.call(h); FeatureGrader::Feature.new(self, h, feature_config)} if f.has_key?(:if_pass)
+      f[:if_pass].collect! {|h| featurize.call(h); HW4Grader::Feature.new(self, h, feature_config)} if f.has_key?(:if_pass)
     end
 
     y[:features].each {|h| featurize.call(h)}
@@ -371,3 +371,4 @@ class HW4Grader < AutoGrader
     puts "#{name}: #{end_time - start_time}s"
   end
 end
+

@@ -1,4 +1,4 @@
-class FeatureGrader < AutoGrader
+class HW4Grader < AutoGrader
   class Feature
     class TestFailedError < StandardError; end   # Internal error
     class IncorrectAnswer < StandardError; end   # Incorrect answer encountered
@@ -9,11 +9,13 @@ class FeatureGrader < AutoGrader
       BlankLine = /^$/
       FailingScenarios = /^Failing Scenarios:$/
       StepResult = /^(\d+) steps \(.*?(\d+) passed.*\)/
+      StepResultFull = /^(\d+) scenarios \((?:(\d+) failed)?,?\s*(?:(\d+) skipped)?,?\s*(?:(\d+) undefined)?,?\s*(?:(\d+) passed)?\)$/
     end
 
     attr_reader :if_pass, :target_pass, :feature, :score, :output, :desc, :weight
 
     attr_reader :grader
+    attr_reader :output
 
     # +Array+ of +ScenarioMatcher+s that should fail for this step,
     # or empty if it should pass in +cucumber+.
@@ -51,7 +53,7 @@ class FeatureGrader < AutoGrader
         #threads.each(&:join)
 
         # Dump output. TODO: better way to do this?
-        features.each { |f| f.dump_output }
+        # features.each { |f| f.dump_output }
 
         return s
       end
@@ -110,10 +112,11 @@ class FeatureGrader < AutoGrader
       passed = false
       lines = []
 
-      h["FEATURE"] = File.join(@config[:temp].path, h["FEATURE"])
+      base_path = @config[:base_path] || @config[:temp].path
+      h["FEATURE"] = File.join(base_path, h["FEATURE"])
 
       $m_db.synchronize do
-        h["TEST_DB"] = File.join(@config[:temp].path, "test_#{$i_db}.sqlite3")
+        h["TEST_DB"] = File.join(base_path, "test_#{$i_db}.sqlite3")
         $i_db += 1
       end
 
@@ -246,12 +249,30 @@ class FeatureGrader < AutoGrader
       end
 
       begin # parse result counts
-        result_lines = output.grep Regex::StepResult
+        #result_lines = output.grep Regex::StepResult
+        #unless result_lines.count == 1
+        #  log output
+        #  raise TestFailedError, "invalid cucumber results" + output.collect{|l| "#{l}\n"}.inspect
+        #end
+        #num_steps, num_passed = result_lines.first.scan(Regex::StepResult).first
+
+        result_lines = output.grep Regex::StepResultFull 
         unless result_lines.count == 1
           log output
-          raise TestFailedError, "invalid cucumber results"
+          raise TestFailedError, "invalid cucumber results" + output.collect{|l| "#{l}\n"}.inspect
         end
-        num_steps, num_passed = result_lines.first.scan(Regex::StepResult).first
+        num_steps, num_failed, num_skipped, num_undefined, num_passed = result_lines.first.scan(Regex::StepResultFull).first
+        num_passed ||= 0
+        num_skipped ||= 0
+        num_failed ||= 0
+        num_undefined ||= 0
+        num_passed = num_passed.to_i
+        num_skipped = num_skipped.to_i
+        num_failed = num_failed.to_i
+        num_steps = num_steps.to_i
+        num_undefined = num_undefined.to_i
+        num_steps -= num_skipped
+        @output = output
         @scenarios[:steps] = {:total => num_steps, :passed => num_passed}
       rescue => e
         raise
