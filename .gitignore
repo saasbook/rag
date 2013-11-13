@@ -6,3 +6,11 @@ config/conf.yml
 .idea/
 Gemfile.lock
 coverage/
+
+
+# avoiding symlinks needed for HW1.5 Oracle of Bacon
+spec/graph_example.xml
+spec/graph_example2.xml
+spec/spellcheck_example.xml
+spec/unauthorized_access.xml
+spec/unknown.xml
