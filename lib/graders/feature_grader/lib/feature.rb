@@ -249,7 +249,7 @@ class FeatureGrader < AutoGrader
         result_lines = output.grep Regex::StepResult
         unless result_lines.count == 1
           log output
-          raise TestFailedError, "invalid cucumber results"
+          raise TestFailedError, "invalid cucumber results" + output.join("\n")
         end
         num_steps, num_passed = result_lines.first.scan(Regex::StepResult).first
         @scenarios[:steps] = {:total => num_steps, :passed => num_passed}
