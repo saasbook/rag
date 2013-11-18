@@ -1,5 +1,6 @@
 require 'tempfile'
-
+require './lib/edx_client'
+require './lib/edx_controller'
 
 Given(/^a configuration file with a grace period of "(.*?)" and a late period of "(.*?)" and assignment date of "(.*?)"$/) do |grace, late,duedate|
 
@@ -7,25 +8,26 @@ Given(/^a configuration file with a grace period of "(.*?)" and a late period of
 end
 
 And(/^a student submits an assignment "(.*?)" days late$/) do |days|
-  EdXClient.init_autograders('./config/autograders.yml')
-  #client = EdXClient.new()
-
+  #EdXClient.init_autograders('./config/autograders.yml')
+  controller_mock = double("EdXController")
+  controller_mock.should_receive(:send_grade_response)
+  EdXController.stub(:new).and_return controller_mock
+  client = EdXClient.new()
+  client.should_receive(:each_submission).and_yield('assign-0-part-1','test-submission', 'assign-0-part-1', {"submission_time" => "#{Time.now}", "anonymous_student_id" => "1" })
   file = Tempfile.new('test-submission')
   file.write %Q{
     class MyClass
       def self.my_method
-        #{code}
         return 'foo'
       end
     end
   }
   file.flush
   submission_path = file.path
+  client.run()
+  #score, comments =AutoGraderSubprocess.run_autograder_subprocess(submission_path, spec, grader_type)
 
 
-  score, comments =AutoGraderSubprocess.run_autograder_subprocess(submission_path, spec, grader_type)
-
-  client.
   #submitted_date=Date.today+days
   # @output=""
 
@@ -103,18 +105,37 @@ def generateAutoConfigFile (graceDays,lateDays, dueDays)
   file = File.open('config/autograders.yml',"w")
   file.write %Q{
   assign-0-queue:
-  name: "test-pull"
-  type: WeightedRspecGrader
-  due : #{due_date}
-  grace_period: #{graceDays}
-  late_period: #{lateDays}
-  parts:
-    assign-0-part-1:
-      uri: ../hw/solutions/part1_spec.rb
-      type: WeightedRspecGrader
+    name: "test-pull"
+    type: WeightedRspecGrader
+    due : #{due_date}
+    grace_period: #{graceDays}
+    late_period: #{lateDays}
+    parts:
+      assign-0-part-1:
+        uri: ../hw/solutions/part1_spec.rb
+        type: WeightedRspecGrader
   }
 
   file.flush
   @codefile = file.path
+
+  file = File.open('config/conf.yml', "w")
+  file.write %Q{
+    live:
+      queue_uri: 'uri'
+      autograders_yml: ./config/autograders.yml
+      django_auth:
+        username: 'username'
+        password: 'password'
+      user_auth:
+        unnecessary: "unnecessary"
+        stuff: "stuff"
+      user_name: 'username'
+      user_pass: 'password'
+      halt: false # default: true, exit when all submission queues are empty
+      sleep_duration: 30 # default 300, time in seconds to sleep when all queues are empty, only valid when halt == false doesn't matter yet
+  }
+  file.flush
+  @configfile = file.path
 
 end
