@@ -1,5 +1,10 @@
 require 'tempfile'
 
+
+Given(/^a configuration file with a grace period of "(.*?)" and a late period of "(.*?)"$/) do |grace, late|
+  pending # express the regexp above with the code you wish you had
+end
+
 Given /^a submission containing "(.*)"$/ do |code|
   file = Tempfile.new('cucumber-code')
   file.write %Q{
