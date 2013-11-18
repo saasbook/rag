@@ -13,7 +13,14 @@ Given /^a submission containing "(.*)"$/ do |code|
   file.flush
   @codefile = file.path
 end
-
+Given /^a simple ruby submission containing "(.*)"$/ do |code|
+  file = Tempfile.new('cucumber-code')
+  file.write %Q{
+        #{code}
+}
+  file.flush
+  @codefile = file.path
+end
 When /^I run the generic RSpec grader$/ do
   specfile = Tempfile.new('cucumber-spec')
   specfile.write %Q{
@@ -34,4 +41,20 @@ end
 
 Then /^the "(.*)" section should contain "(.*)"$/ do |section, str|
   @output.should include(str)
+end
+
+When /^I run the ruby intro grader for "(.*?)"$/ do |homework_number|
+
+
+  case  homework_number
+
+    when "HW0-1"
+      specfile = './spec/fixtures/ruby_intro_part1_spec.rb'
+    when "HW0-2"
+      specfile= './spec/fixtures/ruby_intro_part2_spec.rb'
+    when "HW0-3"
+      specfile= './spec/fixtures/ruby_intro_part3_spec.rb'
+  end
+
+  @output = `ruby #{$APP}/grade #{@codefile} #{specfile}`
 end
