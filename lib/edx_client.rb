@@ -41,7 +41,6 @@ class EdXClient
     # Load configuration file for assignment_id->spec map
 
     @autograders = EdXClient.init_autograders(@autograders_conf)
-    debugger
     @name = @autograders.values.first[:name]
   end
 
