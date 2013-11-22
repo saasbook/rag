@@ -1,12 +1,25 @@
 require 'spec_helper'
 
 describe "GithubRspecGrader" do
-  let(:grader) do
-    grader.should_receive(:super).with('',{:spec => 'github_spec.rb'}).and_return nil
+
+  before do
+    File.should_receive(:readable?).with('github_spec.rb') .and_return true
     ENV.should_receive(:[]=).with('GITHUB_USERNAME','username')
+  end
+
+  it 'should set environmental variable correctly' do
     GithubRspecGrader.new('username',{:spec => 'github_spec.rb'})
   end
-  xit 'should show up in the test coverage' do
 
+  it 'should handle trailing spaces' do
+    GithubRspecGrader.new(' username ',{:spec => 'github_spec.rb'})
+  end
+
+  it 'should handle trailing line endings' do
+    GithubRspecGrader.new("username\n",{:spec => 'github_spec.rb'})
+  end
+
+  it 'should handle trailing line endings from windows' do
+    GithubRspecGrader.new("username\n\r",{:spec => 'github_spec.rb'})
   end
 end

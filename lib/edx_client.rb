@@ -70,7 +70,6 @@ class EdXClient
         logger.fatal(submission)
         raise
       end
-
       comments= late_comments.to_s + " " + comments.to_s
       get_checkmark=true
  
@@ -165,12 +164,7 @@ class EdXClient
     late ||= 0 #if no late period is found choose 1 week +24 hours
   end
   
-  
-  
-  
-  
-  
-  def generate_late_response(received_date, due_date,grace_period,late_period)
+  def generate_late_response(received_date, due_date,grace_period,late_period=1)
     received_time=DateTime.parse(received_date.to_s)
     due_time=DateTime.parse(due_date.to_s)
     lateness=received_time-due_time
