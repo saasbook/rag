@@ -93,14 +93,12 @@ end
 
 def generateAutoConfigFile (graceDays,lateDays, dueDays)
 
-  due_date = Date.today.strftime("%Y%m%d%H%M%S")
-
   file = File.open('config/autograders.yml',"w")
   file.write %Q{
   assign-0-queue:
     name: "test-pull"
     type: WeightedRspecGrader
-    due : #{due_date}
+    due : #{dueDays}
     grace_period: #{graceDays}
     late_period: #{lateDays}
     parts:
