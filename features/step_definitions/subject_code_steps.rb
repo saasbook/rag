@@ -7,23 +7,20 @@ Given(/^a configuration file with a grace period of "(.*?)" and a late period of
   generateAutoConfigFile(grace,late,duedate)
 end
 
-And(/^a student submits an assignment "(.*?)" days late$/) do |days|
+And(/^a student submits an assignment on "(.*?)" and gets a "(.*?)" days late message$/) do |submission_time, days_late|
   #EdXClient.init_autograders('./config/autograders.yml')
   controller_mock = double("EdXController")
-  controller_mock.should_receive(:send_grade_response)
+  controller_mock.should_receive(:send_grade_response).with(false,0,"")
   EdXController.stub(:new).and_return controller_mock
-  client = EdXClient.new()
-  client.should_receive(:each_submission).and_yield('assign-0-part-1','test-submission', 'assign-0-part-1', {"submission_time" => "#{Time.now}", "anonymous_student_id" => "1" })
-  file = Tempfile.new('test-submission')
-  file.write %Q{
+  code = %Q{
     class MyClass
       def self.my_method
         return 'foo'
       end
     end
   }
-  file.flush
-  submission_path = file.path
+  client = EdXClient.new
+  client.should_receive(:each_submission).and_yield("assign-0-queue", code, 'assign-0-part-1', {"submission_time" => submission_time, "anonymous_student_id" => "c2b7336d28e9341109bd03b1d041b544" })
   client.run()
   #score, comments =AutoGraderSubprocess.run_autograder_subprocess(submission_path, spec, grader_type)
 
@@ -33,9 +30,6 @@ And(/^a student submits an assignment "(.*?)" days late$/) do |days|
 
 
 end
-
-
-
 
 Given /^a submission containing "(.*)"$/ do |code|
   file = Tempfile.new('cucumber-code')
@@ -99,7 +93,6 @@ end
 
 def generateAutoConfigFile (graceDays,lateDays, dueDays)
 
-
   due_date = Date.today.strftime("%Y%m%d%H%M%S")
 
   file = File.open('config/autograders.yml',"w")
@@ -112,7 +105,7 @@ def generateAutoConfigFile (graceDays,lateDays, dueDays)
     late_period: #{lateDays}
     parts:
       assign-0-part-1:
-        uri: ../hw/solutions/part1_spec.rb
+        uri: ./spec/fixtures/ruby_intro_part1_spec.rb
         type: WeightedRspecGrader
   }
 

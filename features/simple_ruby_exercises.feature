@@ -9,8 +9,8 @@ Feature: Test Simple Ruby Code
     Given a simple ruby submission containing "<buggy_code>"
     When I run the ruby intro grader for "HW0-1"
     And the "rspec comments" section should contain "<comment>"
-    And the "rspect comments" section should contain "<expected>"
-    And the "rspect comments" section should contain "<got>"
+    And the "rspec comments" section should contain "<expected>"
+    And the "rspec comments" section should contain "<got>"
   #TODO: Rework these examples to support more than one comment/expectation/got per example of code
   Examples:
     | buggy_code             | comment                                      | expected | got |
@@ -27,8 +27,8 @@ Feature: Test Simple Ruby Code
     Given a simple ruby submission containing "<buggy_code>"
     When I run the ruby intro grader for "HW0-2"
     And the "rspec comments" section should contain "<comment>"
-    And the "rspect comments" section should contain "<expected>"
-    And the "rspect comments" section should contain "<got>"
+    And the "rspec comments" section should contain "<expected>"
+    And the "rspec comments" section should contain "<got>"
   #TODO: Rework these examples to support more than one comment/expectation/got per example of code
   Examples:
     | buggy_code             | comment                                      | expected | got |
@@ -41,8 +41,8 @@ Feature: Test Simple Ruby Code
     Given a simple ruby submission containing "<buggy_code>"
     When I run the ruby intro grader for "HW0-3"
     And the "rspec comments" section should contain "<comment>"
-    And the "rspect comments" section should contain "<expected>"
-    And the "rspect comments" section should contain "<got>"
+    And the "rspec comments" section should contain "<expected>"
+    And the "rspec comments" section should contain "<got>"
   #TODO: Rework these examples to support more than one comment/expectation/got per example of code
   Examples:
     | buggy_code             | comment                                      | expected | got |
