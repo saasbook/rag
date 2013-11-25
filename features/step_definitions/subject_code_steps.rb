@@ -7,13 +7,13 @@ Given(/^a configuration file with a grace period of "(.*?)" and a late period of
   generateAutoConfigFile(grace,late,duedate)
 end
 
-And(/^a student submits an assignment on "(.*?)" and gets a "(.*?)" days late message$/) do |submission_time, days_late|
+And(/^a student submits an assignment on "(.*?)" and gets a no credit period message$/) do |submission_time|
   #EdXClient.init_autograders('./config/autograders.yml')
   controller_mock = double("EdXController")
   controller_mock.should_receive(:send_grade_response) do |checkmark, score, comment|
     checkmark.should be_false
     score.should eq 0
-    comment.should =~ /^<pre>More than 3 day\(s\) late:/
+    comment.should =~ /^<pre>More than \d+ day\(s\) late:/
   end
   EdXController.stub(:new).and_return controller_mock
   code = %Q{
