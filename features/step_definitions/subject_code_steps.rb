@@ -95,14 +95,14 @@ When /^I run the ruby intro grader for "(.*?)"$/ do |homework_number|
 end
 
 
-def generateAutoConfigFile (graceDays,lateDays, dueDays)
+def generateAutoConfigFile (graceDays,lateDays, dueDate)
 
   file = File.open('config/autograders.yml',"w")
   file.write %Q{
   assign-0-queue:
     name: "test-pull"
     type: WeightedRspecGrader
-    due : #{dueDays}
+    due : #{dueDate}
     grace_period: #{graceDays}
     late_period: #{lateDays}
     parts:
