@@ -51,6 +51,8 @@ And(/^a student submits an assignment on "(.*?)" and gets a "(.*?)" period messa
       /^<pre>Late assignment: score scaled by .75/
     when "late"
       /^<pre>It's less than \d+ day\(s\) late: score scaled by: .5/
+    when "on time"
+      /^<pre>On Time/
     else
       /^Something not likely to be in the message/
   end
