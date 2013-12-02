@@ -1,0 +1,77 @@
+# This does not support http URIs yet
+#due for Berkeley course note that due time should be time in Boston(Berkeley time + 3) format YYYYMMDDHHMMSS
+#when in doubt leave Seconds portions=00
+assign-1-queue:
+  name: "cs169-rev-production"
+  type: WeightedRspecGrader
+  #due:  20121016031500
+  #due:  20140128120001
+  due: 20131016235959
+  grace_period: 7
+  parts:
+    assign-0-part-1:
+      uri: ../hw/ruby-intro/autograder/part1_spec.rb
+      type: WeightedRspecGrader
+    assign-0-part-2:
+      uri: ../hw/ruby-intro/autograder/part2_spec.rb
+      type: WeightedRspecGrader
+    assign-0-part-3:
+      uri: ../hw/ruby-intro/autograder/part3_spec.rb
+      type: WeightedRspecGrader
+    fall-2013-assign-1-part-1:
+      uri: ../hw/ruby-calisthenics/autograder/fun_with_strings_spec.rb
+      due: 20131010235959
+      type: WeightedRspecGrader
+    fall-2013-assign-1-part-2:
+      uri: ../hw/ruby-calisthenics/autograder/dessert_spec.rb
+      due: 20131023235959
+      type: WeightedRspecGrader
+    fall-2013-assign-1-part-3:
+      uri: ../hw/ruby-calisthenics/autograder/rock_paper_scissors_spec.rb
+      due: 20131023235959
+      type: WeightedRspecGrader
+    fall-2013-assign-1-part-4:
+      uri: ../hw/ruby-calisthenics/autograder/attr_accessor_with_history_spec.rb
+      due: 20131023235959
+      type: WeightedRspecGrader
+    fall-2013-assign-1.5-part-1:
+      uri: ../hw/oracle-of-bacon/autograder/spec/valid_instance_spec.rb
+      due: 20131026235959
+      type: WeightedRspecGrader
+    fall-2013-assign-1.5-part-2:
+      uri: ../hw/oracle-of-bacon/autograder/spec/parsing_xml_spec.rb
+      due: 20131026235959
+      type: WeightedRspecGrader
+    fall-2013-assign-1.5-part-3:
+      uri: ../hw/oracle-of-bacon/autograder/spec/constructing_uri_spec.rb
+      due: 20131026235959
+      type: WeightedRspecGrader
+    fall-2013-assign-1.5-part-4:
+      uri: ../hw/oracle-of-bacon/autograder/spec/connecting_to_service_spec.rb
+      due: 20131026235959
+      type: WeightedRspecGrader
+    fall-2013-assign-2-part-1:
+      uri: ../hw/rails-intro/autograder/combined_rails_intro_spec.rb 
+      due: 20131030235959
+      type: HerokuRspecGrader
+    assign-3-part-1:
+      uri: ../hw/bdd-cucumber/autograder/hw3.yml
+      due: 20131108235959
+      type: HW3Grader
+    hpu-assign-3-part-1:
+      uri: ../hw/bdd-cucumber/autograder/hw3.yml
+      due: 20991231235959
+      type: HW3Grader
+    assign-4-part-1:
+      uri: ../hw/bdd-tdd-cycle/autograder/hw4.yml
+      due: 20131115235959
+      type: HW4Grader
+    fall-2013-assign-5-part-1:
+      uri: ../hw/refactoring-legacy-code/autograder/part1_spec.rb
+      due: 20131122235959
+      type: HW5Grader
+    fall-2013-assign-5-part-2:
+      uri: ../hw/refactoring-legacy-code/autograder/part2_spec.rb
+      type: HW5Grader
+      due: 20131129235959
+

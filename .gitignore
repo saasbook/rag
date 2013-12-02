@@ -3,10 +3,11 @@
 .*.swp
 log/*
 config/conf.yml
+config/autograders.yml
+
 .idea/
 Gemfile.lock
 coverage/
-
 
 # avoiding symlinks needed for HW1.5 Oracle of Bacon
 spec/graph_example.xml
