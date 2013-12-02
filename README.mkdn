@@ -2,6 +2,7 @@ SAAS Autograder
 ==============
 
 Travis C. I. [![Build Status](https://travis-ci.org/saasbook/rag.png)](https://travis-ci.org/saasbook/rag)
+[![Code Climate](https://codeclimate.com/github/saasbook/rag.png)](https://codeclimate.com/github/saasbook/rag)
 
 
 ####Berkeley SAAS  w/ [edX](https://www.edx.org/)
