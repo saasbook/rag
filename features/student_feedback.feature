@@ -15,4 +15,7 @@ Feature: Feedback for Students
     Given a configuration file with a grace period of "1" day and a late period of "2" days and an assignment date of "October 10th 2013"
     And a student submits an assignment on "October 12th 2013" and gets a "late" period message
 
+  Scenario: correctly reports on time period
+    Given a configuration file with a grace period of "2" days and a late period of "3" days and an assignment date of "October 10th 2013"
+    And a student submits an assignment on "October 9th 2013" and gets a "on time" period message
 
