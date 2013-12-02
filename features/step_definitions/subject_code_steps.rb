@@ -2,14 +2,48 @@ require 'tempfile'
 require './lib/edx_client'
 require './lib/edx_controller'
 
-Given(/^a configuration file with a grace period of "(.*?)" and a late period of "(.*?)" and assignment date of "(.*?)"$/) do |grace, late,duedate|
+Given(/^a configuration file with a grace period of "(.*?)" days? and a late period of "(.*?)" days? and an assignment date of "(.*?)"/) do |graceDays,lateDays, dueDate|
+  dueDate = DateTime.parse dueDate # 20131010235959
+  file = File.open('config/autograders.yml',"w")
+  file.write %Q{
+  assign-0-queue:
+    name: "test-pull"
+    type: WeightedRspecGrader
+    due : #{dueDate.strftime '%Y%m%d%H%M%S'}
+    grace_period: #{graceDays}
+    late_period: #{lateDays}
+    parts:
+      assign-0-part-1:
+        uri: ./spec/fixtures/ruby_intro_part1_spec.rb
+        type: WeightedRspecGrader
+  }
 
-  generateAutoConfigFile(grace,late,duedate)
+  file.flush
+  @codefile = file.path
+
+  file = File.open('config/conf.yml', "w")
+  file.write %Q{
+    live:
+      queue_uri: 'uri'
+      autograders_yml: ./config/autograders.yml
+      django_auth:
+        username: 'username'
+        password: 'password'
+      user_auth:
+        unnecessary: "unnecessary"
+        stuff: "stuff"
+      user_name: 'username'
+      user_pass: 'password'
+      halt: false # default: true, exit when all submission queues are empty
+      sleep_duration: 30 # default 300, time in seconds to sleep when all queues are empty, only valid when halt == false doesn't matter yet
+  }
+  file.flush
+  @configfile = file.path
 end
 
 And(/^a student submits an assignment on "(.*?)" and gets a "(.*?)" period message$/) do |submission_time, period|
   #EdXClient.init_autograders('./config/autograders.yml')
-
+  submission_time = DateTime.parse submission_time
   message = case period
     when "no credit"
       /^<pre>More than \d+ day\(s\) late:/
@@ -35,7 +69,7 @@ And(/^a student submits an assignment on "(.*?)" and gets a "(.*?)" period messa
     end
   }
   client = EdXClient.new
-  client.should_receive(:each_submission).and_yield("assign-0-queue", code, 'assign-0-part-1', {"submission_time" => submission_time, "anonymous_student_id" => "c2b7336d28e9341109bd03b1d041b544" })
+  client.should_receive(:each_submission).and_yield("assign-0-queue", code, 'assign-0-part-1', {"submission_time" => submission_time.strftime('%Y%m%d%H%M%S'), "anonymous_student_id" => "c2b7336d28e9341109bd03b1d041b544" })
   client.run()
   #score, comments =AutoGraderSubprocess.run_autograder_subprocess(submission_path, spec, grader_type)
 
@@ -103,45 +137,4 @@ When /^I run the ruby intro grader for "(.*?)"$/ do |homework_number|
   end
 
   @output = `ruby #{$APP}/grade #{@codefile} #{specfile}`
-end
-
-
-def generateAutoConfigFile (graceDays,lateDays, dueDate)
-
-  file = File.open('config/autograders.yml',"w")
-  file.write %Q{
-  assign-0-queue:
-    name: "test-pull"
-    type: WeightedRspecGrader
-    due : #{dueDate}
-    grace_period: #{graceDays}
-    late_period: #{lateDays}
-    parts:
-      assign-0-part-1:
-        uri: ./spec/fixtures/ruby_intro_part1_spec.rb
-        type: WeightedRspecGrader
-  }
-
-  file.flush
-  @codefile = file.path
-
-  file = File.open('config/conf.yml', "w")
-  file.write %Q{
-    live:
-      queue_uri: 'uri'
-      autograders_yml: ./config/autograders.yml
-      django_auth:
-        username: 'username'
-        password: 'password'
-      user_auth:
-        unnecessary: "unnecessary"
-        stuff: "stuff"
-      user_name: 'username'
-      user_pass: 'password'
-      halt: false # default: true, exit when all submission queues are empty
-      sleep_duration: 30 # default 300, time in seconds to sleep when all queues are empty, only valid when halt == false doesn't matter yet
-  }
-  file.flush
-  @configfile = file.path
-
 end
