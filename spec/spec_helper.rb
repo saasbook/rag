@@ -25,6 +25,8 @@ require 'coursera_client'
 require 'edx_client'
 require 'edx_controller'
 require 'edx_submission'
+require 'fakefs/safe'
+
 
 require 'run_with_timeout'
 
