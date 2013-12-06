@@ -3,7 +3,7 @@ require 'spec_helper'
 describe "Run With Timeout" do
 
   [1].each do |tick|
-    [4].each do |timeout|
+    [8].each do |timeout|
       [1,50,128].each do |buffer_size|
         it "should return output, error, and thread status with a timeout of #{timeout} and tick #{tick} and buffer_size #{buffer_size} " do
           run_test timeout, tick, buffer_size
@@ -20,7 +20,7 @@ describe "Run With Timeout" do
         :buffer_size => buffer_size
     }
     stdout_text, stderr_text, exitstatus = run_with_timeout(opts[:cmd], opts[:timeout], opts[:tick], opts[:buffer_size])
-    stdout_text.should start_with "Score out of 100: 0"
+    stdout_text.should =~ /Score out of 100: 0/i
     match = stdout_text.match(/---BEGIN (?:cucumber|rspec|grader) comments---\n#{'-'*80}\n(.*)#{'-'*80}\n---END (?:cucumber|rspec|grader) comments---/m)
     if match.nil?
       puts stdout_text
