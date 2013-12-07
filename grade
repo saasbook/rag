@@ -29,7 +29,7 @@ end
 usage() if (ARGV.length!=2 || ARGV[0] =~ /^-?-h/)
 g = AutoGrader.create('1', 'WeightedRspecGrader', IO.read(ARGV[0]), :spec => ARGV[1])
 g.grade!
-puts "Score out of 100: #{g.normalized_score(100)}\n"
+puts "Normalized Score out of 100: #{g.normalized_score(100)}\n"
 puts "---BEGIN rspec comments---\n#{'-'*80}\n#{g.comments}\n#{'-'*80}\n---END rspec comments---"
 
 # PFX = 'spec/fixtures'

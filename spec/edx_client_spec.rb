@@ -13,7 +13,7 @@ describe EdXClient do
       conf['halt'] = false
       conf['sleep_duration'] = 30
 
-      EdXClient.should_receive(:load_configurations).with('live').and_return(conf)
+      EdXClient.should_receive(:load_configurations).with('live',"config/conf.yml").and_return(conf)
 
       auto_conf = {'assign-0-queue'=>{}}
       auto_conf['assign-0-queue'][:name] = 'test-pull'
@@ -82,6 +82,7 @@ assign-0-queue:
   type: WeightedRspecGrader
   due:  20130822205959
   grace_period: 7
+  late_period: 2
   parts:
     assign-0-part-1:
       uri: ../hw/solutions/part1_spec.rb
@@ -97,7 +98,10 @@ EOF
     autograders = EdXClient.init_autograders('./config/autograders.yml')
     autograders['assign-0-queue'][:name].should eq 'test-pull'
     autograders['assign-0-queue'][:type].should eq 'WeightedRspecGrader'
+    autograders['assign-0-queue'][:late_period].should eq 2
   end
+
+
 
   describe "#run" do
     before :each do
@@ -139,6 +143,7 @@ EOF
         client.should_receive(:load_spec)
         client.should_receive(:load_due_date)
         client.should_receive(:load_grace_period)
+        client.should_receive(:load_late_period)
         client.stub(:generate_late_response).and_return(1,"")
         client.should_receive(:write_student_submission)
         client.stub(:run_autograder_subprocess).and_return(100,"woot!")
@@ -148,6 +153,48 @@ EOF
 
       end
 
+      describe "#late period" do
+         before :each do
+          autograder = {
+            'test-assignment' => {
+              :uri => 'http://example.com',
+              :type => 'RspecGrader',
+              :due => 14921012060000,
+              :grace_period => 31,
+              :late_period => 2,
+              :parts => {
+                'test-part-1' => {
+                  'uri' => "../hw/solutions/test_part1_spec.rb",
+                  'type' => 'RspecGrader',
+                  'due' => 17760704120000,
+                  'grace_period' => 1,
+                  'late_period' => 3,
+                },
+                'test-part-2' => {
+                  'uri' => "../hw/solutions/test_part2_spec.rb",
+                  'type' => 'RspecGrader',
+                  'due' => 18630101130000,
+                  'grace_period' => 8
+                }
+              }
+            }
+          }
+        EdXClient.stub(:init_autograders).and_return(autograder)
+        end
+
+        it 'should load default late period' do
+          client = EdXClient.new()
+          client.send(:load_late_period, 'test-assignment').should eq 2
+        end
+      end
+
+      describe "#generate_late_response" do
+        it 'should generate a late response' do
+          client = EdXClient.new()
+          client.send(:generate_late_response, 20131014060000, 20131014050000, 0, 1).should eq [0.5, "It's less than 1 day(s) late: score scaled by: .5\n"]
+        end
+      end
+      
 
       describe "#due date and grace period" do
         before :each do
@@ -157,12 +204,14 @@ EOF
               :type => 'RspecGrader',
               :due => 14921012060000,
               :grace_period => 31,
+              :late_period => 2,
               :parts => {
                 'test-part-1' => {
                   'uri' => "../hw/solutions/test_part1_spec.rb",
                   'type' => 'RspecGrader',
                   'due' => 17760704120000,
-                  'grace_period' => 1
+                  'grace_period' => 1,
+                  'late_period' => 3,
                 },
                 'test-part-2' => {
                   'uri' => "../hw/solutions/test_part2_spec.rb",
@@ -214,28 +263,6 @@ EOF
           client.send(:load_grace_period, 'test-assignment').should eq 8
         end
       end
-      it 'should reload the autograders\' config after each sleep' do
-        wrong_autograder = {'test-assignment2' => { :uri => 'foo.com', :type => 'RspecGrader' } }
-        autograder = {'test-assignment' => { :uri => 'http://example.com', :type => 'RspecGrader' } }
-        EdXClient.stub(:init_autograders).and_return(wrong_autograder,autograder)
-        EdXClient.any_instance.stub(:continue_running_test).and_return(true,true,false)
-        EdXClient.any_instance.stub(:sleep)
-        controller.should_receive(:get_queue_length).and_return(0,0,1,1)
-        controller.should_receive(:authenticate)
-        controller.stub(:get_submission).and_return(submission)
-        client = EdXClient.new()
-        client.should_receive(:load_spec)
-        client.should_receive(:load_due_date)
-        client.should_receive(:load_grace_period)
-        client.stub(:generate_late_response).and_return(1,"")
-        client.should_receive(:write_student_submission)
-        client.stub(:run_autograder_subprocess).and_return(100,"woot!")
-        client.should_receive(:format_for_html).and_return("woot!")
-        controller.should_receive(:send_grade_response)
-        expect {client.run}.to change {client.autograders}.from(wrong_autograder).to(autograder)
-
-      end
-
 
       it 'should authenticate with EdX, grab submission and grade it' do
         controller.should_receive(:get_queue_length).and_return(1,1,0)
@@ -245,6 +272,7 @@ EOF
         client.should_receive(:load_spec)
         client.should_receive(:load_due_date)
         client.should_receive(:load_grace_period)
+        client.should_receive(:load_late_period)
         client.stub(:generate_late_response).and_return(1,"")
         client.should_receive(:write_student_submission)
         client.stub(:run_autograder_subprocess).and_return(100,"woot!")
