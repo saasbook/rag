@@ -143,22 +143,24 @@ When /^I run the ruby intro grader for "(.*?)"$/ do |homework_number|
   @output = `ruby #{$APP}/grade #{@codefile} #{specfile}`
 end
 
-Given(/^a simple cucumber submission containing a cuke "(.*?)", step "(.*?)" grade it with mutation file "(.*?)"$/) do |cucumber_code, cucumber_steps, mutation_yml|
+Given /^a simple cucumber submission containing a cuke "(.*)", step "(.*)" grade it with mutation file "(.*)"$/ do |cucumber_code, cucumber_steps, mutation_yml|
   # rag/grade3 -a solutions/rottenpotatoes <student_solution>.tar.gz rag/hw3.yml
- # file = Tempfile.new('features/test.feature')
- # file.write %Q{
-             #{cucumber_code}
- #            }
- # file.flush
- # file = Tempfile.new('features/step_definitions/test_steps.rb')
-  #file.write %Q{
-             #{cucumber_steps}
-  #           }
-  #file.flush
-  #`tar xzf features.tar.gz '
-  path_to_app = "rottenpotatoes"
-  command = "ruby #{$APP}/grade3 -a #{path_to_app} #{cucumber_code} #{mutation_file}"
+  create_step_folder_command = "mkdir -p /tmp/features/step_definitions"
+  create_folder_output = `#{create_step_folder_command}`
+  File.open('/tmp/features/test.feature','w') do |file|
+    file.write %Q{#{cucumber_code}}.gsub(',',"\n")
+  end
+  File.open('/tmp/features/step_definitions/test_steps.rb','w') do |file|
+    file.write %Q{#{cucumber_steps}}.gsub(',',"\n")
+  end
+  archive_command = "tar czf /tmp/features.tar.gz -C /tmp/ features/"
+  archive_output = `#{archive_command}`
+  command = "ruby #{$APP}/grade3 -a /tmp/ /tmp/features.tar.gz #{mutation_yml}"
   @feature_output= `#{command}`
   @feature_output.should_not be_nil, "command failure: {$?}"
   @feature_output.should eq("yay"), command
+  create_remove_command = "rm -rf /tmp/features"
+  create_folder_output = `#{create_remove_command}`
+  create_remove_command = "rm /tmp/features.tar.gz"
+  create_folder_output = `#{create_remove_command}`
 end
