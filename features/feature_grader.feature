@@ -4,9 +4,9 @@ Feature: Feature Grader
   I want to mutation test their cucumber code
 
 Scenario Outline: Simple Mutation Test
-  Given a simple cucumber submission containing "<cucumber_code>" grade it with mutation file "hwz.yml"
+  Given a simple cucumber submission containing a cuke "<cucumber_code>", step "<step>" grade it with mutation file "hwz.yml"
 
   #TODO: Rework these examples to support more than one comment/expectation/got per example of code
   Examples:
-    | cucumber_code                     | comment                                      | expected      | got               |
-    | features.tar.gz    | Failure/Error: sum([1,2,3,4,5]).should == 15 |  expected: 15 | got: 0 (using ==) |
+    | cucumber_code                                                  | step                                       | expected      | got               |
+    | Feature: feature \n Scenario: Test \n Given 1 is 1 \n          | Given /^1 is 1/                            |  expected: 15 | got: 0 (using ==) |

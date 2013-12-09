@@ -143,8 +143,19 @@ When /^I run the ruby intro grader for "(.*?)"$/ do |homework_number|
   @output = `ruby #{$APP}/grade #{@codefile} #{specfile}`
 end
 
-Given(/^a simple cucumber submission containing "([^"]*)" grade it with mutation file "([^"]*)"$/) do |cucumber_code, mutation_file|
+Given(/^a simple cucumber submission containing a cuke "(.*?)", step "(.*?)" grade it with mutation file "(.*?)"$/) do |cucumber_code, cucumber_steps, mutation_yml|
   # rag/grade3 -a solutions/rottenpotatoes <student_solution>.tar.gz rag/hw3.yml
+ # file = Tempfile.new('features/test.feature')
+ # file.write %Q{
+             #{cucumber_code}
+ #            }
+ # file.flush
+ # file = Tempfile.new('features/step_definitions/test_steps.rb')
+  #file.write %Q{
+             #{cucumber_steps}
+  #           }
+  #file.flush
+  #`tar xzf features.tar.gz '
   path_to_app = "rottenpotatoes"
   command = "ruby #{$APP}/grade3 -a #{path_to_app} #{cucumber_code} #{mutation_file}"
   @feature_output= `#{command}`
