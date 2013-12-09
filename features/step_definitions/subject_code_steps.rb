@@ -142,3 +142,12 @@ When /^I run the ruby intro grader for "(.*?)"$/ do |homework_number|
 
   @output = `ruby #{$APP}/grade #{@codefile} #{specfile}`
 end
+
+Given(/^a simple cucumber submission containing "([^"]*)" grade it with mutation file "([^"]*)"$/) do |cucumber_code, mutation_file|
+  # rag/grade3 -a solutions/rottenpotatoes <student_solution>.tar.gz rag/hw3.yml
+  path_to_app = "rottenpotatoes"
+  command = "ruby #{$APP}/grade3 -a #{path_to_app} #{cucumber_code} #{mutation_file}"
+  @feature_output= `#{command}`
+  @feature_output.should_not be_nil, "command failure: {$?}"
+  @feature_output.should eq("yay"), command
+end
