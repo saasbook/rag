@@ -1,0 +1,17 @@
+scenarios:
+  - &test
+    match: "false"
+
+features:
+- &step1-1
+    FEATURE: features/test.feature
+    pass: true
+    weight: 0.2
+    if_pass:
+      - &step1-2
+        FEATURE: features/test.feature
+        version: 2
+        weight: 0.075
+        desc: "results false"
+        failures:
+          - *test
