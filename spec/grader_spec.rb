@@ -38,6 +38,10 @@ describe 'Command Line Interface' do
     expect(grader).not_to eq Grader.help
     #AutoGrader.create('1', 'WeightedRspecGrader', IO.read(ARGV[0]), :spec => ARGV[1])
   end
+  it 'should be able to handle feature grader arguments' do
+    grader = Grader.cli(["-t","HW3Grader","/tmp/","features.tar.gz","hwz.yml"])
+    expect(grader).not_to eq Grader.help
+  end
   xit 'should be able to receive different arguments depending on the grader specified' do
     #HW1 e.g. new_grader -t WeightedRspecGrader "#{PFX}/correct_example.rb", "#{PFX}/correct_example.spec.rb"
     #HW1.5 e.g. new_grader -t HerokuRspecGrader? github_user_name specfile.rb

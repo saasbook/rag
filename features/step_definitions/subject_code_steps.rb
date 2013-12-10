@@ -155,6 +155,8 @@ Given /^a simple cucumber submission containing a cuke "(.*)", step "(.*)" grade
   end
   archive_command = "tar czf /tmp/features.tar.gz -C /tmp/ features/"
   archive_output = `#{archive_command}`
+  `mkdir -p /tmp/db/`
+  `touch /tmp/db/test.sqlite3`
   command = "ruby ./grade3 -a /tmp/ /tmp/features.tar.gz #{mutation_yml}"
   @feature_output = `#{command}`
  # @feature_output.should_not be_nil, "command failure: {$?}"
