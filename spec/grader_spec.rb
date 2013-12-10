@@ -39,7 +39,7 @@ describe 'Command Line Interface' do
     #AutoGrader.create('1', 'WeightedRspecGrader', IO.read(ARGV[0]), :spec => ARGV[1])
   end
   it 'should be able to handle feature grader arguments' do
-    grader = Grader.cli(["-t","HW3Grader","/tmp/","features.tar.gz","hwz.yml"])
+    grader = Grader.cli(["-t","HW3Grader","-a","/tmp/","features.tar.gz","hwz.yml"])
     expect(grader).not_to eq Grader.help
   end
   xit 'should be able to receive different arguments depending on the grader specified' do
