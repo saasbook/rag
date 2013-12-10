@@ -27,8 +27,8 @@ class EdXClient
   # directory and it must represent a hash from assignment_part_sid's to
   # spec URIs
 
-  def initialize(conf_name=nil)
-    conf = EdXClient.load_configurations(conf_name)
+  def initialize(conf_name=nil,config_path='config/conf.yml')
+    conf = EdXClient.load_configurations(conf_name,config_path)
     @endpoint = conf['queue_uri'] 
 
     @user_auth=conf['user_auth'].values
@@ -174,9 +174,9 @@ class EdXClient
     
     return [0.75, "Late assignment: score scaled by .75\n"] unless lateness > grace_period
     
-    return [0.5, "It's less than #{late_period} day(s) late: score scaled by: .5\n"] unless lateness > (grace_period + late_period)
+    return [0.5, "It's less than #{grace_period + late_period} day(s) late: score scaled by: .5\n"] unless lateness > (grace_period + late_period)
     
-    return [0.0, "More than #{late_period} day(s) late: no points awarded\n"]
+    return [0.0, "More than #{grace_period + late_period} day(s) late: no points awarded\n"]
   end
 
   def load_spec(assignment_part_sid,part_id)
@@ -291,8 +291,7 @@ class EdXClient
     end
   end
 
-  def self.load_configurations(conf_name=nil)
-    config_path = 'config/conf.yml'
+  def self.load_configurations(conf_name=nil, config_path='config/conf.yml')
     unless File.file?(config_path)
       puts "Please copy conf.yml.example into conf.yml and configure the parameters"
       exit

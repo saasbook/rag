@@ -13,7 +13,7 @@ describe EdXClient do
       conf['halt'] = false
       conf['sleep_duration'] = 30
 
-      EdXClient.should_receive(:load_configurations).with('live').and_return(conf)
+      EdXClient.should_receive(:load_configurations).with('live',"config/conf.yml").and_return(conf)
 
       auto_conf = {'assign-0-queue'=>{}}
       auto_conf['assign-0-queue'][:name] = 'test-pull'

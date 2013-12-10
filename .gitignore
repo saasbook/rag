@@ -9,6 +9,10 @@ config/autograders.yml
 Gemfile.lock
 coverage/
 
+cert_file
+config/test_conf.yml
+spec/log/
+
 # avoiding symlinks needed for HW1.5 Oracle of Bacon
 spec/graph_example.xml
 spec/graph_example2.xml

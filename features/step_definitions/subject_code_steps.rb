@@ -4,7 +4,7 @@ require './lib/edx_controller'
 
 Given(/^a configuration file with a grace period of "(.*?)" days? and a late period of "(.*?)" days? and an assignment date of "(.*?)"/) do |graceDays,lateDays, dueDate|
   dueDate = DateTime.parse dueDate # 20131010235959
-  file = File.open('config/autograders.yml',"w")
+  file = File.open('config/test_autograders.yml',"w")
   file.write %Q{
   assign-0-queue:
     name: "test-pull"
@@ -21,11 +21,11 @@ Given(/^a configuration file with a grace period of "(.*?)" days? and a late per
   file.flush
   @codefile = file.path
 
-  file = File.open('config/conf.yml', "w")
+  file = File.open('config/test_conf.yml', "w")
   file.write %Q{
     live:
       queue_uri: 'uri'
-      autograders_yml: ./config/autograders.yml
+      autograders_yml: ./config/test_autograders.yml
       django_auth:
         username: 'username'
         password: 'password'
@@ -45,6 +45,8 @@ And(/^a student submits an assignment on "(.*?)" and gets a "(.*?)" period messa
   #EdXClient.init_autograders('./config/autograders.yml')
   submission_time = DateTime.parse submission_time
   message = case period
+    when "no late period credit"
+      /^<pre>More than \d+ day\(s\) late:/
     when "no credit"
       /^<pre>More than \d+ day\(s\) late:/
     when "grace"
@@ -70,7 +72,7 @@ And(/^a student submits an assignment on "(.*?)" and gets a "(.*?)" period messa
       end
     end
   }
-  client = EdXClient.new
+  client = EdXClient.new nil, 'config/test_conf.yml'
   client.should_receive(:each_submission).and_yield("assign-0-queue", code, 'assign-0-part-1', {"submission_time" => submission_time.strftime('%Y%m%d%H%M%S'), "anonymous_student_id" => "c2b7336d28e9341109bd03b1d041b544" })
   client.run()
   #score, comments =AutoGraderSubprocess.run_autograder_subprocess(submission_path, spec, grader_type)
