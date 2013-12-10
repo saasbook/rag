@@ -166,3 +166,30 @@ Given /^a simple cucumber submission containing a cuke "(.*)", step "(.*)" grade
   #create_remove_command = "rm /tmp/features.tar.gz"
   #create_folder_output = `#{create_remove_command}`
 end
+
+When(/^I run a WeightedRspecGrader$/) do
+  # equivalent to ./new_grader -t WeightedRspecGrader spec/fixtures/correct_example.rb spec/fixtures/correct_example.spec.rb
+  args = ['-t', 'WeightedRspecGrader','spec/fixtures/correct_example.rb','spec/fixtures/correct_example.spec.rb']
+  @cli_output = Grader.cli(args)
+end
+
+Then(/^it should have the expected output$/) do
+  weighted_rspec_output =
+      <<EndOfOutput
+Score out of 100: 0
+---BEGIN rspec comments---
+--------------------------------------------------------------------------------
+
+MyCode
+  should return true for my_method
+
+Finished in \d\.\d* seconds
+1 example, 0 failures
+
+
+--------------------------------------------------------------------------------
+---END rspec comments---
+EndOfOutput
+  @cli_output.should =~ weighted_rspec_output
+end
+
