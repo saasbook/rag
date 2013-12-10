@@ -1,10 +1,10 @@
+---
 scenarios:
   - &test
     match: "false"
 
 features:
-- &step1-1
+  - &step1-1
     FEATURE: features/test.feature
     pass: true
     desc: "results false"
-    
