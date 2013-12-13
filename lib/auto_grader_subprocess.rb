@@ -43,11 +43,16 @@ module AutoGraderSubprocess
           :timeout => 300,
           :cmd => %Q{./grade4 "#{file.path}" "#{spec}"}
         }
-       when 'HW5Grader'
-          submission = escape_all_fields(submission)
+      when 'HW5Grader'
+        submission = escape_all_fields(submission)
         {
           :timeout => 300,
           :cmd => %Q{./grade5 #{submission} "#{spec}"}
+        }
+      when 'MigrationGrader'
+        {
+          :timeout => 300,
+          :cmd => %Q{./grade6 "#{file.path}" "#{spec}"}
         }
       else
         {}
