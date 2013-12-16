@@ -174,22 +174,7 @@ When(/^I run a WeightedRspecGrader$/) do
 end
 
 Then(/^it should have the expected output$/) do
-  weighted_rspec_output =
-      <<EndOfOutput
-Score out of 100: 0
----BEGIN rspec comments---
---------------------------------------------------------------------------------
-
-MyCode
-  should return true for my_method
-
-Finished in \d\.\d* seconds
-1 example, 0 failures
-
-
---------------------------------------------------------------------------------
----END rspec comments---
-EndOfOutput
-  @cli_output.should =~ weighted_rspec_output
+  @@COMMENT_REGEX = /---BEGIN (?:cucumber|rspec|grader) comments---\n#{'-'*80}\n(.*)#{'-'*80}\n---END (?:cucumber|rspec|grader) comments---/m
+  @cli_output.should =~ @@COMMENT_REGEX
 end
 
