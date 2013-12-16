@@ -174,7 +174,6 @@ When(/^I run a WeightedRspecGrader$/) do
 end
 
 Then(/^it should have the expected output$/) do
-  @@COMMENT_REGEX = /---BEGIN (?:cucumber|rspec|grader) comments---\n#{'-'*80}\n(.*)#{'-'*80}\n---END (?:cucumber|rspec|grader) comments---/m
-  @cli_output.should =~ @@COMMENT_REGEX
+  @cli_output.should =~ AutoGraderSubprocess::COMMENT_REGEX
 end
 
