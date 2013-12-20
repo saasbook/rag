@@ -3,7 +3,7 @@ require './lib/auto_grader.rb'
 class Grader
 
   def self.cli(args)
-    return help unless args.respond_to? 'length' and args.length >= 4
+    return help unless args.respond_to? :length and args.length >= 4
     case type = args[1]
       when 'HW3Grader' then return handle_hw3_grader args
       when /RspecGrader/ then return handle_rspec_grader args
