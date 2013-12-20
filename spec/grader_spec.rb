@@ -38,17 +38,12 @@ describe 'Command Line Interface' do
   end
   it 'should be able to handle feature grader arguments' do
     grader = Grader.cli(["-t","HW3Grader","-a","/tmp/","features.tar.gz","hwz.yml"])
-    # Nil test fails due to problem parsing feature file used for test, prob could be yml file too?
-    #   WARNING: No DRb server is running. Running features locally:
-    #   /tmp/submission20131219-23360-18y5qd7/features/test.feature:
-    #   Parse error at /tmp/submission20131219-23360-18y5qd7/features/test.feature:1.
-    #   Found scenario when expecting one of: comment, feature, tag. (Current state: root). (Gherkin::Parser::ParseError)
     expect(grader).not_to be_nil
     expect(grader).not_to eq Grader.help
   end
   xit 'should be able to receive different arguments depending on the grader specified' do
     #HW1 e.g. new_grader -t WeightedRspecGrader "#{PFX}/correct_example.rb", "#{PFX}/correct_example.spec.rb"
-    #HW1.5 e.g. new_grader -t HerokuRspecGrader? github_user_name specfile.rb
+    #HW1.5 e.g. new_grader -t GithubRspecGrader? github_user_name specfile.rb
     #HW2 e.g. new_grader -t HerokuRspecGrader submission_uri specfile.rb
     #HW3 e.g. new_grader -t HW3Grader -a /path/to/app/ input.tar.gz description.yml
     #HW4 e.g. new_grader -t HW4Grader input.tar.gz description.yml
