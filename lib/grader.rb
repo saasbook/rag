@@ -30,7 +30,7 @@ class Grader
         g.grade!
         feedback g
       rescue Object => e
-        STDERR.puts "*** FATAL: #{e.respond_to? :message ? e.message : 'unspecified error'}"
+        STDERR.puts "*** FATAL: #{e.respond_to?(:message) ? e.message : 'unspecified error'}"
       end
     ensure
       Dir::chdir start_dir
