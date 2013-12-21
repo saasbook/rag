@@ -9,4 +9,4 @@ Scenario Outline: Simple Mutation Test
   #TODO: Rework these examples to support more than one comment/expectation/got per example of code
   Examples:
     | cucumber_code                                       | step                                  | expected          | got                    |
-    | Scenario: Test,Feature: feature,Given 1 is 1        | Given /^1 is 1/ do,true,end           | expected: false   | got: true              | 
+    | Feature: feature,Scenario: Test,Given 1 is 1        | Given /^1 is 1/ do,true,end           | expected: false   | got: true              |
