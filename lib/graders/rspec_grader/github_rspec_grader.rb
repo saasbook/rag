@@ -5,4 +5,8 @@ class GithubRspecGrader < WeightedRspecGrader
     super('', grading_rules)
     ENV['GITHUB_USERNAME'] = username.strip.delete("\n")
   end
+
+  def self.cli(args)
+    RspecGrader::cli args
+  end
 end

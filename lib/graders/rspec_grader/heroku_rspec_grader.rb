@@ -10,4 +10,8 @@ class HerokuRspecGrader < WeightedRspecGrader
     ENV['HEROKU_URI'] = @heroku_uri
     super
   end
+
+  def self.cli(args)
+    RspecGrader::cli args
+  end
 end
