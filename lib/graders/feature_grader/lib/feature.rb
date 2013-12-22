@@ -131,8 +131,6 @@ class FeatureGrader < AutoGrader
         Open3.popen3(h, $CUKE_RUNNER, popen_opts) do |stdin, stdout, stderr, wait_thr|
           #exit_status = wait_thr.value
           lines = stdout.readlines
-          # unmute stderr to propagate errs from the tests for devel/debug 
-          stderr.readlines.each{ |e| print e }
           lines.each(&:chomp!)
           self.send :process_output, lines
         end
