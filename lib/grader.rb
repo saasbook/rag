@@ -4,37 +4,20 @@ class Grader
 
   def self.cli(args)
     return help unless args.respond_to? :length and args.length >= 4
-    case type = args[1]
-      when 'HW3Grader' then return handle_hw3_grader args
-      when /RspecGrader/ then return handle_rspec_grader args
-      else return help
-    end
+    type = args[1]
+    return HW3Grader::cli args if 'HW3Grader' == type
+    return self.handle_rspec_grader args if /RspecGrader/.match type
+    return help
   end
 
+  # If it is worth coverage cost to disperse this, above can just be:
+  # Kernel.const_get(type)::cli args
   def self.handle_rspec_grader(args)
     t_opt, type, file, specs = args
     file = IO.read file if type == 'WeightedRspecGrader'
     g = AutoGrader.create '1', type ,file ,:spec => specs
     g.grade!
     feedback g
-  end
-
-  # TODO refactor with rag/grade3.rb and rag/features/step_definitions/subject_code_steps.rb
-  def self.handle_hw3_grader(args)
-    t_opt, type, a_opt, tmp_dir, archive, hw_yml = args
-    begin
-      start_dir = Dir::getwd
-      begin
-        Dir::chdir tmp_dir
-        g = AutoGrader.create '3', type, archive, :spec => hw_yml
-        g.grade!
-        feedback g
-      rescue Object => e
-        STDERR.puts "*** FATAL: #{e.respond_to?(:message) ? e.message : 'unspecified error'}"
-      end
-    ensure
-      Dir::chdir start_dir
-    end
   end
 
   def self.feedback(g)
