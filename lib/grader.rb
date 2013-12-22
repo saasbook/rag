@@ -3,21 +3,10 @@ require './lib/auto_grader.rb'
 class Grader
 
   def self.cli(args)
-    return help unless args.respond_to? :length and args.length >= 4
+    return help unless args.respond_to? :length and args.length >= 3
     type = args[1]
-    return HW3Grader::cli args if 'HW3Grader' == type
-    return self.handle_rspec_grader args if /RspecGrader/.match type
+    return Kernel.const_get(type)::cli args if /Grader/.match type
     return help
-  end
-
-  # If it is worth coverage cost to disperse this, above can just be:
-  # Kernel.const_get(type)::cli args
-  def self.handle_rspec_grader(args)
-    t_opt, type, file, specs = args
-    file = IO.read file if type == 'WeightedRspecGrader'
-    g = AutoGrader.create '1', type ,file ,:spec => specs
-    g.grade!
-    feedback g
   end
 
   def self.feedback(g)
