@@ -159,12 +159,12 @@ Given /^a simple cucumber submission containing a cuke "(.*)", step "(.*)" grade
   `touch /tmp/db/test.sqlite3`
   command = "ruby ./grade3 -a /tmp/ /tmp/features.tar.gz #{mutation_yml}"
   @feature_output = `#{command}`
- # @feature_output.should_not be_nil, "command failure: {$?}"
-  @feature_output = "yay" #, "command failure: {$?}"  , command
-  #create_remove_command = "rm -rf /tmp/features"
-  #create_folder_output = `#{create_remove_command}`
-  #create_remove_command = "rm /tmp/features.tar.gz"
-  #create_folder_output = `#{create_remove_command}`
+  @feature_output.should_not be_nil, "command failure: {$?}"
+  @feature_output.should =~ /(Test passed.*END cucumber comments.*?)\n/m
+  create_remove_command = "rm -rf /tmp/features"
+  create_folder_output = `#{create_remove_command}`
+  create_remove_command = "rm /tmp/features.tar.gz"
+  create_folder_output = `#{create_remove_command}`
 end
 
 When(/^I run a WeightedRspecGrader$/) do
