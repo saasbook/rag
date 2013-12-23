@@ -145,6 +145,8 @@ end
 
 Given /^a simple cucumber submission containing a cuke "(.*)", step "(.*)" grade it with mutation file "(.*)"$/ do |cucumber_code, cucumber_steps, mutation_yml|
   # rag/grade3 -a solutions/rottenpotatoes <student_solution>.tar.gz rag/hw3.yml
+  create_log_folder_command = "mkdir -p /tmp/log"
+  create_log_output = `#{create_log_folder_command}`
   create_step_folder_command = "mkdir -p /tmp/features/step_definitions"
   create_folder_output = `#{create_step_folder_command}`
   File.open('/tmp/features/test.feature','w') do |file|
@@ -165,6 +167,8 @@ Given /^a simple cucumber submission containing a cuke "(.*)", step "(.*)" grade
   create_folder_output = `#{create_remove_command}`
   create_remove_command = "rm /tmp/features.tar.gz"
   create_folder_output = `#{create_remove_command}`
+  create_remove_command = "rm -rf /tmp/log"
+  create_log_output = `#{create_remove_command}`
 end
 
 When(/^I run a WeightedRspecGrader$/) do
