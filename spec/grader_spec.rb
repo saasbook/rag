@@ -36,26 +36,28 @@ describe 'Command Line Interface' do
     expect(grader).not_to eq Grader.help
     #AutoGrader.create('1', 'WeightedRspecGrader', IO.read(ARGV[0]), :spec => ARGV[1])
   end
-
-  describe 'should produce appropriate response to correct command line arguments' do
-    before do
-      FileUtils.cp "#{Dir::getwd}/spec/fixtures/features.tar.gz", '/tmp'
-      FileUtils.mkdir_p '/tmp/db/'
-      FileUtils.touch '/tmp/db/test.sqlite3'
-      FileUtils.mkdir_p '/tmp/log'
-    end
-    it 'should be able to handle feature grader arguments' do
-      grader = Grader.cli(["-t","HW3Grader","-a","/tmp/","features.tar.gz","hwz.yml"])
-      expect(grader).not_to be_nil
-      expect(grader).not_to eq Grader.help
-    end
-    xit 'should be able to receive different arguments depending on the grader specified' do
-      #HW1 e.g. new_grader -t WeightedRspecGrader "#{PFX}/correct_example.rb", "#{PFX}/correct_example.spec.rb"
-      #HW1.5 e.g. new_grader -t GithubRspecGrader? github_user_name specfile.rb
-      #HW2 e.g. new_grader -t HerokuRspecGrader submission_uri specfile.rb
-      #HW3 e.g. new_grader -t HW3Grader -a /path/to/app/ input.tar.gz description.yml
-      #HW4 e.g. new_grader -t HW4Grader input.tar.gz description.yml
-      #HW5 e.g. new_grader -t HW5Grader submission_uri admin_user admin_password specfile.rb
-    end
+  def mock_auto_grader
+    auto_grader = mock('AutoGrader')
+    auto_grader.should_receive(:grade!)
+    auto_grader.should_receive(:normalized_score).with(100).and_return(67)
+    auto_grader.should_receive(:comments).and_return('Test passed')
+    return auto_grader
+  end
+  it 'should be able to handle feature grader arguments' do
+    cli_args = ["-t","HW3Grader","-a","/tmp/","features.tar.gz","hwz.yml"]
+    auto_args = ['3','HW3Grader','features.tar.gz', {:spec => 'hwz.yml'}]
+    Kernel.should_receive(:const_get).with('HW3Grader').and_return(HW3Grader)
+    HW3Grader.should_receive(:autograder_args).with(cli_args).and_return(auto_args)
+    AutoGrader.should_receive(:create).with(*auto_args).and_return(mock_auto_grader)
+    grader = Grader.cli(cli_args)
+    expect(grader).to match(/Test passed/)
+  end
+  xit 'should be able to receive different arguments depending on the grader specified' do
+    #HW1 e.g. new_grader -t WeightedRspecGrader "#{PFX}/correct_example.rb", "#{PFX}/correct_example.spec.rb"
+    #HW1.5 e.g. new_grader -t GithubRspecGrader? github_user_name specfile.rb
+    #HW2 e.g. new_grader -t HerokuRspecGrader submission_uri specfile.rb
+    #HW3 e.g. new_grader -t HW3Grader -a /path/to/app/ input.tar.gz description.yml
+    #HW4 e.g. new_grader -t HW4Grader input.tar.gz description.yml
+    #HW5 e.g. new_grader -t HW5Grader submission_uri admin_user admin_password specfile.rb
   end
 end
