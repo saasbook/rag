@@ -20,4 +20,10 @@ class WeightedRspecGrader < RspecGrader
       end
     end
   end
+
+  def self.cli(args)
+    t_opt, type, file, specs = args
+    file =  IO.read file # Is this OK for a huge file?
+    super [t_opt, type, file, specs]
+  end
 end

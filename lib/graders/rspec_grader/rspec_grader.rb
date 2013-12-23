@@ -28,4 +28,10 @@ class RspecGrader < AutoGrader
     @comments = runner.output
   end
 
+  def self.cli(args)
+    t_opt, type, file, specs = args
+    g = AutoGrader.create '1', type ,file , :spec => specs
+    g.grade!
+    Grader.feedback g
+  end
 end

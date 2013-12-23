@@ -8,7 +8,7 @@ class FeatureGrader < AutoGrader
     module Regex
       BlankLine = /^$/
       FailingScenarios = /^Failing Scenarios:$/
-      StepResult = /^(\d+) steps \(.*?(\d+) passed.*\)/
+      StepResult = /^(\d+) steps? \(.*?(\d+) passed.*\)/
     end
 
     attr_reader :if_pass, :target_pass, :feature, :score, :output, :desc, :weight
@@ -130,7 +130,6 @@ class FeatureGrader < AutoGrader
         FileUtils.cp SOURCE_DB, h["TEST_DB"]
         Open3.popen3(h, $CUKE_RUNNER, popen_opts) do |stdin, stdout, stderr, wait_thr|
           #exit_status = wait_thr.value
-
           lines = stdout.readlines
           lines.each(&:chomp!)
           self.send :process_output, lines
@@ -247,6 +246,7 @@ class FeatureGrader < AutoGrader
 
       begin # parse result counts
         result_lines = output.grep Regex::StepResult
+
         unless result_lines.count == 1
           log output
           raise TestFailedError, "invalid cucumber results" + output.join("\n")
