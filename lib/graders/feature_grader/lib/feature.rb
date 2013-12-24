@@ -8,7 +8,7 @@ class FeatureGrader < AutoGrader
     module Regex
       BlankLine = /^$/
       FailingScenarios = /^Failing Scenarios:$/
-      StepResult = /^(\d+) steps \(.*?(\d+) passed.*\)/
+      StepResult = /^(\d+) steps? \(.*?(\d+) passed.*\)/
     end
 
     attr_reader :if_pass, :target_pass, :feature, :score, :output, :desc, :weight
