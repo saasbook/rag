@@ -20,7 +20,9 @@ describe "Run With Timeout" do
         :buffer_size => buffer_size
     }
     stdout_text, stderr_text, exitstatus = run_with_timeout(opts[:cmd], opts[:timeout], opts[:tick], opts[:buffer_size])
-    stdout_text.should =~ /^(Normalized )?Score out of 100:/i
+
+    stdout_text.should =~ /^(Normalized )?Score out of 100: 0/
+
     match = stdout_text.match(/---BEGIN (?:cucumber|rspec|grader) comments---\n#{'-'*80}\n(.*)#{'-'*80}\n---END (?:cucumber|rspec|grader) comments---/m)
     if match.nil?
       puts stdout_text
