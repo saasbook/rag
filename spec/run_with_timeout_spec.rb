@@ -20,7 +20,9 @@ describe "Run With Timeout" do
         :buffer_size => buffer_size
     }
     stdout_text, stderr_text, exitstatus = run_with_timeout(opts[:cmd], opts[:timeout], opts[:tick], opts[:buffer_size])
+
     stdout_text.should =~ /^(Normalized )?Score out of 100: 0/
+
     match = stdout_text.match(/---BEGIN (?:cucumber|rspec|grader) comments---\n#{'-'*80}\n(.*)#{'-'*80}\n---END (?:cucumber|rspec|grader) comments---/m)
     if match.nil?
       puts stdout_text
@@ -32,7 +34,14 @@ describe "Run With Timeout" do
       line.gsub(/\(FAILED - \d+\)/, "(FAILED)")
     end.join("\n")
     formatted.should start_with "\nRuby intro part 1\n  #sum\n    should be defined (FAILED)"
-    stderr_text.should eq ""
+    only_warnings = stderr_text.scan /WARNING:.*$\n/m
+    stderr_text.should eq only_warnings.join
     exitstatus.should eq 0
+  end
+
+  it 'should clean up the thread or complain' do
+    Thread.any_instance.should_receive(:alive?).and_return(true)
+    Process.should_receive(:kill)
+    expect {run_test(8, 1, 128)}.to raise_error Timeout::Error
   end
 end
