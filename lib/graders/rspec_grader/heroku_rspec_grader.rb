@@ -10,4 +10,12 @@ class HerokuRspecGrader < WeightedRspecGrader
     ENV['HEROKU_URI'] = @heroku_uri
     super
   end
+  
+  def self.format_cli(t_option, type, username, specs)
+    # refuse parent IO file read, use grandparent
+    return RspecGrader.format_cli(t_option, type, username, specs)
+  end
+  
 end
+
+
