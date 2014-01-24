@@ -1,6 +1,14 @@
 require_relative 'rspec_grader'
 
 class WeightedRspecGrader < RspecGrader
+
+  @assignment_id = '1'
+
+  def self.format_cli(t_option, type, answer, specs)
+    answer = IO.read answer # make -b a command line option?
+    return super(t_option, type, answer, specs)
+  end
+
   def grade!
     runner =  RspecRunner.new(@code, @specfile)
     runner.run
@@ -21,3 +29,4 @@ class WeightedRspecGrader < RspecGrader
     end
   end
 end
+
