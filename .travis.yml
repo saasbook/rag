@@ -1,6 +1,14 @@
 language: ruby
 rvm: 
   - "1.9.3"
+# Trying to match master lockfile versions, and work in Travis  
+# For compatibility with ZenTest 4.9.4
+before_install:
+  - gem install debugger -v '1.6.2'
+  - gem update --system 2.1
+  - gem --version
+
 script:
   - bundle exec rspec spec
   - bundle exec cucumber
+
