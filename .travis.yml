@@ -1,6 +1,15 @@
 language: ruby
 rvm: 
   - "1.9.3"
+  
+# For compatibility with Gemfile.lock version of ZenTest4.9.4
+before_install:
+  - gem update --system 2.1
+  - gem --version
+  
+# Remove this after initial deploy
+bundler_args: '--no-deployment'
+
 script:
   - bundle exec rspec spec
   - bundle exec cucumber
