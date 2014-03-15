@@ -71,6 +71,7 @@ class HW4Grader < AutoGrader
 
     @temp = TempArchiveFile.new(@submission_archive)
     @logpath = File.expand_path(File.join('.', 'log', "hw4_#{File.basename @temp.path}.log"))
+    FileUtils.mkdir_p File.dirname @logpath
   end
 
   def log(*args)
