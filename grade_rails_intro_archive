@@ -1,0 +1,34 @@
+#!/usr/bin/env ruby
+# -*- mode: ruby -*-
+
+# An example use of the Ruby autograder
+
+require './lib/auto_grader.rb'
+#require 'debugger'
+#require './lib/graders/rspec_grader/rails_intro_archive_grader'
+
+def grade(file,spec)
+end
+
+def usage
+  STDERR.puts <<EndOfHelp
+Usage: #{$0} submission_uri specfile.rb
+
+Creates an autograder of the HerokuRspecGrader subclass (which evaluates
+student code based solely on RSpec output) and grades the Heroku submission URI
+with it.
+
+EndOfHelp
+  exit
+end
+
+usage() if (ARGV.length!=2 || ARGV[0] =~ /^-?-h/)
+#assignment_id, grader, submitted_answer, grading_rules, normalize=100
+g = AutoGrader.create('RailsIntroArchive', 'RailsIntroArchiveGrader', ARGV[0], :spec => ARGV[1])
+g.grade!
+puts "Score out of 100: #{g.normalized_score(100)}\n"
+puts "---BEGIN rspec comments---\n#{'-'*80}\n#{g.comments}\n#{'-'*80}\n---END rspec comments---"
+
+# PFX = 'spec/fixtures'
+# grade "#{PFX}/correct_example.rb", "#{PFX}/correct_example.spec.rb"
+# grade "#{PFX}/example_with_syntax_error.rb", "#{PFX}/correct_example.spec.rb"
