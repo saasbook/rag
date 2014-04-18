@@ -10,60 +10,60 @@ class RailsIntroArchiveGrader < HerokuRspecGrader
 
   def run_process(cmd, dir)
     env = {
-            'RAILS_ROOT' => @temp,
-            'RAILS_ENV' => 'test',
-            'BUNDLE_GEMFILE' => 'Gemfile'
-        }
-    #@output, @errors, @status = Open3.capture3(
-    #    env, cli_string, :chdir => dir
-    #)
-    #puts (cli_string +
-    #    @output +
-    #    @errors +
-    #    @status.to_s) unless @status.success? #and @test_errors.empty?
+        'RAILS_ROOT' => @temp,
+        'RAILS_ENV' => 'test',
+        'BUNDLE_GEMFILE' => 'Gemfile'
+    }
+      @output, @errors, @status = Open3.capture3(
+          env, cmd, :chdir => dir
+      )
+      puts (cmd +
+          @output +
+          @errors +
+          @status.to_s) #unless @status.success? #and @test_errors.empty?
 
-    Open3.popen3(env, cmd) do |stdin, stdout, stderr, wait_thr|
-      exitstatus = wait_thr.value.exitstatus
-      out = stdout.read
-      err = stderr.read
-      if exitstatus != 0
-        raise out + err
-      end
-    end
+    #Open3.popen3(env, cmd) do |stdin, stdout, stderr, wait_thr|
+    #  exitstatus = wait_thr.value.exitstatus
+    #  out = stdout.read
+    #  err = stderr.read
+    #  if exitstatus != 0
+    #    raise out + err
+    #  end
+    #end
   end
 
   def grade!
     ENV['HEROKU_URI'] = @heroku_uri
-    begin
-      start_time = Time.now()
-      Dir.mktmpdir('rails_intro_archive', '/tmp') do |tmpdir|
 
-        @temp = tmpdir
+    #start_time = Time.now()
+    Dir.mktmpdir('rails_intro_archive', '/tmp') do |tmpdir|
 
-        untar_cmd = "tar -xvf #{@archive} -C /#{@temp}"
-        `#{untar_cmd}`
+      @temp = tmpdir
 
-        pid = Process.fork {
-          run_process('system rails s', @temp)
-        }
-        Process.detach(pid)
+      untar_cmd = "tar -xvf #{@archive} -C /#{@temp}"
+      `#{untar_cmd}`
 
-        #TODO arbitrary, use a timeout?
-        # Gets Net::HTTP::Persistent::Error on local if no timeout, increasing for travis
-        sleep 15
-
-        super
-        #kill -2 #{@pid}`
-        #if `lsof -wni tcp:3000`
-        #  `kill -9 #{@pid}`
-        #end
+      @pid = Process.fork do
+        run_process('xterm -e rails s', @temp)
+        #run_process('rails s', @temp)
       end
+      #puts "PID == ", @pid
+      Process.detach(@pid)
 
-      #puts "Total score: #{@raw_score} / #{@raw_max}"
-      puts "Completed in #{Time.now-start_time} seconds."
-        #  dump_output
-    ensure
-      #@temp.destroy if @temp
+      #TODO arbitrary, use a timeout?
+      # Gets Net::HTTP::Persistent::Error on local if no timeout, increasing for travis
+      sleep 10
+
+      super
+
+      `pkill -f "xterm -e rails s"`
+
+
     end
+
+
   end
+
+
 end
+
