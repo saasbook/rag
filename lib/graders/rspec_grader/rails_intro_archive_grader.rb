@@ -9,13 +9,14 @@ class RailsIntroArchiveGrader < HerokuRspecGrader
   end
 
   def run_process(cmd, dir)
-    env = {
-        'RAILS_ROOT' => @temp,
-        'RAILS_ENV' => 'test',
-        'BUNDLE_GEMFILE' => 'Gemfile'
-    }
+    #env = {
+    #    'RAILS_ROOT' => @temp,
+    #    'RAILS_ENV' => 'test',
+    #    'BUNDLE_GEMFILE' => 'Gemfile'
+    #}
       @output, @errors, @status = Open3.capture3(
-          env, cmd, :chdir => dir
+          cmd, :chdir => dir
+      #env, cmd, :chdir => dir
       )
       puts (cmd +
           @output +
@@ -33,6 +34,27 @@ class RailsIntroArchiveGrader < HerokuRspecGrader
     #end
   end
 
+  def app_loaded?
+    begin
+      require 'net/http'
+      uri = URI.parse("http://127.0.0.1:3000/movies/")
+      response = Net::HTTP.get_response(uri)
+      if response and response.code
+        return true if response.respond_to?(:code) && response.code == '200'
+      end
+    rescue Errno::ECONNREFUSED
+      return false
+    end
+    #return true if `$RAILS_ENV`
+    false
+  end
+
+  def wait_for_app_max(sec, polling=1)
+    to_status = timeout(sec) {
+      sleep(polling) until app_loaded?
+    }
+  end
+
   def grade!
     ENV['HEROKU_URI'] = @heroku_uri
 
@@ -44,19 +66,20 @@ class RailsIntroArchiveGrader < HerokuRspecGrader
       untar_cmd = "tar -xvf #{@archive} -C /#{@temp}"
       `#{untar_cmd}`
 
-      @pid = Process.fork do
+      pid = Process.fork do
         run_process('rails s', @temp)
       end
-      Process.detach(@pid)
+      #Process.detach(pid)
 
-      #TODO arbitrary, use a timeout?
       # Gets Net::HTTP::Persistent::Error on local if no timeout, increasing for travis
-      sleep 9
+      wait_for_app_max(30)
 
       super
 
-      `pkill -2 -f "ruby script/rails s"`
-      `pkill -9 -f "ruby script/rails s"`
+      # prev pid no good, get now
+      pid = `pgrep -f "ruby script/rails s"`
+      Process.kill('INT', pid.to_i)
+      Process.kill('KILL', pid.to_i)
 
     end
 
