@@ -20,8 +20,9 @@ class RailsIntroArchiveGrader < HerokuRspecGrader
       puts (cmd +
           @output +
           @errors +
-          @status.to_s) #unless @status.success? #and @test_errors.empty?
+          @status.to_s) unless @status.success? and @test_errors.empty?
 
+    # Gets Net:HTTP:Persistent error
     #Open3.popen3(env, cmd) do |stdin, stdout, stderr, wait_thr|
     #  exitstatus = wait_thr.value.exitstatus
     #  out = stdout.read
@@ -44,20 +45,18 @@ class RailsIntroArchiveGrader < HerokuRspecGrader
       `#{untar_cmd}`
 
       @pid = Process.fork do
-        run_process('xterm -e rails s', @temp)
-        #run_process('rails s', @temp)
+        run_process('rails s', @temp)
       end
-      #puts "PID == ", @pid
       Process.detach(@pid)
 
       #TODO arbitrary, use a timeout?
       # Gets Net::HTTP::Persistent::Error on local if no timeout, increasing for travis
-      sleep 10
+      sleep 9
 
       super
 
-      `pkill -f "xterm -e rails s"`
-
+      `pkill -2 -f "ruby script/rails s"`
+      `pkill -9 -f "ruby script/rails s"`
 
     end
 
