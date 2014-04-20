@@ -8,7 +8,7 @@ class RailsIntroArchiveGrader < HerokuRspecGrader
     @archive = archive
   end
 
-  def run_process(cmd, dir)
+  def self.run_process(cmd, dir)
       @output, @errors, @status = Open3.capture3(
           cmd, :chdir => dir
       )

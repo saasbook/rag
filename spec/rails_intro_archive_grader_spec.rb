@@ -4,10 +4,28 @@ describe RailsIntroArchiveGrader do
 
    describe "#new" do
      it 'initializes instance variables' do
+       File.stub(readable?: true)
        grader = RailsIntroArchiveGrader.new('archive', { spec: 'grading_rules' })
        expect(grader.instance_variable_get(:@heroku_uri)).to eq('http://localhost:3000')
        expect(grader.instance_variable_get(:@archive)).to eq('archive')
      end
+     it 'raises an error when spec file is not readable' do
+       expect {RailsIntroArchiveGrader.new(
+           'archive', { spec: 'FAKE' })}.to raise_error(RspecGrader::NoSuchSpecError, /Specfile FAKE not found/)
+     end
+   end
+
+   describe "#run_process" do
+     it 'runs a process' do
+       expect {RailsIntroArchiveGrader.run_process('rm -rf FAKEDIR', '.')}.not_to raise_error
+     end
+     #it 'initializes instance variables' do
+     #  RailsIntroArchiveGrader.run_process('rm ./FAKEDIR', '.')
+     #  expect(RailsIntroArchiveGrader.instance_variable_get(:@output)).to match ""
+     #  expect(RailsIntroArchiveGrader.instance_variable_get(:@errors)).to match "No such file or directory"
+     #  expect(RailsIntroArchiveGrader.instance_variable_get(:@status.inspect)).to match "success"
+     #
+     #end
    end
 end
 
