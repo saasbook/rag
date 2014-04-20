@@ -2,31 +2,58 @@ require 'spec_helper'
 
 describe RailsIntroArchiveGrader do
 
-   describe "#new" do
-     it 'initializes instance variables' do
-       File.stub(readable?: true)
-       grader = RailsIntroArchiveGrader.new('archive', { spec: 'grading_rules' })
-       expect(grader.instance_variable_get(:@heroku_uri)).to eq('http://localhost:3000')
-       expect(grader.instance_variable_get(:@archive)).to eq('archive')
-     end
-     it 'raises an error when spec file is not readable' do
-       expect {RailsIntroArchiveGrader.new(
-           'archive', { spec: 'FAKE' })}.to raise_error(RspecGrader::NoSuchSpecError, /Specfile FAKE not found/)
-     end
-   end
+  before(:each) do
+    File.stub(readable?: true)
+    @grader = RailsIntroArchiveGrader.new('archive', { spec: 'grading_rules' })
+  end
 
-   describe "#run_process" do
-     it 'runs a process' do
-       expect {RailsIntroArchiveGrader.run_process('rm -rf FAKEDIR', '.')}.not_to raise_error
-     end
-     #it 'initializes instance variables' do
-     #  RailsIntroArchiveGrader.run_process('rm ./FAKEDIR', '.')
-     #  expect(RailsIntroArchiveGrader.instance_variable_get(:@output)).to match ""
-     #  expect(RailsIntroArchiveGrader.instance_variable_get(:@errors)).to match "No such file or directory"
-     #  expect(RailsIntroArchiveGrader.instance_variable_get(:@status.inspect)).to match "success"
-     #
-     #end
+  describe '#new' do
+    it 'raises an error when spec file is not readable' do
+      File.stub(readable?: false)
+      expect {RailsIntroArchiveGrader.new(
+           'archive', { spec: 'FAKE' })}.to raise_error(RspecGrader::NoSuchSpecError, /Specfile FAKE not found/)
+    end
+    it 'initializes instance variables' do
+      expect(@grader.instance_variable_get(:@heroku_uri)).to eq('http://127.0.0.1:3000')
+      expect(@grader.instance_variable_get(:@archive)).to eq('archive')
+    end
+  end
+
+  describe '#run_process' do
+   it 'runs a process' do
+     expect {@grader.run_process('rm -rf FAKEDIR', '.')}.not_to raise_error
    end
+   it 'initializes instance variables from the results when failing' do
+     @grader.run_process('rm ./FAKEDIR', '.')
+     expect(@grader.instance_variable_get(:@p_out)).to match ''
+     expect(@grader.instance_variable_get(:@p_errs)).to match 'No such file or directory'
+     expect(@grader.instance_variable_get(:@p_stat).success?).to be false
+   end
+   it 'initializes instance variables from the results when succeeding' do
+     @grader.run_process('ls -la', '.')
+     expect(@grader.instance_variable_get(:@p_out)).to match '.'
+     expect(@grader.instance_variable_get(:@p_errs)).to match ''
+     expect(@grader.instance_variable_get(:@p_stat).success?).to be true
+   end
+  end
+
+  describe '#rails_up_timeout' do
+    it 'returns when http is connected to uri' do
+      @grader.stub(app_loaded?: true)
+      expect {@grader.rails_up_timeout(2,1).to_s}.not_to raise_error
+    end
+    #TODO better to just log and return?
+    it 'times out if rails never gets up' do
+      @grader.stub(app_loaded?: false)
+      expect {@grader.rails_up_timeout(2,1).to_s}.to raise_error(Timeout::Error, /execution expired/)
+    end
+    it 'can take it if the interval is larger than the timeout' do
+      @grader.stub(app_loaded?: false)
+      expect {@grader.rails_up_timeout(2,10).to_s}.to raise_error(Timeout::Error, /execution expired/)
+    end
+  end
+
+
 end
 
   # it 'initializes instance variables' do
@@ -53,7 +80,7 @@ end
   #  end
   #
   #  describe 'GET index' do
-  #    it 'should render "index"' do
+  #    it 'should render 'index'' do
   #      get :index
   #      assigns(:events).should eq(@events)
   #      response.should render_template :index

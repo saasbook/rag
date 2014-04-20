@@ -13,8 +13,6 @@ class RailsIntroArchiveGrader < HerokuRspecGrader
   def grade!
     kill_port_process!
 
-    #ENV['HEROKU_URI'] = @heroku_uri
-    #TODO kill anything on our port
     #TODO log it, log everything
     #TODO grader name
 
@@ -23,7 +21,7 @@ class RailsIntroArchiveGrader < HerokuRspecGrader
       #TODO run_process on it?
       untar_cmd = "tar -xvf #{@archive} -C /#{@temp}"
       `#{untar_cmd}`
-      #TODO should it be forking here
+      #TODO should it be forking here?
       pid = Process.fork do
         run_process('rails s', @temp)
       end
@@ -35,7 +33,7 @@ class RailsIntroArchiveGrader < HerokuRspecGrader
       #TODO DRY it with kill_port_process!
       #TODO run_process on it?
       pid = `pgrep -f "ruby script/rails s"`.to_i
-      #pid = `$(lsof -wni tcp:3000 |  xargs echo | cut -d \\  -f 11)`.to_i
+      #pid = `$(lsof -wni tcp:3000 |  xargs echo | cut -d ' ' -f 11)`.to_i
       if pid > 0
         Process.kill('KILL', pid) unless Process.kill('INT', pid) == 1
       end
@@ -45,14 +43,14 @@ class RailsIntroArchiveGrader < HerokuRspecGrader
 
   #TODO re-investigate open3 per hw4_grader
   def run_process(cmd, dir)
-      @output, @errors, @status = Open3.capture3(
+      @p_out, @p_errs, @p_stat = Open3.capture3(
           cmd, :chdir => dir
       )
       #TODO format output
       puts (cmd +
-          @output +
-          @errors +
-          @status.to_s) unless @status.success? and @errors == ''
+          @p_out +
+          @p_errs +
+          @p_stat.to_s) unless @p_stat.success? and @p_errs == ''
   end
 
 
@@ -62,7 +60,7 @@ class RailsIntroArchiveGrader < HerokuRspecGrader
     ##TODO log alert if these two numbers differ
     if pid > 0
       Process.kill('KILL', pid) unless Process.kill('INT', pid) == 1
-      #TODO raise process can't be killed unless stopped
+      #TODO raise 'process can't be killed' unless stopped
     end
   end
 
