@@ -9,29 +9,13 @@ class RailsIntroArchiveGrader < HerokuRspecGrader
   end
 
   def run_process(cmd, dir)
-    #env = {
-    #    'RAILS_ROOT' => @temp,
-    #    'RAILS_ENV' => 'test',
-    #    'BUNDLE_GEMFILE' => 'Gemfile'
-    #}
       @output, @errors, @status = Open3.capture3(
           cmd, :chdir => dir
-      #env, cmd, :chdir => dir
       )
       puts (cmd +
           @output +
           @errors +
-          @status.to_s) unless @status.success? and @test_errors.empty?
-
-    # Gets Net:HTTP:Persistent error
-    #Open3.popen3(env, cmd) do |stdin, stdout, stderr, wait_thr|
-    #  exitstatus = wait_thr.value.exitstatus
-    #  out = stdout.read
-    #  err = stderr.read
-    #  if exitstatus != 0
-    #    raise out + err
-    #  end
-    #end
+          @status.to_s) unless @status.success? and @errors != ''
   end
 
   def app_loaded?
@@ -45,7 +29,6 @@ class RailsIntroArchiveGrader < HerokuRspecGrader
     rescue Errno::ECONNREFUSED
       return false
     end
-    #return true if `$RAILS_ENV`
     false
   end
 
@@ -57,35 +40,19 @@ class RailsIntroArchiveGrader < HerokuRspecGrader
 
   def grade!
     ENV['HEROKU_URI'] = @heroku_uri
-
-    #start_time = Time.now()
     Dir.mktmpdir('rails_intro_archive', '/tmp') do |tmpdir|
-
       @temp = tmpdir
-
       untar_cmd = "tar -xvf #{@archive} -C /#{@temp}"
       `#{untar_cmd}`
-
       pid = Process.fork do
         run_process('rails s', @temp)
       end
-      #Process.detach(pid)
-
-      # Gets Net::HTTP::Persistent::Error on local if no timeout, increasing for travis
       wait_for_app_max(30)
-
       super
-
-      # prev pid no good, get now
       pid = `pgrep -f "ruby script/rails s"`
       Process.kill('INT', pid.to_i)
       Process.kill('KILL', pid.to_i)
-
     end
-
-
   end
-
-
 end
 
