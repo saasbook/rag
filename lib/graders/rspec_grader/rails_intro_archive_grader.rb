@@ -22,7 +22,9 @@ class RailsIntroArchiveGrader < HerokuRspecGrader
       @temp = tmpdir
       #TODO run_process on it?
       untar_cmd = "tar -xvf #{@archive} -C /#{@temp}"
-      `#{untar_cmd}`
+      run_process(untar_cmd, '.')
+
+      #`#{untar_cmd}`
       #TODO should it be forking here?
       pid = Process.fork do
         run_process('rails s', @temp)
