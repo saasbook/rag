@@ -75,7 +75,12 @@ describe RailsIntroArchiveGrader do
     end
   end
 
-
+  #TODO use WEBrick:
+  #require 'webrick'
+  #server = WEBrick::HTTPServer.new :Port => 1234
+  #server.mount "/", WEBrick::HTTPServlet::FileHandler, './'
+  #trap('INT') { server.stop }
+  #server.start
   describe '#kill_port_process!' do
     let(:uri) { URI.parse(@grader.instance_variable_get(:@heroku_uri)) }
     let(:port) { @grader.instance_variable_get(:@port) }
@@ -102,51 +107,21 @@ describe RailsIntroArchiveGrader do
     end
   end
 
-  describe '#grade!' do
-    it 'should grade the homework' do
-      expect(@grader).to receive(:kill_port_process!)
-      #Kernel.stub(:`).and_return(0)
-      status = double(Process::Status, success?: true)
-      Open3.stub(capture3: ['ouput','errors', status] )
-      @grader.stub(:run_process)
-      @grader.stub(:rails_up_timeout).and_return()
-      @grader.grade!
-
-
-
-
-    end
-  end
-
-  #def grade!
-  #  kill_port_process!
+  #describe '#grade!' do
+  #  it 'should grade the homework' do
+  #    expect(@grader).to receive(:kill_port_process!)
+  #    #Kernel.stub(:`).and_return(0)
+  #    status = double(Process::Status, success?: true)
+  #    Open3.stub(capture3: ['ouput','errors', status] )
+  #    @grader.stub(:run_process)
+  #    @grader.stub(:rails_up_timeout).and_return()
+  #    @grader.grade!
   #
-  #  #TODO log it, log everything
-  #  #TODO grader name
   #
-  #  Dir.mktmpdir('rails_intro_archive', '/tmp') do |tmpdir|
-  #    @temp = tmpdir
-  #    #TODO run_process on it?
-  #    untar_cmd = "tar -xvf #{@archive} -C /#{@temp}"
-  #    `#{untar_cmd}`
-  #    #TODO should it be forking here?
-  #    pid = Process.fork do
-  #      run_process('rails s', @temp)
-  #    end
-  #    # wait for rails to start
-  #    rails_up_timeout(30)
   #
-  #    super
-  #
-  #    #TODO DRY it with kill_port_process!
-  #    #TODO run_process for it?
-  #    pid = `pgrep -f "ruby script/rails s"`.to_i
-  #    #pid = `$(lsof -wni tcp:3000 |  xargs echo | cut -d ' ' -f 11)`.to_i
-  #    if pid > 0
-  #      Process.kill('KILL', pid) unless Process.kill('INT', pid) == 1
-  #    end
   #
   #  end
   #end
+
 
 end
