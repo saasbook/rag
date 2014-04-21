@@ -1,11 +1,13 @@
 require 'spec_helper'
 
+
 describe RailsIntroArchiveGrader do
 
   before(:each) do
     File.stub(readable?: true)
     @grader = RailsIntroArchiveGrader.new('archive', { spec: 'grading_rules' })
   end
+
 
   describe '#new' do
     it 'raises an error when spec file is not readable' do
@@ -14,10 +16,13 @@ describe RailsIntroArchiveGrader do
            'archive', { spec: 'FAKE' })}.to raise_error(RspecGrader::NoSuchSpecError, /Specfile FAKE not found/)
     end
     it 'initializes instance variables' do
+      expect(@grader.instance_variable_get(:@host)).to eq('127.0.0.1')
+      expect(@grader.instance_variable_get(:@port)).to eq('3000')
       expect(@grader.instance_variable_get(:@heroku_uri)).to eq('http://127.0.0.1:3000')
       expect(@grader.instance_variable_get(:@archive)).to eq('archive')
     end
   end
+
 
   describe '#run_process' do
    it 'runs a process' do
@@ -37,6 +42,7 @@ describe RailsIntroArchiveGrader do
    end
   end
 
+
   describe '#rails_up_timeout' do
     it 'returns when http is connected to uri' do
       @grader.stub(app_loaded?: true)
@@ -47,56 +53,53 @@ describe RailsIntroArchiveGrader do
       @grader.stub(app_loaded?: false)
       expect {@grader.rails_up_timeout(2,1).to_s}.to raise_error(Timeout::Error, /execution expired/)
     end
-    it 'can take it if the interval is larger than the timeout' do
+    it 'times out if the interval is larger than the timeout' do
       @grader.stub(app_loaded?: false)
       expect {@grader.rails_up_timeout(2,10).to_s}.to raise_error(Timeout::Error, /execution expired/)
     end
   end
 
 
-end
+  describe '#app_loaded?' do
+    it 'returns true when it connects to the uri' do
+      OpenURI.stub(open_uri: true)
+      expect(@grader.app_loaded?).to be true
+    end
+    it 'returns false when rails is not ready to connect' do
+      OpenURI.stub(open_uri: false)
+      expect(@grader.app_loaded?).to be false
+    end
+    it 'returns false when it any different error' do
+      @grader.instance_variable_set(:@heroku_uri,'error')
+      expect(@grader.app_loaded?).to be false
+    end
+  end
 
-  # it 'initializes instance variables' do
-  #feature_grader = FeatureGrader.new('features_archive', { spec: 'test.yml.file' })
-  #expect(feature_grader.instance_variable_get(:@output)).to eq([])
-  #expect(feature_grader.instance_variable_get(:@m_output)).to be_a(Mutex)
-  #expect(feature_grader.instance_variable_get(:@features)).to eq([])
-  #
-  #expect(feature_grader.instance_variable_get(:@features_archive)).to eq 'features_archive'
-  #expect(feature_grader.instance_variable_get(:@description)).to eq 'test.yml.file'
-  #
-  #end
-  #
-  #
-  #
-  #
-  # describe EventsController do
-  #  let(:event) { @event }
-  #  let(:valid_session) { {} }
-  #
-  #  before :each do
-  #    @event = FactoryGirl.create(:event)
-  #    @events = @event.current_occurences
-  #  end
-  #
-  #  describe 'GET index' do
-  #    it 'should render 'index'' do
-  #      get :index
-  #      assigns(:events).should eq(@events)
-  #      response.should render_template :index
-  #    end
-  #  end
-  #
-  #  describe 'GET show' do
-  #    before(:each) do
-  #      get :show, {:id => event.to_param}, valid_session
-  #    end
-  #
-  #    it 'assigns the requested event as @event' do
-  #      assigns(:event).should eq(event)
-  #    end
-  #
-  #    it 'renders the show template' do
-  #      expect(response).to render_template 'show'
-  #    end
-  #  end
+
+  describe '#kill_port_process!' do
+    let(:uri) { URI.parse(@grader.instance_variable_get(:@heroku_uri)) }
+    let(:port) { @grader.instance_variable_get(:@port) }
+
+    it 'kills any process running on the port' do
+      if `lsof -wni tcp:#{port}` == ''
+        Process.fork do
+          `cd ./spec/fixtures/ropo && rails s -p #{port}`
+        end
+        sleep 15
+      end
+      expect(`lsof -wni tcp:#{port}`).not_to eql('')
+      expect((OpenURI.open_uri(uri)).status[0]).to eql("200")
+      @grader.kill_port_process!
+      sleep 5
+      expect { OpenURI.open_uri(uri) }.to raise_error
+      expect(`lsof -wni tcp:#{port}`).to eql('')
+    end
+
+    it 'exits OK if no process running on the port' do
+      expect { OpenURI.open_uri(uri) }.to raise_error
+      expect(`lsof -wni tcp:#{port}`).to eql('')
+      expect {@grader.kill_port_process!}.not_to raise_error
+    end
+  end
+
+end

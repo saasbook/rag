@@ -1,13 +1,15 @@
 require_relative 'heroku_rspec_grader'
+require 'open-uri'
 
 class RailsIntroArchiveGrader < HerokuRspecGrader
+
   def initialize(archive, grading_rules)
     super('', grading_rules)
     @archive = archive
-    host = '127.0.0.1' #TODO load config from yml file?
-    port = '3000' #TODO make it other than port 3000
+    @host = '127.0.0.1' #TODO load config from yml file?
+    @port = '3000' #TODO make it other than port 3000
     # super field
-    @heroku_uri = 'http://' + host + ':' + port
+    @heroku_uri = 'http://' + @host + ':' + @port
   end
 
   def grade!
@@ -31,7 +33,7 @@ class RailsIntroArchiveGrader < HerokuRspecGrader
       super
 
       #TODO DRY it with kill_port_process!
-      #TODO run_process on it?
+      #TODO run_process for it?
       pid = `pgrep -f "ruby script/rails s"`.to_i
       #pid = `$(lsof -wni tcp:3000 |  xargs echo | cut -d ' ' -f 11)`.to_i
       if pid > 0
@@ -59,7 +61,8 @@ class RailsIntroArchiveGrader < HerokuRspecGrader
     #rails_pid = `pgrep -f "ruby script/rails s"`.to_i
     ##TODO log alert if these two numbers differ
     if pid > 0
-      Process.kill('KILL', pid) unless Process.kill('INT', pid) == 1
+      exit = Process.kill('INT', pid)
+      Process.kill('KILL', pid) if exit != 1
       #TODO raise 'process can't be killed' unless stopped
     end
   end
@@ -74,16 +77,14 @@ class RailsIntroArchiveGrader < HerokuRspecGrader
     #end
   end
 
-  #TODO prefer mechanize?
   def app_loaded?
-    #return true => test
     begin
-      #uri = URI.parse("") => test
-      #uri = URI.parse("#{@heroku_uri}/steez") => test causes timeout unless rescue
       uri = URI.parse(@heroku_uri)
-      response = Net::HTTP.get_response(uri)
-      return true if response.respond_to?(:code) and response.code != nil
-    rescue Errno::ECONNREFUSED
+      return true if OpenURI.open_uri(uri)
+    rescue Errno::ECONNREFUSED #The normal error if not fully started yet
+      return false
+    rescue => e
+      #log e.inspect
       return false
     end
     false
