@@ -1,5 +1,5 @@
 require 'spec_helper'
-
+require 'webrick'
 
 describe RailsIntroArchiveGrader do
 
@@ -87,9 +87,15 @@ describe RailsIntroArchiveGrader do
 
     it 'kills any process running on the port' do
       if `lsof -wni tcp:#{port}` == ''
-        Process.fork do
-          `cd ./spec/fixtures/ropo && rails s -p #{port}`
+        pid = Process.fork do
+          # Rails uses webrick, should act similar for this purpose
+          #`cd ./spec/fixtures/ropo && rails s -p #{port}`
+          WEBrick::HTTPUtils::DefaultMimeTypes['rhtml'] = 'text/html'
+          server = WEBrick::HTTPServer.new :Port => port, :DocumentRoot => Dir.pwd
+          trap('INT') { server.stop }
+          server.start
         end
+        Process.detach pid
         sleep 15
       end
       expect(`lsof -wni tcp:#{port}`).not_to eql('')
@@ -116,10 +122,6 @@ describe RailsIntroArchiveGrader do
   #    @grader.stub(:run_process)
   #    @grader.stub(:rails_up_timeout).and_return()
   #    @grader.grade!
-  #
-  #
-  #
-  #
   #  end
   #end
 
