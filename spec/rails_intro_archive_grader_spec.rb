@@ -25,21 +25,21 @@ describe RailsIntroArchiveGrader do
 
 
   describe '#run_process' do
-   it 'runs a process' do
+  it 'runs a process' do
      expect {@grader.run_process('rm -rf FAKEDIR', '.')}.not_to raise_error
-   end
-   it 'initializes instance variables from the results when failing' do
+  end
+  it 'initializes instance variables from the results when failing' do
      @grader.run_process('rm ./FAKEDIR', '.')
      expect(@grader.instance_variable_get(:@p_out)).to match ''
      expect(@grader.instance_variable_get(:@p_errs)).to match 'No such file or directory'
      expect(@grader.instance_variable_get(:@p_stat).success?).to be false
-   end
-   it 'initializes instance variables from the results when succeeding' do
+  end
+  it 'initializes instance variables from the results when succeeding' do
      @grader.run_process('ls -la', '.')
      expect(@grader.instance_variable_get(:@p_out)).to match '.'
      expect(@grader.instance_variable_get(:@p_errs)).to match ''
      expect(@grader.instance_variable_get(:@p_stat).success?).to be true
-   end
+  end
   end
 
 
@@ -75,12 +75,7 @@ describe RailsIntroArchiveGrader do
     end
   end
 
-  #TODO use WEBrick:
-  #require 'webrick'
-  #server = WEBrick::HTTPServer.new :Port => 1234
-  #server.mount "/", WEBrick::HTTPServlet::FileHandler, './'
-  #trap('INT') { server.stop }
-  #server.start
+
   describe '#kill_port_process!' do
     let(:uri) { URI.parse(@grader.instance_variable_get(:@heroku_uri)) }
     let(:port) { @grader.instance_variable_get(:@port) }
@@ -94,14 +89,13 @@ describe RailsIntroArchiveGrader do
           server = WEBrick::HTTPServer.new :Port => port, :DocumentRoot => Dir.pwd
           trap('INT') { server.stop }
           server.start
+          sleep 5 # Rails takes longer probably
         end
-        Process.detach pid
-        sleep 15
       end
       expect(`lsof -wni tcp:#{port}`).not_to eql('')
       expect((OpenURI.open_uri(uri)).status[0]).to eql("200")
       @grader.kill_port_process!
-      sleep 5
+      Process.wait(pid) # sleep 5
       expect { OpenURI.open_uri(uri) }.to raise_error
       expect(`lsof -wni tcp:#{port}`).to eql('')
     end
@@ -113,17 +107,26 @@ describe RailsIntroArchiveGrader do
     end
   end
 
-  #describe '#grade!' do
-  #  it 'should grade the homework' do
-  #    expect(@grader).to receive(:kill_port_process!)
-  #    #Kernel.stub(:`).and_return(0)
-  #    status = double(Process::Status, success?: true)
-  #    Open3.stub(capture3: ['ouput','errors', status] )
-  #    @grader.stub(:run_process)
-  #    @grader.stub(:rails_up_timeout).and_return()
-  #    @grader.grade!
-  #  end
-  #end
+  describe '#grade!' do
 
+    it 'grades the homework' do
+      expect(@grader).to receive(:kill_port_process!)
+      #Kernel.stub(:`).and_return(0)
+      status = double(Process::Status, success?: true)
+      Open3.stub(capture3: ['ouput','errors', status] )
+      @grader.stub(:run_process)
+      @grader.stub(:rails_up_timeout).and_return()
+      runner = stub(RspecRunner, output: 'rspec output')
+      RspecRunner.stub(:new).and_return(runner)
+      runner.stub(:run).and_return()
+
+      @grader.grade!
+
+      #expect(@grader.instance_variable_get(:@raw_score)).to be 10
+      #expect(@grader.instance_variable_get(:@raw_max)).to be 10
+      expect(@grader.instance_variable_get(:@comments)).to eql 'rspec output'
+    end
+
+  end
 
 end
