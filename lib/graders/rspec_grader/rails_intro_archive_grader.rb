@@ -37,11 +37,9 @@ class RailsIntroArchiveGrader < HerokuRspecGrader
       #TODO DRY it with kill_port_process!
       #TODO run_process for it?
       pid = `pgrep -f "ruby script/rails s"`.to_i
-      #pid = `$(lsof -wni tcp:3000 |  xargs echo | cut -d ' ' -f 11)`.to_i
-      if pid > 0
+      if pid > 0 and process_running?(pid)
         Process.kill('KILL', pid) unless Process.kill('INT', pid) == 1
       end
-
     end
   end
 
@@ -57,12 +55,28 @@ class RailsIntroArchiveGrader < HerokuRspecGrader
           @p_stat.to_s) unless @p_stat.success? and @p_errs == ''
   end
 
+  def process_running?(pid)
+    begin
+      return true if Process.getpgid(pid) != nil
+      return true if Process.kill(0, pid) == 1
+    rescue Errno::ESRCH
+      puts 'Process not found for pid ' + pid.to_s
+    rescue Errno::EPERM
+      process_uid = Process.uid(pid)
+      this_uid = Process.uid
+      same_user = (process_uid == this_uid)
+      unless same_user
+        puts "Process #{pid} owner #{process_uid} not the same as this process owner #{this_uid}."
+      end
+    end
+    false
+  end
 
   def kill_port_process!
     pid = `lsof -wni tcp:3000 | xargs echo | cut -d ' ' -f 11`.to_i
     #rails_pid = `pgrep -f "ruby script/rails s"`.to_i
     ##TODO log alert if these two numbers differ
-    if pid > 0
+    if pid > 0 && process_running?(pid)
       exit = Process.kill('INT', pid)
       Process.kill('KILL', pid) if exit != 1
       #TODO raise 'process can't be killed' unless stopped

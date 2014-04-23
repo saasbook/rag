@@ -23,25 +23,33 @@ describe RailsIntroArchiveGrader do
     end
   end
 
-
   describe '#run_process' do
-  it 'runs a process' do
-     expect {@grader.run_process('rm -rf FAKEDIR', '.')}.not_to raise_error
-  end
-  it 'initializes instance variables from the results when failing' do
-     @grader.run_process('rm ./FAKEDIR', '.')
-     expect(@grader.instance_variable_get(:@p_out)).to match ''
-     expect(@grader.instance_variable_get(:@p_errs)).to match 'No such file or directory'
-     expect(@grader.instance_variable_get(:@p_stat).success?).to be false
-  end
-  it 'initializes instance variables from the results when succeeding' do
-     @grader.run_process('ls -la', '.')
-     expect(@grader.instance_variable_get(:@p_out)).to match '.'
-     expect(@grader.instance_variable_get(:@p_errs)).to match ''
-     expect(@grader.instance_variable_get(:@p_stat).success?).to be true
-  end
+    it 'runs a process' do
+       expect {@grader.run_process('rm -rf FAKEDIR', '.')}.not_to raise_error
+    end
+    it 'initializes instance variables from the results when failing' do
+       @grader.run_process('rm ./FAKEDIR', '.')
+       expect(@grader.instance_variable_get(:@p_out)).to match ''
+       expect(@grader.instance_variable_get(:@p_errs)).to match 'No such file or directory'
+       expect(@grader.instance_variable_get(:@p_stat).success?).to be false
+    end
+    it 'initializes instance variables from the results when succeeding' do
+       @grader.run_process('ls -la', '.')
+       expect(@grader.instance_variable_get(:@p_out)).to match '.'
+       expect(@grader.instance_variable_get(:@p_errs)).to match ''
+       expect(@grader.instance_variable_get(:@p_stat).success?).to be true
+    end
   end
 
+
+  describe '#process_running?' do
+    it 'finds a running process' do
+      @grader.process_running?(1)
+    end
+    it 'handles not finding a process' do
+      @grader.process_running?(-444666)
+    end
+  end
 
   describe '#rails_up_timeout' do
     it 'returns when http is connected to uri' do
@@ -79,7 +87,6 @@ describe RailsIntroArchiveGrader do
   describe '#kill_port_process!' do
     let(:uri) { URI.parse(@grader.instance_variable_get(:@heroku_uri)) }
     let(:port) { @grader.instance_variable_get(:@port) }
-
     it 'kills any process running on the port' do
       if `lsof -wni tcp:#{port}` == ''
         pid = Process.fork do
@@ -99,7 +106,6 @@ describe RailsIntroArchiveGrader do
       expect { OpenURI.open_uri(uri) }.to raise_error
       expect(`lsof -wni tcp:#{port}`).to eql('')
     end
-
     it 'exits OK if no process running on the port' do
       expect { OpenURI.open_uri(uri) }.to raise_error
       expect(`lsof -wni tcp:#{port}`).to eql('')
@@ -108,25 +114,32 @@ describe RailsIntroArchiveGrader do
   end
 
   describe '#grade!' do
-
-    it 'grades the homework' do
-      expect(@grader).to receive(:kill_port_process!)
-      #Kernel.stub(:`).and_return(0)
+    before(:each) do
       status = double(Process::Status, success?: true)
       Open3.stub(capture3: ['ouput','errors', status] )
       @grader.stub(:run_process)
-      @grader.stub(:rails_up_timeout).and_return()
-      runner = stub(RspecRunner, output: 'rspec output')
-      RspecRunner.stub(:new).and_return(runner)
-      runner.stub(:run).and_return()
-
-      @grader.grade!
-
-      #expect(@grader.instance_variable_get(:@raw_score)).to be 10
-      #expect(@grader.instance_variable_get(:@raw_max)).to be 10
-      expect(@grader.instance_variable_get(:@comments)).to eql 'rspec output'
+      @grader.stub(:rails_up_timeout).and_return
+      # stub the first call only, simplecov wants it later
+      IO.stub(:read) {IO.unstub(:read)}
+      RspecRunner.any_instance.stub(:read_spec_file).with('grading_rules').and_return('something')
+      @runner = RspecRunner.new('code', 'grading_rules')
+      @runner.stub(output: "blah [10 points] \n blah (FAILED [10 points])")
+      RspecRunner.stub(:new).and_return(@runner)
     end
-
+    it 'kills other processes using the port, before and after running' do
+      expect(@grader).to receive(:kill_port_process!)
+      expect(@grader).to receive(:process_running?).and_return(true)
+      expect(Process).to receive(:kill).twice
+      @grader.grade!
+    end
+    it 'grades the homework' do
+      RspecRunner.should_receive(:new).and_return(@runner)
+      @grader.grade!
+      expect(@grader.instance_variable_get(:@raw_score)).to eql 10
+      expect(@grader.instance_variable_get(:@raw_max)).to eql 20
+      expect(@grader.instance_variable_get(:@comments)).
+          to eql "blah [10 points] \n blah (FAILED [10 points])"
+    end
   end
 
 end
