@@ -98,6 +98,7 @@ describe RailsIntroArchiveGrader do
           server.start
           sleep 5 # Rails takes longer probably
         end
+        Process.detach(pid)
       end
       expect(`lsof -wni tcp:#{port}`).not_to eql('')
       expect((OpenURI.open_uri(uri)).status[0]).to eql("200")

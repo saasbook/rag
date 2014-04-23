@@ -16,34 +16,28 @@ class RailsIntroArchiveGrader < HerokuRspecGrader
     kill_port_process!
 
     #TODO log it, log everything
-    #TODO grader name
+    #TODO grader name sux
 
     Dir.mktmpdir('rails_intro_archive', '/tmp') do |tmpdir|
       @temp = tmpdir
-      #TODO run_process on it?
-      untar_cmd = "tar -xvf #{@archive} -C /#{@temp}"
-      run_process(untar_cmd, '.')
 
-      #`#{untar_cmd}`
+      run_process("tar -xvf #{@archive} -C /#{@temp}", '.')
+
       #TODO should it be forking here?
-      pid = Process.fork do
-        run_process('rails s', @temp)
-      end
+      pid = Open3.popen3('rails s', :chdir => tmpdir)[3].pid
+      Process.detach(pid)
+
       # wait for rails to start
       rails_up_timeout(30)
 
       super
 
-      #TODO DRY it with kill_port_process!
-      #TODO run_process for it?
-      pid = `pgrep -f "ruby script/rails s"`.to_i
       if pid > 0 and process_running?(pid)
         Process.kill('KILL', pid) unless Process.kill('INT', pid) == 1
       end
     end
   end
 
-  #TODO re-investigate open3 per hw4_grader
   def run_process(cmd, dir)
       @p_out, @p_errs, @p_stat = Open3.capture3(
           cmd, :chdir => dir
@@ -62,12 +56,7 @@ class RailsIntroArchiveGrader < HerokuRspecGrader
     rescue Errno::ESRCH
       puts 'Process not found for pid ' + pid.to_s
     rescue Errno::EPERM
-      process_uid = Process.uid(pid)
-      this_uid = Process.uid
-      same_user = (process_uid == this_uid)
-      unless same_user
-        puts "Process #{pid} owner #{process_uid} not the same as this process owner #{this_uid}."
-      end
+      puts "Process #{pid} owner not the same as this process owner #{Process.uid}."
     end
     false
   end
