@@ -8,7 +8,6 @@ describe RailsIntroArchiveGrader do
     @grader = RailsIntroArchiveGrader.new('archive', { spec: 'grading_rules' })
   end
 
-
   describe '#new' do
     it 'raises an error when spec file is not readable' do
       File.stub(readable?: false)
@@ -22,7 +21,6 @@ describe RailsIntroArchiveGrader do
       expect(@grader.instance_variable_get(:@archive)).to eq('archive')
     end
   end
-
 
   describe '#run_process' do
     it 'runs a process' do
@@ -43,7 +41,6 @@ describe RailsIntroArchiveGrader do
        expect(@grader.instance_variable_get(:@p_stat).success?).to be true
     end
   end
-
 
   describe '#process_running?' do
     it 'finds a running process' do
@@ -77,7 +74,6 @@ describe RailsIntroArchiveGrader do
     end
   end
 
-
   describe '#app_loaded?' do
     it 'returns true when it connects to the uri' do
       OpenURI.stub(open_uri: true)
@@ -87,12 +83,15 @@ describe RailsIntroArchiveGrader do
       OpenURI.stub(open_uri: false)
       expect(@grader.app_loaded?).to be false
     end
-    it 'returns false when it any different error' do
+    it 'returns false when it has any different error' do
       @grader.instance_variable_set(:@heroku_uri,'CAUSE-ERROR')
       expect(@grader.app_loaded?).to be false
     end
+    it 'gets connection refused error when the uri is valid, but not existent' do
+       expect(@grader).to receive(:log).with(/ECONNREFUSED/)
+       @grader.app_loaded?
+    end
   end
-
 
   describe '#kill_port_process!' do
     it 'kills any process running on the port' do
@@ -124,7 +123,6 @@ describe RailsIntroArchiveGrader do
       @grader.escalating_kill(-444)
     end
     it 'catches errors and just logs them' do
-      Process.stub(:kill)
       expect(@grader).to receive(:log)
       @grader.escalating_kill(nil)
     end

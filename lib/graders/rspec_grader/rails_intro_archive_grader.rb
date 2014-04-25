@@ -4,7 +4,6 @@ require 'open-uri'
 
 class RailsIntroArchiveGrader < HerokuRspecGrader
   class RailsIntroArchiveGrader::ProcessUnkillableError < StandardError ; end
-  # class RailsIntroArchiveGrader::RunProcessError < StandardError ; end
 
 
   def initialize(archive, grading_rules)
@@ -48,7 +47,6 @@ class RailsIntroArchiveGrader < HerokuRspecGrader
     end
   end
 
-
   def kill_port_process!(pid=nil)   
     pid ||= find_port_process
     pid = pid.to_i
@@ -73,7 +71,7 @@ class RailsIntroArchiveGrader < HerokuRspecGrader
     begin
       exit_status = Process.kill('INT', pid)
       exit_status = Process.kill('KILL', pid) unless exit_status == 1
-      log "kill #{pid} exit_status: ${exit_status}"
+      log "kill #{pid} exit_status: #{exit_status}"
       return true if exit_status == 1
     rescue Errno::ESRCH => e
       log e.inspect
@@ -137,23 +135,12 @@ class RailsIntroArchiveGrader < HerokuRspecGrader
     false
   end
 
-
   #TODO
   def log(*args)
-    # @log = Logger.new(STDOUT)
-    # log.level = Logger::WARN
     puts args
     # curl lib the logs to a logging service?
-    # @logpath = File.expand_path(File.join('.', 'log', "#{tmpdir}.log"))
-    # `include curl-log; curl-log github.com/logs/hey
-    # File.open(@logpath, 'a') {|f| f.puts args}
+    # @log = Logger.new(STDOUT)
+    # @log.level = Logger::WARN
   end
 
 end
-
-
-
-
-
-
-
