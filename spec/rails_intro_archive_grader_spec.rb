@@ -1,5 +1,5 @@
 require 'spec_helper'
-require 'webrick'
+# require 'webrick'
 
 describe RailsIntroArchiveGrader do
 
@@ -23,17 +23,20 @@ describe RailsIntroArchiveGrader do
     end
   end
 
+
   describe '#run_process' do
     it 'runs a process' do
-       expect {@grader.run_process('rm -rf FAKEDIR', '.')}.not_to raise_error
+       expect {@grader.run_process('rm -rf FAKEi?DIR')}.not_to raise_error
     end
     it 'initializes instance variables from the results when failing' do
-       @grader.run_process('rm ./FAKEDIR', '.')
+       expect(@grader).to receive(:log)
+       @grader.run_process('rm ./FAKEi?DIR')
        expect(@grader.instance_variable_get(:@p_out)).to match ''
        expect(@grader.instance_variable_get(:@p_errs)).to match 'No such file or directory'
        expect(@grader.instance_variable_get(:@p_stat).success?).to be false
     end
     it 'initializes instance variables from the results when succeeding' do
+       expect(@grader).not_to receive(:log)
        @grader.run_process('ls -la', '.')
        expect(@grader.instance_variable_get(:@p_out)).to match '.'
        expect(@grader.instance_variable_get(:@p_errs)).to match ''
@@ -44,26 +47,33 @@ describe RailsIntroArchiveGrader do
 
   describe '#process_running?' do
     it 'finds a running process' do
-      @grader.process_running?(1)
+      expect(@grader.process_running?(1)).to be_true
     end
     it 'handles not finding a process' do
-      @grader.process_running?(-444666)
+      expect(@grader.process_running?(-444666)).to be_false
+    end
+    it 'may have to handle process detection differently on different platforms' do
+      Process.stub(getpgid: false)
+      expect(@grader.process_running?(Process.pid)).to be_true
     end
   end
 
   describe '#rails_up_timeout' do
-    it 'returns when http is connected to uri' do
+    it 'waits for the server to start up' do
       @grader.stub(app_loaded?: true)
       expect {@grader.rails_up_timeout(2,1).to_s}.not_to raise_error
     end
     #TODO better to just log and return?
     it 'times out if rails never gets up' do
       @grader.stub(app_loaded?: false)
-      expect {@grader.rails_up_timeout(2,1).to_s}.to raise_error(Timeout::Error, /execution expired/)
+      @grader.stub(process_running: false)
+      expect {@grader.rails_up_timeout(2).to_s}.to raise_error(Timeout::Error, /execution expired/)
     end
-    it 'times out if the interval is larger than the timeout' do
-      @grader.stub(app_loaded?: false)
-      expect {@grader.rails_up_timeout(2,10).to_s}.to raise_error(Timeout::Error, /execution expired/)
+    it 'raises ArgumentError if the polling interval is larger than the timeout' do
+      expect {@grader.rails_up_timeout(2,10).to_s}.to raise_error(ArgumentError)
+    end
+    it 'raises ArgumentError if polling is set to zero' do
+      expect {@grader.rails_up_timeout(20,0)}.to raise_error(ArgumentError)
     end
   end
 
@@ -78,39 +88,45 @@ describe RailsIntroArchiveGrader do
       expect(@grader.app_loaded?).to be false
     end
     it 'returns false when it any different error' do
-      @grader.instance_variable_set(:@heroku_uri,'error')
+      @grader.instance_variable_set(:@heroku_uri,'CAUSE-ERROR')
       expect(@grader.app_loaded?).to be false
     end
   end
 
 
   describe '#kill_port_process!' do
-    let(:uri) { URI.parse(@grader.instance_variable_get(:@heroku_uri)) }
-    let(:port) { @grader.instance_variable_get(:@port) }
     it 'kills any process running on the port' do
-      if `lsof -wni tcp:#{port}` == ''
-        pid = Process.fork do
-          # Rails uses webrick, should act similar for this purpose
-          #`cd ./spec/fixtures/ropo && rails s -p #{port}`
-          WEBrick::HTTPUtils::DefaultMimeTypes['rhtml'] = 'text/html'
-          server = WEBrick::HTTPServer.new :Port => port, :DocumentRoot => Dir.pwd
-          trap('INT') { server.stop }
-          server.start
-          sleep 5 # Rails takes longer probably
-        end
-        Process.detach(pid)
+      #had rails working, tried webrick but locked up ports
+      pid = Process.fork do
+        exec 'sleep 30'
       end
-      expect(`lsof -wni tcp:#{port}`).not_to eql('')
-      expect((OpenURI.open_uri(uri)).status[0]).to eql("200")
-      @grader.kill_port_process!
-      Process.wait(pid) # sleep 5
-      expect { OpenURI.open_uri(uri) }.to raise_error
-      expect(`lsof -wni tcp:#{port}`).to eql('')
+      Process.detach pid
+     # sleep 3
+      expect(@grader.process_running?(pid)).not_to be_false
+      @grader.kill_port_process!(pid)
+      expect(@grader.process_running?(pid)).to be_false
     end
-    it 'exits OK if no process running on the port' do
-      expect { OpenURI.open_uri(uri) }.to raise_error
-      expect(`lsof -wni tcp:#{port}`).to eql('')
-      expect {@grader.kill_port_process!}.not_to raise_error
+    it 'exits OK if no process was running' do
+      expect {@grader.kill_port_process!(nil)}.not_to raise_error
+    end
+    it 'raises error if the process cannot be killed' do
+      Process.stub(:kill)
+      @grader.stub(process_running?: true)
+      expect {@grader.kill_port_process!(666)}.to raise_error(RailsIntroArchiveGrader::ProcessUnkillableError)
+    end
+  end
+
+  describe '#escalating_kill' do
+    it 'catches errors and just logs them' do
+      expect(Process).to receive(:kill).with('INT', -444).and_return
+      expect(Process).to receive(:kill).with('KILL', -444)
+      expect(@grader).to receive(:log)
+      @grader.escalating_kill(-444)
+    end
+    it 'catches errors and just logs them' do
+      Process.stub(:kill)
+      expect(@grader).to receive(:log)
+      @grader.escalating_kill(nil)
     end
   end
 
@@ -128,9 +144,8 @@ describe RailsIntroArchiveGrader do
       RspecRunner.stub(:new).and_return(@runner)
     end
     it 'kills other processes using the port, before and after running' do
-      expect(@grader).to receive(:kill_port_process!)
-      expect(@grader).to receive(:process_running?).and_return(true)
-      expect(Process).to receive(:kill).twice
+      @grader.stub(process_running?: true)
+      expect(@grader).to receive(:kill_port_process!).twice
       @grader.grade!
     end
     it 'grades the homework' do
