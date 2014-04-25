@@ -24,7 +24,7 @@ end
 
 usage() if (ARGV.length!=2 || ARGV[0] =~ /^-?-h/)
 #assignment_id, grader, submitted_answer, grading_rules, normalize=100
-g = AutoGrader.create('RailsIntroArchive', 'RailsIntroArchiveGrader', ARGV[0], :spec => ARGV[1])
+g = AutoGrader.create('LocalServerGrader', 'LocalServerGrader', ARGV[0], :spec => ARGV[1])
 g.grade!
 puts "Score out of 100: #{g.normalized_score(100)}\n"
 puts "---BEGIN rspec comments---\n#{'-'*80}\n#{g.comments}\n#{'-'*80}\n---END rspec comments---"

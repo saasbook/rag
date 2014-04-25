@@ -2,8 +2,8 @@
 require_relative 'heroku_rspec_grader'
 require 'open-uri'
 
-class RailsIntroArchiveGrader < HerokuRspecGrader
-  class RailsIntroArchiveGrader::ProcessUnkillableError < StandardError ; end
+class LocalServerGrader < HerokuRspecGrader
+  class LocalServerGrader::ProcessUnkillableError < StandardError ; end
 
 
   def initialize(archive, grading_rules)
@@ -38,7 +38,7 @@ class RailsIntroArchiveGrader < HerokuRspecGrader
     @p_out, @p_errs, @p_stat = Open3.capture3(cmd, :chdir => dir)
 
     unless @p_stat.success? and @p_errs == '' then
-      pretty = "\n" + RailsIntroArchiveGrader.to_s + ': Errors from command: ' + cmd +
+      pretty = "\n" + LocalServerGrader.to_s + ': Errors from command: ' + cmd +
         "\n" + @p_out +
         "\n" + @p_errs +
         "\n" + @p_stat.inspect

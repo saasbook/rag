@@ -1,17 +1,17 @@
 require 'spec_helper'
 # require 'webrick'
 
-describe RailsIntroArchiveGrader do
+describe LocalServerGrader do
 
   before(:each) do
     File.stub(readable?: true)
-    @grader = RailsIntroArchiveGrader.new('archive', { spec: 'grading_rules' })
+    @grader = LocalServerGrader.new('archive', { spec: 'grading_rules' })
   end
 
   describe '#new' do
     it 'raises an error when spec file is not readable' do
       File.stub(readable?: false)
-      expect {RailsIntroArchiveGrader.new(
+      expect {LocalServerGrader.new(
            'archive', { spec: 'FAKE' })}.to raise_error(RspecGrader::NoSuchSpecError, /Specfile FAKE not found/)
     end
     it 'initializes instance variables' do
@@ -111,7 +111,7 @@ describe RailsIntroArchiveGrader do
     it 'raises error if the process cannot be killed' do
       Process.stub(:kill)
       @grader.stub(process_running?: true)
-      expect {@grader.kill_port_process!(666)}.to raise_error(RailsIntroArchiveGrader::ProcessUnkillableError)
+      expect {@grader.kill_port_process!(666)}.to raise_error(LocalServerGrader::ProcessUnkillableError)
     end
   end
 
