@@ -82,8 +82,8 @@ class LocalServerGrader < HerokuRspecGrader
       return true if exit_status == 1
     rescue Errno::ESRCH => e
       @log.warn e.inspect
-    rescue => e
-      @log.warn e.inspect
+    rescue Exception => e
+      @log.error e.inspect
     end
     false
   end
@@ -135,8 +135,8 @@ class LocalServerGrader < HerokuRspecGrader
     # ECONNREFUSED happens when not fully started yet
     rescue Errno::ECONNREFUSED => e
       @log.info e.inspect
-    rescue => e
-      @log.warn e.inspect
+    rescue Exception => e
+      @log.error e.inspect
     end
     false
   end

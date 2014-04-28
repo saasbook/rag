@@ -93,8 +93,9 @@ describe LocalServerGrader do
       OpenURI.stub(open_uri: false)
       expect(@grader.app_loaded?).to be false
     end
-    it 'returns false when it has any different error' do
-      @grader.instance_variable_set(:@heroku_uri,'CAUSE-ERROR')
+    it 'returns false when it gets invalid input error' do
+      @grader.instance_variable_set(:@heroku_uri, 'htppp://')
+      expect(@logger).to receive(:error)
       expect(@grader.app_loaded?).to be false
     end
     it 'gets connection refused error when the uri is valid, but not existent' do
@@ -136,8 +137,8 @@ describe LocalServerGrader do
       expect(@logger).to receive(:warn)
       @grader.escalating_kill(-444)
     end
-    it 'logs errors from nil input' do
-      expect(@logger).to receive(:warn)
+    it 'logs errors from invalid input like nil' do
+      expect(@logger).to receive(:error)
       @grader.escalating_kill(nil)
     end
     
