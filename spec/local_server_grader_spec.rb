@@ -7,7 +7,7 @@ describe LocalServerGrader do
     File.stub(readable?: true)
     @grader = LocalServerGrader.new('archive', { spec: 'grading_rules' })
     @logger=Logger.new(STDOUT)
-    @grader.set_logger(@logger)
+    @grader.log=@logger
     @grader.set_log_level(Logger::WARN)
   end
 
@@ -57,6 +57,12 @@ describe LocalServerGrader do
       Process.stub(getpgid: false)
       expect(@grader.process_running?(Process.pid)).to be_true
     end
+    it 'logs error but does not raise if the process is owned by another' do
+      Process.stub(:getpgid).and_raise Errno::EPERM
+      expect(@logger).to receive(:error)
+      expect {@grader.process_running?(Process.pid)}.not_to raise_error
+    end
+
   end
 
   describe '#rails_up_timeout' do

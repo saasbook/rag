@@ -2,9 +2,12 @@
 require_relative 'heroku_rspec_grader'
 require 'open-uri'
 
+
 class LocalServerGrader < HerokuRspecGrader
   class LocalServerGrader::ProcessUnkillableError < StandardError ; end
+  class LocalServerGrader::RunProcessError < StandardError ; end
 
+  attr_accessor :log
 
   def initialize(archive, grading_rules)
     super('', grading_rules)
@@ -13,15 +16,11 @@ class LocalServerGrader < HerokuRspecGrader
     @port = '3000'
     # super field do not change
     @heroku_uri = 'http://' + @host + ':' + @port
-    set_logger(Logger.new(STDOUT))
+    @log = Logger.new(STDOUT)
     @log.level = Logger::WARN
     @log.info LocalServerGrader.to_s + ' init() uri: ' + @heroku_uri
-
   end
 
-  def set_logger(logger)
-    @log = logger
-  end
 
   def set_log_level(level)
     @log.level = level if @log.respond_to? :level=
@@ -44,7 +43,7 @@ class LocalServerGrader < HerokuRspecGrader
   end
 
 
-  def run_process(cmd, dir='.')
+  def run_process(cmd, dir='.', reraise=false)
     @p_out, @p_errs, @p_stat = Open3.capture3(cmd, :chdir => dir)
 
     unless @p_stat.success? and @p_errs == '' then
@@ -53,7 +52,7 @@ class LocalServerGrader < HerokuRspecGrader
         "\n" + @p_errs +
         "\n" + @p_stat.inspect
       @log.error pretty
-      # raise RunProcessError, pretty
+      raise RunProcessError, pretty if reraise
     end
   end
 
@@ -76,21 +75,19 @@ class LocalServerGrader < HerokuRspecGrader
 
   def escalating_kill(pid)
     begin
+      # dont need
       exit_status = Process.kill('INT', pid)
       exit_status = Process.kill('KILL', pid) unless exit_status == 1
       @log.info "kill #{pid} exit_status: #{exit_status}"
       return true if exit_status == 1
     rescue Errno::ESRCH => e
       @log.warn e.inspect
-      return false
     rescue => e
       @log.warn e.inspect
-      return false
     end
     false
   end
 
-  # delay if you have just changed the state of the process
   def process_running?(pid, wait=1)
     sleep wait
     pid = pid.to_i
@@ -107,11 +104,9 @@ class LocalServerGrader < HerokuRspecGrader
       end
     rescue Errno::ESRCH
       @log.info 'Process not found for pid ' + pid.to_s
-      return false
     # possible platform differences caught this way, untested
     rescue Errno::EPERM
       @log.error "Process #{pid} owner not the same as this process owner #{Process.uid}."
-      return false
     end
     false
   end
@@ -126,8 +121,8 @@ class LocalServerGrader < HerokuRspecGrader
         sleep(polling) until app_loaded?
       }
     rescue Timeout::Error => e
-      err_msg = "Rails timed out : #{sec} seconds" + e.message
-      @log.error err_msg.to_s + "\nrerun with @log.level >= INFO to see stack trace"
+      err_msg = "Rails timed out : #{sec} seconds. " + e.message
+      @log.error err_msg
       @log.info e.backtrace.to_s
       raise e, err_msg, e.backtrace
     end
@@ -137,12 +132,11 @@ class LocalServerGrader < HerokuRspecGrader
     begin
       uri = URI.parse @heroku_uri
       return true if OpenURI.open_uri uri
-    rescue Errno::ECONNREFUSED => e#The normal error if not fully started yet
+    # ECONNREFUSED happens when not fully started yet
+    rescue Errno::ECONNREFUSED => e
       @log.info e.inspect
-      return false
     rescue => e
       @log.warn e.inspect
-      return false
     end
     false
   end
