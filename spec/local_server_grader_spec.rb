@@ -6,6 +6,9 @@ describe LocalServerGrader do
   before(:each) do
     File.stub(readable?: true)
     @grader = LocalServerGrader.new('archive', { spec: 'grading_rules' })
+    @logger=Logger.new(STDOUT)
+    @grader.set_logger(@logger)
+    @grader.set_log_level(Logger::WARN)
   end
 
   describe '#new' do
@@ -19,6 +22,7 @@ describe LocalServerGrader do
       expect(@grader.instance_variable_get(:@port)).to eq('3000')
       expect(@grader.instance_variable_get(:@heroku_uri)).to eq('http://127.0.0.1:3000')
       expect(@grader.instance_variable_get(:@archive)).to eq('archive')
+      expect(@grader.instance_variable_get(:@log)).not_to eq(nil)
     end
   end
 
@@ -27,14 +31,14 @@ describe LocalServerGrader do
        expect {@grader.run_process('rm -rf FAKEi?DIR')}.not_to raise_error
     end
     it 'initializes instance variables from the results when failing' do
-       expect(@grader).to receive(:log)
+       expect(@logger).to receive(:error)
        @grader.run_process('rm ./FAKEi?DIR')
        expect(@grader.instance_variable_get(:@p_out)).to match ''
        expect(@grader.instance_variable_get(:@p_errs)).to match 'No such file or directory'
        expect(@grader.instance_variable_get(:@p_stat).success?).to be false
     end
     it 'initializes instance variables from the results when succeeding' do
-       expect(@grader).not_to receive(:log)
+       expect(@logger).not_to receive(:error)
        @grader.run_process('ls -la', '.')
        expect(@grader.instance_variable_get(:@p_out)).to match '.'
        expect(@grader.instance_variable_get(:@p_errs)).to match ''
@@ -58,16 +62,16 @@ describe LocalServerGrader do
   describe '#rails_up_timeout' do
     it 'waits for the server to start up' do
       @grader.stub(app_loaded?: true)
-      expect {@grader.rails_up_timeout(2,1).to_s}.not_to raise_error
+      expect {@grader.rails_up_timeout(2,1)}.not_to raise_error
     end
     #TODO better to just log and return?
     it 'times out if rails never gets up' do
       @grader.stub(app_loaded?: false)
       @grader.stub(process_running: false)
-      expect {@grader.rails_up_timeout(2).to_s}.to raise_error(Timeout::Error, /execution expired/)
+      expect {@grader.rails_up_timeout(2,2)}.to raise_error(Timeout::Error, /execution expired/)
     end
     it 'raises ArgumentError if the polling interval is larger than the timeout' do
-      expect {@grader.rails_up_timeout(2,10).to_s}.to raise_error(ArgumentError)
+      expect {@grader.rails_up_timeout(2,10)}.to raise_error(ArgumentError)
     end
     it 'raises ArgumentError if polling is set to zero' do
       expect {@grader.rails_up_timeout(20,0)}.to raise_error(ArgumentError)
@@ -88,7 +92,7 @@ describe LocalServerGrader do
       expect(@grader.app_loaded?).to be false
     end
     it 'gets connection refused error when the uri is valid, but not existent' do
-       expect(@grader).to receive(:log).with(/ECONNREFUSED/)
+       expect(@logger).to receive(:info).with(/ECONNREFUSED/)
        @grader.app_loaded?
     end
   end
@@ -116,16 +120,21 @@ describe LocalServerGrader do
   end
 
   describe '#escalating_kill' do
-    it 'catches errors and just logs them' do
-      expect(Process).to receive(:kill).with('INT', -444).and_return
-      expect(Process).to receive(:kill).with('KILL', -444)
-      expect(@grader).to receive(:log)
+    it 'kills process with increasing insistence' do
+      Process.stub(kill: [0,1])
+      expect(Process).to receive(:kill).with('INT', 555).and_return(0)
+      expect(Process).to receive(:kill).with('KILL', 555).and_return(1)
+      @grader.escalating_kill(555)
+    end    
+    it 'logs errors from non-existent process arguments' do
+      expect(@logger).to receive(:warn)
       @grader.escalating_kill(-444)
     end
-    it 'catches errors and just logs them' do
-      expect(@grader).to receive(:log)
+    it 'logs errors from nil input' do
+      expect(@logger).to receive(:warn)
       @grader.escalating_kill(nil)
     end
+    
   end
 
   describe '#grade!' do

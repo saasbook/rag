@@ -11,24 +11,34 @@ class LocalServerGrader < HerokuRspecGrader
     @archive = archive
     @host = '127.0.0.1' #TODO load config from yml file?
     @port = '3000'
-
     # super field do not change
     @heroku_uri = 'http://' + @host + ':' + @port
+    set_logger(Logger.new(STDOUT))
+    @log.level = Logger::WARN
+    @log.info LocalServerGrader.to_s + ' init() uri: ' + @heroku_uri
 
   end
 
+  def set_logger(logger)
+    @log = logger
+  end
+
+  def set_log_level(level)
+    @log.level = level if @log.respond_to? :level=
+  end
 
   def grade!
     Dir.mktmpdir('rails_intro_archive', '/tmp') do |tmpdir|
       kill_port_process!
+      @log.info "extract #{@archive} to #{tmpdir}"
       run_process "tar -xvf #{@archive} -C /#{tmpdir}"
 
       pid = Open3.popen3('rails s', :chdir => tmpdir)[3].pid
       Process.detach pid
-      rails_up_timeout
-
+      @log.info "start rails PID: #{pid}"
+      rails_up_timeout(20, 3)
+      
       super
-
       kill_port_process! pid
     end
   end
@@ -42,7 +52,7 @@ class LocalServerGrader < HerokuRspecGrader
         "\n" + @p_out +
         "\n" + @p_errs +
         "\n" + @p_stat.inspect
-      log pretty
+      @log.error pretty
       # raise RunProcessError, pretty
     end
   end
@@ -50,19 +60,16 @@ class LocalServerGrader < HerokuRspecGrader
   def kill_port_process!(pid=nil)   
     pid ||= find_port_process
     pid = pid.to_i
-    if pid > 0 && process_running?(pid)
-      # SIGINT is rails trapped signal, equivalent to ctrl+c
-      escalating_kill(pid)
-      #sleep 3
-      if process_running?(pid)
-        err_msg = "Process #{pid} cannot be killed."
-        log err_msg
-        raise ProcessUnkillableError, err_msg
-      end
+    escalating_kill(pid) if pid > 0 && process_running?(pid)
+    if process_running?(pid)
+      err_msg = "Process #{pid} cannot be killed."
+      @log.error err_msg
+      raise ProcessUnkillableError, err_msg
     end
   end
 
   def find_port_process
+    #TODO brittle
     run_process "lsof -wni tcp:#{@port} | xargs echo | cut -d ' ' -f 11"
     pid = @p_out
   end
@@ -71,35 +78,40 @@ class LocalServerGrader < HerokuRspecGrader
     begin
       exit_status = Process.kill('INT', pid)
       exit_status = Process.kill('KILL', pid) unless exit_status == 1
-      log "kill #{pid} exit_status: #{exit_status}"
+      @log.info "kill #{pid} exit_status: #{exit_status}"
       return true if exit_status == 1
     rescue Errno::ESRCH => e
-      log e.inspect
+      @log.warn e.inspect
+      return false
     rescue => e
-      log e.inspect
-    end 
+      @log.warn e.inspect
+      return false
+    end
+    false
   end
 
   # delay if you have just changed the state of the process
   def process_running?(pid, wait=1)
     sleep wait
     pid = pid.to_i
-    # zero represents the current process, dont kill it
+    # zero is the current process, dont kill it
     return false if pid <= 0
     begin
       if Process.getpgid(pid)
-        log "process #{pid} running"
+        @log.info "process #{pid} running"
         return true 
       end
       if Process.kill(0, pid) == 1
-        log "poke process #{pid}: found"
+        @log.info "poke process #{pid}: found"
         return true 
       end
     rescue Errno::ESRCH
-      log 'Process not found for pid ' + pid.to_s
+      @log.info 'Process not found for pid ' + pid.to_s
+      return false
     # possible platform differences caught this way, untested
     rescue Errno::EPERM
-      log "Process #{pid} owner not the same as this process owner #{Process.uid}."
+      @log.error "Process #{pid} owner not the same as this process owner #{Process.uid}."
+      return false
     end
     false
   end
@@ -108,14 +120,15 @@ class LocalServerGrader < HerokuRspecGrader
     raise ArgumentError,
      "Polling interval must be greater than zero." if polling <= 0
     raise ArgumentError,
-     "Polling interval must be greater than timeout" if polling > sec
+     "Polling interval must be greater than timeout." if polling > sec
     begin
       to_status = timeout(sec) {
         sleep(polling) until app_loaded?
       }
     rescue Timeout::Error => e
-      err_msg = "Rails took too long to start: #{sec} seconds. Aborting. " + e.message
-      log err_msg
+      err_msg = "Rails timed out : #{sec} seconds" + e.message
+      @log.error err_msg.to_s + "\nrerun with @log.level >= INFO to see stack trace"
+      @log.info e.backtrace.to_s
       raise e, err_msg, e.backtrace
     end
   end
@@ -125,22 +138,14 @@ class LocalServerGrader < HerokuRspecGrader
       uri = URI.parse @heroku_uri
       return true if OpenURI.open_uri uri
     rescue Errno::ECONNREFUSED => e#The normal error if not fully started yet
-      log e.inspect
+      @log.info e.inspect
       return false
     rescue => e
-      log e.inspect
+      @log.warn e.inspect
       return false
     end
-
     false
   end
 
-  #TODO
-  def log(*args)
-    puts args
-    # curl lib the logs to a logging service?
-    # @log = Logger.new(STDOUT)
-    # @log.level = Logger::WARN
-  end
 
 end
