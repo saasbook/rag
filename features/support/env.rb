@@ -6,6 +6,14 @@ require 'rspec/expectations'
 require 'cucumber/rspec/doubles'
 
 After do
-  [@codefile, @specfile].each { |file| File.unlink(file) if (file && File.readable?(file)) }
+  [@codefile, @specfile].each do |file|
+    if file && File.readable?(file)
+      begin
+        File.unlink file
+      rescue Errno::ETXTBSY, 'Text file busy - config/test_autograders.yml' => e
+        puts e.inspect
+      end
+    end 
+  end
 end
 
