@@ -13,6 +13,9 @@ git clone https://github.com/saasbook/rag.git
 
 cd rag
 
+# gem update --system 2.1
+# and
+# comment out debugger
 bundle install
 bundle exec rspec
 
