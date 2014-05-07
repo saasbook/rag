@@ -1,9 +1,10 @@
 language: ruby
 rvm: 
-  - "1.9.3-p374"
+  - "1.9.3-p545"
 before_install:
   - gem install therubyracer -v '0.9.10'
-  - gem install debugger-ruby_core_source 
+  - gem install debugger-ruby_core_source
+  - gem install debugger -v '1.6.2'
 script:
   - bundle exec rspec spec
   - bundle exec cucumber
