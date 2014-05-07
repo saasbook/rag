@@ -13,7 +13,8 @@ git clone https://github.com/saasbook/rag.git
 
 cd rag
 
-bundle install
+bundle update --source ZenTest
+
 bundle exec rspec
 
 cd ..
