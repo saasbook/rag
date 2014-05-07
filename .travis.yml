@@ -1,6 +1,8 @@
 language: ruby
 rvm: 
-  - "1.9.3-p484"
+  - "1.9.3"
+before_install:
+  - gem install therubyracer -v '0.9.10' 
 script:
   - bundle exec rspec spec
   - bundle exec cucumber
