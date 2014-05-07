@@ -1,6 +1,6 @@
 language: ruby
 rvm: 
-  - "1.9.3"
+  - "1.9.3-p374"
 before_install:
   - gem install therubyracer -v '0.9.10'
   - gem install debugger-ruby_core_source 
