@@ -13,8 +13,13 @@ git clone https://github.com/saasbook/rag.git
 
 cd rag
 git branch -a
+
+
+
 git checkout Spring2014
-bundle install
+# PMC on master branch at least, hod to do this:
+bundle update --source ZenTest
+#bundle install
 bundle exec rspec
 bundle exec cucumber
 cd ..
