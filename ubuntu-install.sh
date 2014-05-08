@@ -78,7 +78,11 @@ bundle exec rake db:migrate
 bundle exec rake db:test:prepare
 
 # then the spork command can be run, default port is 8990
+# this must be started first?
 bundle exec spork cucumber
+
+# copied ~/hide/rag/config/autograders.yml and conf.yml to rag/config
+# PMC add them to pull request
 
 # Added PMC
 #cd ../rag
