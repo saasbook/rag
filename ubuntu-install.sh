@@ -12,14 +12,22 @@ gem install therubyracer -v '0.9.10'
 git clone https://github.com/saasbook/rag.git
 
 cd rag
+git branch -a
 
-bundle install
+
+
+git checkout Spring2014
+# PMC on master branch at least, hod to do this:
+bundle update --source ZenTest
+#bundle install
 bundle exec rspec
-
+bundle exec cucumber
 cd ..
 git clone https://github.com/saasbook/hw.git
 
 cd hw
+git branch -a
+git checkout Spring2014
 bundle install
 ./check_all_solutions
 
@@ -46,8 +54,17 @@ cp rag/.screenrc .screenrc
 
 cd hw/bdd-cucumber/public/rottenpotatoes/
 /bin/bash --login
-rvm gemset create rag3
-rvm gemset import rag3
+rvm gemset create rag3 # this is already in repo
+
+#### Added install and export PMC
+#
+mv rag3.gems rag3.gems.BAK
+bundle install
+rvm gemset export rag3
+#### end additions PMC
+
+
+rvm gemset import rag3 # => failed unless export first
 rvm gemset use rag3
 
 # also we need:
@@ -57,14 +74,23 @@ sudo apt-get install libxslt-dev libxml2-dev
 git clone https://github.com/saasbook/rottenpotatoes.git
 cd rottenpotatoes/
 git checkout -b hw3_solution origin/hw3_solution
+
+# Added PMC commit lock file
+bundle update --source therubyracer
 bundle install
 bundle exec rake db:create
 bundle exec rake db:migrate
 bundle exec rake db:test:prepare
 
-# then the spork command can be run
+# then the spork command can be run, default port is 8990
+# this must be started first?
 bundle exec spork cucumber
 
+# copied ~/hide/rag/config/autograders.yml and conf.yml to rag/config
+# PMC add them to pull request
 
-
-
+# Added PMC
+#cd ../rag
+# start another screen screen -t 'edX-client'
+#while true; do ./run_edx_client.rb live; done
+# detatch process?
