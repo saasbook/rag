@@ -8,14 +8,14 @@ rvm:
 bundler_args: --without development --path=~/.bundle
 before_install:
 - 'echo ''gem: --no-ri --no-rdoc'' > ~/.gemrc'
-- gem install cucumber
-- gem install rspec
+# - gem install cucumber
+# - gem install rspec
 - gem install nokogiri -- --use-system-libraries
 - gem install bundler bundle_cache
 - bundle_cache_install
 script:
-- rspec
-- cucumber
+- bundle exec rspec spec
+- bundle exec cucumber features
 after_script:
 - bundle_cache
 env:
