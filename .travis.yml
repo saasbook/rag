@@ -6,24 +6,25 @@ rvm:
 ## per https://github.com/data-axle/bundle_cache ###
 #
 bundler_args: --without development --path=~/.bundle
+
 before_install:
 - 'echo ''gem: --no-ri --no-rdoc'' > ~/.gemrc'
-# - gem install cucumber
-# - gem install rspec
-- gem install nokogiri -- --use-system-libraries
 - gem install bundler bundle_cache
+- bundle config build.nokogiri --use-system-libraries
 - bundle_cache_install
 script:
 - bundle exec rspec spec
 - bundle exec cucumber features
 after_script:
 - bundle_cache
+
 env:
   global:
   - BUNDLE_ARCHIVE: rag-travis-cache
   - AWS_S3_BUCKET: rag-travis-cache
   - RAILS_ENV: test
-
+# This is the current default if you use a US Standard bucket, otherwise may have to indicate endpoint on S3?
+# - AWS_REGION: us-east-1
   - secure: MLwcHLj9um308gO3I0EGUiCR5yPylDdifFDPtUkvleaGs85bbMA/Yfy9Mn8tXXcs9fGMfoNBN1e+J5KkhENEnIXr5BKWMR6CfujxRDJB9fflAPEPz4mp0DuNIOlVj9NXiZBvyoHZIr9ZV2Ha4IPZUcQv1hzrn6DomZ5GVw3z/FM=
   # AWS encrypted Keys
   - secure: fcyUq3nnjNvBnYqih0JSK8mrhdVPGawjW8mDygMoqvX0xqWnpQZ3UGVyoTxWEMg+xYnayBak8yU8i1Sj6dm1bkjnnq2KxTxzwPFZ2qMIRz5Laa37WYCuebc5PVeZI33l2ViegARv9flW6jSYiPwigQ3VxO6s3xILN/1Jz8N45g4=
