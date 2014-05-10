@@ -3,37 +3,30 @@ rvm:
 - 1.9.3
 
 
-before_install:
-- gem install cucumber
-- gem install rspec
-
-
 ## per https://github.com/data-axle/bundle_cache ###
 #
 bundler_args: --without development --path=~/.bundle
 before_install:
 - 'echo ''gem: --no-ri --no-rdoc'' > ~/.gemrc'
+- gem install cucumber
+- gem install rspec
 - gem install nokogiri -- --use-system-libraries
 - gem install bundler bundle_cache
 - bundle_cache_install
+script:
+- rspec
+- cucumber
 after_script:
 - bundle_cache
 env:
   global:
-  - BUNDLE_ARCHIVE="rag-travis-cache"
-  - AWS_S3_BUCKET="rag-travis-cache"
-  - AWS_S3_REGION="us-west-2"
-  - RAILS_ENV=test
-#
-###################################################
+  - BUNDLE_ARCHIVE: rag-travis-cache
+  - AWS_S3_BUCKET: rag-travis-cache
+  - AWS_S3_REGION: us-west-2
+  - RAILS_ENV: test
 
-env:
-  global:
   - secure: MLwcHLj9um308gO3I0EGUiCR5yPylDdifFDPtUkvleaGs85bbMA/Yfy9Mn8tXXcs9fGMfoNBN1e+J5KkhENEnIXr5BKWMR6CfujxRDJB9fflAPEPz4mp0DuNIOlVj9NXiZBvyoHZIr9ZV2Ha4IPZUcQv1hzrn6DomZ5GVw3z/FM=
   # AWS encrypted Keys
   - secure: fcyUq3nnjNvBnYqih0JSK8mrhdVPGawjW8mDygMoqvX0xqWnpQZ3UGVyoTxWEMg+xYnayBak8yU8i1Sj6dm1bkjnnq2KxTxzwPFZ2qMIRz5Laa37WYCuebc5PVeZI33l2ViegARv9flW6jSYiPwigQ3VxO6s3xILN/1Jz8N45g4=
   - secure: CYzRm/pfqfFEruZvbR17083Ae+55YRHG8yVBx5+twTax3BwsrcZbDl62i3Df7HVSzGuRmJEqLz/UVv8WkGuQy8vOcxkljfduss4VbQnHdtPsnjBxc4w1FCXu8UUWgOi4+0SJIGgRW7bQpdDFemd1dosks0jBtBCVCfJ439q436g=
-script:
-- cucumber install/install.feature
-- cucumber features
 
