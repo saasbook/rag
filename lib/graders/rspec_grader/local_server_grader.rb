@@ -115,7 +115,7 @@ class LocalServerGrader < HerokuRspecGrader
     raise ArgumentError,
      "Polling interval must be greater than zero." if polling <= 0
     raise ArgumentError,
-     "Polling interval must be greater than timeout." if polling > sec
+     "Polling interval must be less than or equal to timeout." if polling > sec
     begin
       to_status = timeout(sec) {
         sleep(polling) until app_loaded?

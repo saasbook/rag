@@ -82,6 +82,10 @@ describe LocalServerGrader do
     it 'raises ArgumentError if polling is set to zero' do
       expect {@grader.rails_up_timeout(20,0)}.to raise_error(ArgumentError)
     end
+    it 'does not raise error if polling is less than or equal to timeout' do
+      @grader.stub(app_loaded?: true)
+      expect {@grader.rails_up_timeout(2,2)}.not_to raise_error
+    end    
   end
 
   describe '#app_loaded?' do
@@ -111,7 +115,6 @@ describe LocalServerGrader do
         exec 'sleep 30'
       end
       Process.detach pid
-     # sleep 3
       expect(@grader.process_running?(pid)).not_to be_false
       @grader.kill_port_process!(pid)
       expect(@grader.process_running?(pid)).to be_false
@@ -147,7 +150,7 @@ describe LocalServerGrader do
   describe '#grade!' do
     before(:each) do
       status = double(Process::Status, success?: true)
-      Open3.stub(capture3: ['ouput','errors', status] )
+      Open3.stub(popen3: [nil,nil,nil,double('wait_thr', pid: 55555)] )
       @grader.stub(:run_process)
       @grader.stub(:rails_up_timeout).and_return
       # stub the first call only, simplecov wants it later
@@ -159,7 +162,10 @@ describe LocalServerGrader do
     end
     it 'kills other processes using the port, before and after running' do
       @grader.stub(process_running?: true)
-      expect(@grader).to receive(:kill_port_process!).twice
+      expect(@grader).to receive(:kill_port_process!)#.twice
+      expect(@logger).to receive(:info)
+      expect(@logger).to receive(:info).with("start rails PID: 55555")
+      expect(@grader).to receive(:kill_port_process!)#.twice
       @grader.grade!
     end
     it 'grades the homework' do
