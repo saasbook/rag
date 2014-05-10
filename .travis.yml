@@ -22,7 +22,6 @@ env:
   global:
   - BUNDLE_ARCHIVE: rag-travis-cache
   - AWS_S3_BUCKET: rag-travis-cache
-  - AWS_S3_REGION: us-west-2
   - RAILS_ENV: test
 
   - secure: MLwcHLj9um308gO3I0EGUiCR5yPylDdifFDPtUkvleaGs85bbMA/Yfy9Mn8tXXcs9fGMfoNBN1e+J5KkhENEnIXr5BKWMR6CfujxRDJB9fflAPEPz4mp0DuNIOlVj9NXiZBvyoHZIr9ZV2Ha4IPZUcQv1hzrn6DomZ5GVw3z/FM=
