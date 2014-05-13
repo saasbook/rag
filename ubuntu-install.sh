@@ -2,20 +2,27 @@
 # Simple autograder setup.sh for configuring Ubuntu 14.04 LTS EC2 instance
 SPORK_SCREEN=Spork
 EDX_CLIENT_SCREEN=Edx-client
+RAG_BRANCH=Spring2014
+HW_BRANCH=Spring2014
+#TODO add Spring2014 branch for this repo too, and tag deploy on success
+ROTTENPOTATOES_BRANCH=hw3_solution
 
 echo "
-0. Get a copy of the old rag/config/autograders.yml and conf.yml for later.
-1. Copy .screenrc and this file from rag to rag/.. and do 'source .screenrc'
-2. './ubuntu-install.sh'
-3. 'sudo chmod a+x ubuntu-install.sh' if execute permission denied.
-4. Enter sudo password.
-5. Enter github credentials at clone of saasbook/hw and saasbook/rottenpotatoes.
-6. When prompted, after install of rag, copy over old config files and edit.
-7. When running, access with 'screen -r $SPORK_SCREEN' and 'screen -r $EDX_CLIENT_SCREEN'
-8. If the script is re-run it shows errors but seems to be OK.
-9. If run multiple times, consider 'screen -r' and then 'Ctrl+a k' to kill them.
+ 0. Get a copy of the old rag/config/autograders.yml and conf.yml for later.
+ 1. Copy .screenrc and this file from rag to rag/.. and do 'source .screenrc'
+ 2. './ubuntu-install.sh'
+ 3. 'sudo chmod a+x ubuntu-install.sh' if execute permission denied.
+ 4. Enter sudo password.
+ 5. Enter github credentials at clone of saasbook/hw and saasbook/rottenpotatoes.
+ 6. When prompted, after install of rag, copy over old config files and edit.
+ 7. When running, access with 'screen -r $SPORK_SCREEN' and 'screen -r $EDX_CLIENT_SCREEN'
+ 8. If the script is re-run it shows errors but seems to be OK.
+ 9. If run multiple times, consider 'screen -r' and then 'Ctrl+a k' to kill them.
+10. Check courseware is same queue and assignments as rag/config/autograder.yml
 "
-read -p "** Click Enter key to continue, Ctrl+c to exit.. "
+read -p "* Click Enter key to continue, Ctrl+c to exit.. "
+read -p "* GitHub username for private repos: " GH_USER
+read -s -p "* GitHub password: " GH_PASS
 
 echo "
 ############################## Install Dependencies ############################
@@ -42,7 +49,8 @@ echo "
 "
 git clone https://github.com/saasbook/rag.git
 cd rag
-git checkout Spring2014
+pwd
+git checkout $RAG_BRANCH
 git branch -a
 bundle update --source ZenTest
 bundle install
@@ -55,7 +63,8 @@ echo "
 "
 git clone https://github.com/saasbook/hw.git
 cd hw
-git checkout Spring2014
+pwd
+git checkout $HW_BRANCH
 git branch -a
 bundle install
 bundle exec rspec
@@ -64,7 +73,7 @@ bundle exec rspec
 ./check_all_solutions # bundle exec cucumber
 cd ..
 echo "
-# Create and use a gemset in hw3 app
+### Create and use a gemset in hw3 app
 "
 cd hw/bdd-cucumber/public/rottenpotatoes/
 rvm gemset create rag3
@@ -82,11 +91,13 @@ echo "
 git clone https://github.com/saasbook/rottenpotatoes.git
 cd rottenpotatoes/
 pwd
-git checkout -b hw3_solution origin/hw3_solution
-#git checkout -tb Spring2014 origin/Spring2014 #bundle update --source therubyracer 
+#git checkout -b $ROTTENPOTATOES_BRANCH origin/$ROTTENPOTATOES_BRANCH
+#This should be the same
+git checkout $ROTTENPOTATOES_BRANCH
 # TODO update not needed if Spring2014 branch has updated Gemfile.lock
 # which will be needed to get rid of ruby-debug and or update beyond current 3.1.0
-bundle update --source therubyracer 
+#git checkout -tb Spring2014 origin/Spring2014 #bundle update --source therubyracer
+bundle update --source therubyracer
 #bundle install
 bundle exec rake db:create
 bundle exec rake db:migrate
@@ -96,24 +107,23 @@ cd ..
 echo "
 #############################       Run        #################################
 "
-# TODO -h 999 lines of scrollback, -l login
 
 echo "
 ### Repeat bundle install and launch spork in rottenpotatoes repo.
 Resume with: screen -r $SPORK_SCREEN
 "
 cd rottenpotatoes
-screen -dmS $SPORK_SCREEN bash -c 'bundle install; bundle exec spork cucumber'
+pwd
+screen -h 1000 -dmS $SPORK_SCREEN bash -c 'bundle install; bundle exec spork cucumber'
 cd ..
 
 
 # TODO Copied manually! ~/hide/rag/config/autograders.yml and conf.yml to rag/config
 echo "
-** Now, copy old rag/config/autograders.yml and conf.yml to rag/config and modify.
+* Now, copy old rag/config/autograders.yml and conf.yml to rag/config and modify.
 Don't add them to source control.
 "
-read -p "** Click Enter key to continue when done." 
-echo
+read -p "** Click Enter key to continue when done."
 
 
 echo "
@@ -121,12 +131,19 @@ echo "
 Resume with: screen -r $EDX_CLIENT_SCREEN
 "
 cd rag
-screen -dmS $EDX_CLIENT_SCREEN bash -c 'bundle install; while true; do ./run_edx_client.rb live; done'
+pwd
+screen -h 1000 -dmS $EDX_CLIENT_SCREEN bash -c 'bundle install; while true; do ./run_edx_client.rb live; done'
 cd ..
 
 
 echo "
 $0 done!
-** Now, check courseware is same queue and assignments as rag/config/autograder.yml
+* Now, check courseware is same queue and assignments as rag/config/autograder.yml
 "
+
+echo '
+export PS1=$PS1\w\[\033[01;34m\]$(__git_ps1 " (%s)")${ret_status}$(~/.rvm/bin/rvm-prompt u) $(~/.rvm/bin/rvm-prompt g)\[\033[00m\] ' >> ~/.bash_profile
+
+source ~/.bash_profile
+
 
