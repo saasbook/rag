@@ -4,11 +4,11 @@
 
 SPORK_SCREEN=Spork
 EDX_CLIENT_SCREEN=Edx-client
-SCROLLBACK_DEFAULT=500
+SCROLLBACK_DEFAULT=1000
 RAG_BRANCH=Spring2014
 HW_BRANCH=Spring2014
 ROTTENPOTATOES_BRANCH=hw3_solution
-RUBYGEMS_VERSION=2.2.2
+RUBYGEMS_VERSION=2.2.0
 clear
 sleep 1
 
@@ -23,22 +23,19 @@ if [ -z "$(echo $(screen -ls) | grep 'No Sockets')" ]; then
   echo "It seems some screen is running, you better check it out."
   screen -ls
   echo
-  echo "Ctrl+c to exit and 'screen -r' to reattach and examine them."
-  echo "If not concerned about exit, 'pkill -f SCREEN' kills all."
-  read -p "Enter will continue if you wish, however."
+  read -p  "Ctrl+c to exit! 'kill [pid pid]' or 'pkill -f SCREEN'"
 fi
 echo "
- 0. Get a copy of the old rag/config/autograders.yml and conf.yml for later.
- 1. Copy .screenrc and this file from rag to rag/.. and do 'source .screenrc'
- 2. Execute this script: './ubuntu-install.sh' ($0)
- 3. 'sudo chmod a+x ubuntu-install.sh' if execute permission denied.
- 4. Enter sudo password.
- 5. Enter github credentials, screen scrollback.
- 6. When prompted, copy over old config files and edit.
- 7. When running, access with 'screen -r $SPORK_SCREEN' and 'screen -r $EDX_CLIENT_SCREEN'
- 8. If the script is re-run it shows errors but seems to be OK.
- 9. If run multiple times, you must kill the extra screen processes.
-10. Check courseware is same queue and assignments as rag/config/autograder.yml
+0. Get a copy of the old rag/config/autograders.yml and conf.yml for later.
+1. Copy .screenrc and this file from rag to rag/.. and do 'source .screenrc'
+2. Execute this script: './ubuntu-install.sh' ($0)
+3. 'sudo chmod a+x ubuntu-install.sh' if execute permission denied.
+4. Enter sudo password.
+5. Enter github credentials, screen scrollback.
+6. When prompted, copy over old config files and edit.
+7. When running, access with 'screen -r $SPORK_SCREEN' and 'screen -r $EDX_CLIENT_SCREEN'
+8. If the script is re-run it shows errors but seems to be OK.
+9. Check courseware is same queue and assignments as rag/config/autograder.yml
 "
 read -p "* Enter scrollback for screen. [$SCROLLBACK_DEFAULT]: " SCROLLBACK
 SCROLLBACK="${SCROLLBACK:-$SCROLLBACK_DEFAULT}"
@@ -61,7 +58,7 @@ SCROLLBACK: $SCROLLBACK
 ---------------------------------
 "
 echo "
-     Review install options:$INSTALL_ARGS"
+     Confirm install options:$INSTALL_ARGS"
 read -p "* If above info is correct, click Enter key to continue, or Ctrl+c to exit and edit $0 "
 
 
@@ -72,14 +69,17 @@ echo "
 ############################## Install Dependencies ###########################
 "
 
-gem update --system $RUBYGEMS_VERSION
+
+
+
+
 sudo apt-get install -y git
 sudo apt-get install -y curl
-\curl -L https://get.rvm.io | bash -s stable  --ruby=1.9.3
-source ~/.rvm/scripts/rvm
-# this needed for HW4 and must be installed before some other versions of libv8 are pulled in?
-# We can get rid of it if we update HW3 and 4. It appears to fail if already installed, but tests pass.
-gem install therubyracer -v '0.9.10'
+
+sudo -H -u ubuntu bash -c "\curl -L https://get.rvm.io | bash -s stable  --ruby=1.9.3"
+source /home/ubuntu/.rvm/scripts/rvm
+rvm --install use 1.9.3 && rvm rubygems --force $RUBYGEMS_VERSION"
+gem install therubyracer -v '0.9.10'"
 sudo apt-get install -y libxslt-dev libxml2-dev
 
 
@@ -97,7 +97,7 @@ cd rag
 pwd
 git checkout $RAG_BRANCH
 git branch -a
-bundle update --source ZenTest
+#bundle update --source ZenTest
 bundle install
 bundle exec rspec
 bundle exec cucumber
@@ -137,10 +137,9 @@ cd rottenpotatoes/
 pwd
 git checkout $ROTTENPOTATOES_BRANCH
 # TODO update not needed when Spring2014 branch gets updated Gemfile.lock
-# which will be needed to get rid of ruby-debug and or update beyond current 3.1.0
 #git checkout -tb Spring2014 origin/Spring2014 #bundle update --source therubyracer
 bundle update --source therubyracer
-#bundle install
+bundle install
 bundle exec rake db:create
 bundle exec rake db:migrate
 bundle exec rake db:test:prepare
@@ -163,7 +162,8 @@ echo "
 "
 read -p "
 * #1 Copy old rag/config/autograders.yml text to clipboard.
-* Click Enter to open nano for the new file, paste in the text to nano. Save and close nano to continue.
+* Click Enter to open nano for the new file, paste in the text to nano.
+* Save and close nano to continue.
 "
 nano rag/config/autograders.yml
 clear
@@ -171,7 +171,7 @@ read -p "
 * #2 Do similar for rag/config/conf.yml. Click Enter to begin.
 "
 nano rag/config/conf.yml
-read -p "** Don't put them in source control. Click Enter key to continue."
+read -p "** Don't put them in source control. Click Enter key to run screens."
 
 
 
@@ -198,7 +198,6 @@ cd rag
 pwd
 screen -h $SCROLLBACK -dmS $EDX_CLIENT_SCREEN bash -c 'bundle install; while true; do ./run_edx_client.rb live; done'
 cd ..
-
 #echo '
 #Attempt to install git-aware bash prompt in ~/.bash_profile
 #'
@@ -206,11 +205,16 @@ cd ..
 #export PS1=$PS1\'\w\[\033[01;34m\]$(__git_ps1 " (%s)")${ret_status}$(~/.rvm/bin/rvm-prompt u) $(~/.rvm/bin/rvm-prompt g)\[\033[00m\]\' ' >> ~/.bash_profile
 #source ~/.bash_profile
 
+echo "
+######################       Post-install        ##############################
+"
 screen -ls
 echo "
 Installed with args:$INSTALL_ARGS
 $0 done!
-* Now, check courseware is same queue and assignments as rag/config/autograder.yml
+* 'source /home/ubuntu/.rvm/scripts/rvm'
+* Now, check courseware is same queue and assignments as
+* in the recently modified ./rag/config/autograders.yml
 "
 
 
