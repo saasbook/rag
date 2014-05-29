@@ -153,10 +153,11 @@ echo "
 #############################       Edit     ################################
 "
 echo "
-### I will run nano twice to install 2 files in rag/config and edit them.
+### I will run nano thrice to install 2 files in rag/config and edit them,
+### and to edit paths in hw/features/step_definitions/hw_testing_steps.rb
 ### Or you can quit now and edit the files offline because the only other
 ### thing left after this is running the screen commands from this file:
-### $0 Line 167 or so.
+### $0 Line 187 or so.
 
 * Click Enter key to continue, Ctrl+c to exit prematurely.
 "
@@ -171,11 +172,16 @@ read -p "
 * #2 Do similar for rag/config/conf.yml. Click Enter to begin.
 "
 nano rag/config/conf.yml
-read -p "** Don't put them in source control. Click Enter key to run screens."
 
+read -p "
+* Click Enter to edit HW_RAG_PATH and RAG_HW_PATH in hw_testing_steps.rb
+* Using absolute paths is fine.
+"
+nano hw/features/step_definitions/hw_testing_steps.rb
 
-
-
+read -p "
+* Click Enter to run screens and finish.
+"
 echo "
 #############################       Run        ################################
 "
