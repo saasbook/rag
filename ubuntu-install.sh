@@ -32,7 +32,7 @@ echo "
 3. 'sudo chmod a+x ubuntu-install.sh' if execute permission denied.
 4. Enter sudo password.
 5. Enter github credentials, screen scrollback.
-6. When prompted, copy over old config files and edit.
+6. When prompted, copy over old config files and edit. Edit hw_testing_steps.rb paths.
 7. When running, access with 'screen -r $SPORK_SCREEN' and 'screen -r $EDX_CLIENT_SCREEN'
 8. If the script is re-run it shows errors but seems to be OK.
 9. Check courseware is same queue and assignments as rag/config/autograder.yml
@@ -79,10 +79,9 @@ sudo apt-get install -y curl
 
 sudo -H -u ubuntu bash -c "\curl -L https://get.rvm.io | bash -s stable  --ruby=1.9.3"
 source /home/ubuntu/.rvm/scripts/rvm
-rvm --install use 1.9.3 && rvm rubygems --force $RUBYGEMS_VERSION"
-gem install therubyracer -v '0.9.10'"
-sudo apt-get install -y libxslt-dev libxml2-dev
-
+rvm --install use 1.9.3 && rvm rubygems --force $RUBYGEMS_VERSION
+gem install therubyracer -v '0.9.10'
+sudo apt-get install -y libxslt-dev libxml2-dev libpq-dev
 source /home/ubuntu/.bash_profile
 
 
