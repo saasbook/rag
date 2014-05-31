@@ -5,13 +5,13 @@
 SPORK_SCREEN=Spork
 EDX_CLIENT_SCREEN=Edx-client
 SCROLLBACK_DEFAULT=1000
-RAG_BRANCH=Spring2014
-HW_BRANCH=Spring2014
+#TODO switch to saasbook after merge of devel_update branches
+USER_REPO=apelade
+RAG_BRANCH=devel_update #develop
+HW_BRANCH=devel_update #develop
 ROTTENPOTATOES_BRANCH=hw3_solution
 RUBYGEMS_VERSION=2.2.0
 #clear
-sleep 1
-
 
 
 
@@ -25,11 +25,11 @@ if [ -z "$(echo $(screen -ls) | grep 'No Sockets')" ]; then
   echo
   read -p  "Ctrl+c to exit! 'kill [pid pid]' or 'pkill -f SCREEN'"
 fi
-echo "
+echo " General steps:
 0. Get a copy of the old rag/config/autograders.yml and conf.yml for later.
 1. Copy .screenrc and this file from rag to rag/.. and do 'source .screenrc'
-2. Execute this script: './ubuntu-install.sh' ($0)
-3. 'sudo chmod a+x ubuntu-install.sh' if execute permission denied.
+2. Execute this script: ($0)
+3. 'sudo chmod a+x $0' if execute permission denied.
 4. Enter sudo password.
 5. Enter github credentials, screen scrollback.
 6. When prompted, copy over old config files and edit. Edit hw_testing_steps.rb paths.
@@ -48,6 +48,7 @@ Install to PWD: $PWD
 RUBYGEMS_VERSION: $RUBYGEMS_VERSION
 GH_USER: $GH_USER
 GH_PASS: -secret-
+USER_REPO: $USER_REPO
 RAG_BRANCH: $RAG_BRANCH
 HW_BRANCH: $HW_BRANCH
 ROTTENPOTATOES_BRANCH: $ROTTENPOTATOES_BRANCH
@@ -92,7 +93,7 @@ echo "
 echo "
 ### Clone, install, and test rag.
 "
-git clone https://github.com/saasbook/rag.git
+git clone https://github.com/$USER_REPO/rag
 cd rag
 pwd
 git checkout $RAG_BRANCH
@@ -105,8 +106,9 @@ cd ..
 echo "
 ### Clone, install, and test hw.
 "
-git clone https://$GH_USER:$GH_PASS@github.com/saasbook/hw.git
+git clone https://$GH_USER:$GH_PASS@github.com/$USER_REPO/hw
 cd hw
+git remote set-url origin https://github.com/$USER_REPO/hw
 pwd
 git checkout $HW_BRANCH
 git branch -a
@@ -132,6 +134,8 @@ echo "
 "
 git clone https://$GH_USER:$GH_PASS@github.com/saasbook/rottenpotatoes.git
 cd rottenpotatoes/
+git remote set-url origin https://github.com/saasbook/rottenpotatoes
+
 pwd
 git checkout $ROTTENPOTATOES_BRANCH
 # TODO update not needed when Spring2014 branch gets updated Gemfile.lock
@@ -222,8 +226,11 @@ $INSTALL_ARGS
 
 $0 done!
 
-* Now, check courseware is same queue and assignments as
-* in the recently modified ./rag/config/autograders.yml
+* Now do these:
+* source ~/.bash_profile
+* May need to do bundle install in each rottenpotatoes app, incl rag/hw4_grader_stuff
+* Check courseware is same queue and assignments as
+  in the recently modified ./rag/config/autograders.yml
 "
 
 
