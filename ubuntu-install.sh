@@ -5,11 +5,11 @@
 SPORK_SCREEN=Spork
 EDX_CLIENT_SCREEN=Edx-client
 SCROLLBACK_DEFAULT=1000
-#TODO switch to saasbook after merge of devel_update branches
+#TODO switch to saasbook and develop branch after merge of devel_update branches
 USER_REPO=apelade
 RAG_BRANCH=devel_update #develop
 HW_BRANCH=devel_update #develop
-ROTTENPOTATOES_BRANCH=hw3_solution
+ROTTENPOTATOES_BRANCH=devel_update
 #This is the current version, not forcing
 #RUBYGEMS_VERSION=2.2.2
 #clear
@@ -121,6 +121,8 @@ cd hw/bdd-cucumber/public/rottenpotatoes/
 rvm gemset create rag3
 mv rag3.gems rag3.gems.BAK
 bundle install
+bundle exec rake db:migrate
+bundle exec rake db:test:prepare
 rvm gemset export rag3
 rvm gemset import rag3 # => failed unless export first
 rvm gemset use rag3
