@@ -6,11 +6,11 @@ SPORK_SCREEN=Spork
 EDX_CLIENT_SCREEN=Edx-client
 SCROLLBACK_DEFAULT=1000
 
-USER_REPO=saasbook
+USER_REPO=apelade
 # The update_3218 branch is Spring2014 with hw_updates
 RAG_BRANCH=devel_update #Spring2014
 HW_BRANCH=devel_update #Spring2014
-ROTTENPOTATOES_BRANCH=hw3_solution
+ROTTENPOTATOES_BRANCH=devel_update #hw3_solution
 RUBYGEMS_VERSION=2.2.0
 #clear
 
@@ -133,15 +133,15 @@ cd ../../../..
 echo "
 ### Clone, install, saasbook/rottenpotatoes hw3_solution branch.
 "
-git clone https://$GH_USER:$GH_PASS@github.com/saasbook/rottenpotatoes.git
+git clone https://$GH_USER:$GH_PASS@github.com/$USER_REPO/rottenpotatoes.git
 cd rottenpotatoes/
-git remote set-url origin https://github.com/saasbook/rottenpotatoes
+git remote set-url origin https://github.com/$USER_REPO/rottenpotatoes
 
 pwd
 git checkout $ROTTENPOTATOES_BRANCH
 # TODO update not needed when Spring2014 branch gets updated Gemfile.lock
 #git checkout -tb Spring2014 origin/Spring2014 #bundle update --source therubyracer
-bundle update --source therubyracer
+#bundle update --source therubyracer
 bundle install
 bundle exec rake db:create
 bundle exec rake db:migrate
@@ -229,7 +229,8 @@ $0 done!
 
 * Now do these:
 * source ~/.bash_profile
-* May need to do bundle install in each rottenpotatoes app, incl rag/hw4_grader_stuff
+* May need to do bundle install in each rottenpotatoes app
+  incl rag/hw4_grader_stuff and 'rvm gemset use rag3' in hw/bdd-cucumber/public/rottenpotatoes
 * Check courseware is same queue and assignments as
   in the recently modified ./rag/config/autograders.yml
 "
