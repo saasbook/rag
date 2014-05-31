@@ -10,7 +10,8 @@ USER_REPO=apelade
 RAG_BRANCH=devel_update #develop
 HW_BRANCH=devel_update #develop
 ROTTENPOTATOES_BRANCH=hw3_solution
-RUBYGEMS_VERSION=2.2.0
+#This is the current version, not forcing
+#RUBYGEMS_VERSION=2.2.2
 #clear
 
 
@@ -65,13 +66,9 @@ read -p "* If above info is correct, click Enter key to continue, or Ctrl+c to e
 
 
 
-
-
 echo "
 ############################## Install Dependencies ###########################
 "
-
-
 
 
 
@@ -80,7 +77,7 @@ sudo apt-get install -y curl
 
 sudo -H -u ubuntu bash -c "\curl -L https://get.rvm.io | bash -s stable  --ruby=1.9.3"
 source /home/ubuntu/.rvm/scripts/rvm
-rvm --install use 1.9.3 && rvm rubygems --force $RUBYGEMS_VERSION
+# rvm --install use 1.9.3 && rvm rubygems --force $RUBYGEMS_VERSION
 gem install therubyracer -v '0.9.10'
 sudo apt-get install -y libxslt-dev libxml2-dev libpq-dev
 source /home/ubuntu/.bash_profile
@@ -132,9 +129,9 @@ cd ../../../..
 echo "
 ### Clone, install, saasbook/rottenpotatoes hw3_solution branch.
 "
-git clone https://$GH_USER:$GH_PASS@github.com/saasbook/rottenpotatoes.git
+git clone https://$GH_USER:$GH_PASS@github.com/$USER_REPO/rottenpotatoes.git
 cd rottenpotatoes/
-git remote set-url origin https://github.com/saasbook/rottenpotatoes
+git remote set-url origin https://github.com/$USER_REPO/rottenpotatoes
 
 pwd
 git checkout $ROTTENPOTATOES_BRANCH
@@ -232,5 +229,4 @@ $0 done!
 * Check courseware is same queue and assignments as
   in the recently modified ./rag/config/autograders.yml
 "
-
 
