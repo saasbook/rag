@@ -1,6 +1,6 @@
 source 'https://rubygems.org'
 
-gem 'rspec'
+gem 'rspec', '~> 2.14.1'
 gem 'metric_fu'
 gem 'mechanize'
 gem 'octokit'
