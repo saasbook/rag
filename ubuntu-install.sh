@@ -233,6 +233,7 @@ $0 done!
   incl rag/hw4_grader_stuff and 'rvm gemset use rag3' in hw/bdd-cucumber/public/rottenpotatoes
 * Check courseware is same queue and assignments as
   in the recently modified ./rag/config/autograders.yml
+* for migration grader (performance homework) a directory migration_grader will be required in the root, and inside the rjmHW6 branch of the https://github.com/saasbook/rottenpotatoes is required
 "
 
 
