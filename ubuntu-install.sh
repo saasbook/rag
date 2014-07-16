@@ -62,8 +62,10 @@ bundle exec rake db:create
 bundle exec rake db:migrate
 bundle exec rake db:test:prepare
 
-# then the spork command can be run
+# then the spork command can be run, though not necessary
 bundle exec spork cucumber
+
+# for migration grader (performance homework) a directory migration_grader will be required in the root, and inside the rjmHW6 branch of the https://github.com/saasbook/rottenpotatoes is required
 
 
 
