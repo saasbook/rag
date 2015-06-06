@@ -1,6 +1,7 @@
 source 'https://rubygems.org'
 
 gem 'rspec', '~> 2.14.1'
+gem 'cucumber', '~> 1.3.10'
 gem 'metric_fu'
 gem 'mechanize'
 gem 'octokit'
@@ -12,6 +13,5 @@ group :development, :testing do
   gem 'simplecov'
   gem 'simplecov-rcov'
   gem 'addressable'
-  gem 'cucumber'
 end
 
