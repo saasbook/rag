@@ -142,3 +142,38 @@ When /^I run the ruby intro grader for "(.*?)"$/ do |homework_number|
 
   @output = `ruby #{$APP}/grade #{@codefile} #{specfile}`
 end
+
+Given /^a simple cucumber submission containing a cuke "(.*)", step "(.*)" grade it with mutation file "(.*)"$/ do |cucumber_code, cucumber_steps, mutation_yml|
+  # rag/grade3 -a solutions/rottenpotatoes <student_solution>.tar.gz rag/hw3.yml
+  create_step_folder_command = "mkdir -p /tmp/features/step_definitions"
+  create_folder_output = `#{create_step_folder_command}`
+  File.open('/tmp/features/test.feature','w') do |file|
+    file.write %Q{#{cucumber_code}}.gsub(',',"\n")
+  end
+  File.open('/tmp/features/step_definitions/test_steps.rb','w') do |file|
+    file.write %Q{#{cucumber_steps}}.gsub(',',"\n")
+  end
+  archive_command = "tar czf /tmp/features.tar.gz -C /tmp/ features/"
+  archive_output = `#{archive_command}`
+  `mkdir -p /tmp/db/ /tmp/log/`
+  `touch /tmp/db/test.sqlite3`
+  command = "ruby ./grade3 -a /tmp/ /tmp/features.tar.gz #{mutation_yml}"
+  @feature_output = `#{command}`
+  # lacks 'END cucumber comments' if /tmp/log/ not exist
+  @feature_output.should =~ /(Tests? passed.*?END cucumber comments.*?)\n/m
+  create_remove_command = "rm -rf /tmp/features"
+  create_folder_output = `#{create_remove_command}`
+  create_remove_command = "rm /tmp/features.tar.gz"
+  create_folder_output = `#{create_remove_command}`
+end
+
+When(/^I run a WeightedRspecGrader$/) do
+  # equivalent to ./new_grader -t WeightedRspecGrader spec/fixtures/correct_example.rb spec/fixtures/correct_example.spec.rb
+  args = ['-t', 'WeightedRspecGrader','spec/fixtures/correct_example.rb','spec/fixtures/correct_example.spec.rb']
+  @cli_output = Grader.cli(args)
+end
+
+Then(/^it should have the expected output$/) do
+  @cli_output.should =~ AutoGraderSubprocess::COMMENT_REGEX
+end
+

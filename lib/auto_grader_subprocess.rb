@@ -84,13 +84,16 @@ module AutoGraderSubprocess
     AutoGraderSubprocess.run_autograder_subprocess(submission, spec, grader_type)
   end
 
+  SCORE_REGEX = /Score out of \d+:\s*(\d+(?:\.\d+)?)$/
+  COMMENT_REGEX = /---BEGIN (?:cucumber|rspec|grader) comments---\n#{'-'*80}\n(.*)#{'-'*80}\n---END (?:cucumber|rspec|grader) comments---/m
+
   # FIXME: This is related to the below hack, remove later
   def self.parse_grade(str)
     # Used for parsing the stdout output from running grade as a shell command
     # FIXME: This feels insecure and fragile
-    score_regex = /Score out of \d+:\s*(\d+(?:\.\d+)?)$/
-    score = str.match(score_regex, str.rindex(score_regex))[1].to_f
-    comments = str.match(/---BEGIN (?:cucumber|rspec|grader) comments---\n#{'-'*80}\n(.*)#{'-'*80}\n---END (?:cucumber|rspec|grader) comments---/m)[1]
+
+    score = str.match(SCORE_REGEX, str.rindex(SCORE_REGEX))[1].to_f
+    comments = str.match(COMMENT_REGEX)[1]
     comments = comments.split("\n").map do |line|
       line.gsub(/\(FAILED - \d+\)/, "(FAILED)")
     end.join("\n")

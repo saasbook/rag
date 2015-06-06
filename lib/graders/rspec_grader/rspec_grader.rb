@@ -28,4 +28,19 @@ class RspecGrader < AutoGrader
     @comments = runner.output
   end
 
+  @assignment_id = '1' # TODO where should this come from, and is it used?
+  def self.format_cli(t_opt, type, answer, specs)
+    return [@assignment_id, type , answer, {:spec => specs}]
+  end
+
+  def self.feedback(g)
+    <<EndOfFeedback
+Score out of 100: #{g.normalized_score(100)}
+---BEGIN rspec comments---
+#{'-'*80}
+    #{g.comments}
+    #{'-'*80}
+---END rspec comments---
+EndOfFeedback
+  end
 end

@@ -8,7 +8,7 @@ class FeatureGrader < AutoGrader
     module Regex
       BlankLine = /^$/
       FailingScenarios = /^Failing Scenarios:$/
-      StepResult = /^(\d+) steps \(.*?(\d+) passed.*\)/
+      StepResult = /^(\d+) steps? \(.*?(\d+) passed.*\)/
     end
 
     attr_reader :if_pass, :target_pass, :feature, :score, :output, :desc, :weight
@@ -247,6 +247,7 @@ class FeatureGrader < AutoGrader
 
       begin # parse result counts
         result_lines = output.grep Regex::StepResult
+
         unless result_lines.count == 1
           log output
           raise TestFailedError, "invalid cucumber results" + output.join("\n")

@@ -7,6 +7,9 @@ describe RspecGrader do
   it 'should give error when initializing with no specs' do
     lambda { RspecGrader.new('foo', {}) }.should raise_error RspecGrader::NoSpecsGivenError
   end
+  it 'should give error when initializing with non existent spec' do
+    lambda { RspecGrader.new('foo', {:spec => 'spec/fixtures/non_existent.spec.rb'}) }.should raise_error RspecGrader::NoSuchSpecError
+  end
   describe 'running valid specfile should be able to correctly parse rspec text output' do
     before :each do
       @g = RspecGrader.new('foo', :spec => 'spec/fixtures/correct_example.spec.rb')
