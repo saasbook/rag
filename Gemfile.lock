@@ -1,7 +1,7 @@
 GEM
   remote: http://rubygems.org/
   specs:
-    ZenTest (4.9.4)
+    ZenTest (4.11.0)
     activesupport (4.0.0)
       i18n (~> 0.6, >= 0.6.4)
       minitest (~> 4.2)
@@ -173,3 +173,6 @@ DEPENDENCIES
   simplecov
   simplecov-rcov
   term-ansicolor
+
+BUNDLED WITH
+   1.10.3

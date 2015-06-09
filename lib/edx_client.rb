@@ -169,14 +169,18 @@ class EdXClient
     due_time=DateTime.parse(due_date.to_s)
     lateness=received_time-due_time
     lateness=lateness.to_f #we might lose some precision but oh well
-    #should really be a case statement
-    return [1.0, "On Time"] unless lateness > 0
-    
-    return [0.75, "Late assignment: score scaled by .75\n"] unless lateness > grace_period
-    
-    return [0.5, "It's less than #{grace_period + late_period} day(s) late: score scaled by: .5\n"] unless lateness > (grace_period + late_period)
-    
-    return [0.0, "More than #{grace_period + late_period} day(s) late: no points awarded\n"]
+
+    case
+    when lateness <= 0
+      return [1.0, "On Time"]
+    when lateness < grace_period
+      return [0.75, "Late assignment: score scaled by .75\n"]
+    when lateness < grace_period + late_period
+      return [0.5, "It's less than #{grace_period + late_period} day(s) late: score scaled by: .5\n"]
+    else 
+      return [0.0, "More than #{grace_period + late_period} day(s) late: no points awarded\n"]
+    end
+
   end
 
   def load_spec(assignment_part_sid,part_id)
