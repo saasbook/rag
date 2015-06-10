@@ -1,27 +1,34 @@
 require './lib/auto_grader.rb'
 
 class Grader
-  def initialize(auto_grader)
-    @g = auto_grader
-  end
+
+  # TODO use optparse like rag/grade3
+  # Simply do: return Kernel.const_get(type).new(args).grade!
   def self.cli(args)
-    return self.help if args.length != 4
+    return self.help if args.nil? || args.length < 4 || ! args[1] =~ /Grader/
+    original_dir = Dir.getwd
+    begin
+      if args[2] == '-a'
+        working_dir = args[3]
+        Dir.chdir(working_dir)
+        ENV['BUNDLE_GEMFILE'] = working_dir + '/Gemfile'
+      end
+      self.run_grader(args)
+    ensure
+      Dir.chdir original_dir
+      ENV['BUNDLE_GEMFILE'] = original_dir + '/Gemfile'
+    end
+  end
+
+  def self.run_grader(args)
     type = args[1]
-    args[2] = IO.read(args[2]) if type == 'WeightedRspecGrader'
-    g = AutoGrader.create('1', args[1] ,args[2] ,:spec => args[3])
+    subclass = Kernel.const_get(type)
+    autograder_args = subclass.format_cli(*args)
+    g = AutoGrader.create(*autograder_args)
     g.grade!
-    return Grader.new(g)
+    return subclass.feedback g
   end
-  def to_s
-    <<EndOfFeedback
-Score out of 100: #{@g.normalized_score(100)}
----BEGIN rspec comments---
-#{'-'*80}
-#{@g.comments}
-#{'-'*80}
----END rspec comments---
-EndOfFeedback
-  end
+
   def self.help
     <<EndOfHelp
 Usage: #{$0} -t GraderType submission specfile.rb
@@ -37,3 +44,4 @@ For example, try these, where PREFIX=rag/spec/fixtures:
 EndOfHelp
   end
 end
+
