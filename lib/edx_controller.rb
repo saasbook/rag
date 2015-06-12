@@ -44,6 +44,7 @@ class EdXController
       all_cookies=response['set-cookie']
 
      # all_cookies=""
+      puts "ALL COOKIES: #{all_cookies} ---------"
       @session_cookie=all_cookies.split(/;/)[0]
 
   end

@@ -169,7 +169,6 @@ class EdXClient
     due_time=DateTime.parse(due_date.to_s)
     lateness=received_time-due_time
     lateness=lateness.to_f #we might lose some precision but oh well
-
     case
     when lateness <= 0
       return [1.0, "On Time"]
@@ -180,7 +179,6 @@ class EdXClient
     else 
       return [0.0, "More than #{grace_period + late_period} day(s) late: no points awarded\n"]
     end
-
   end
 
   def load_spec(assignment_part_sid,part_id)
@@ -259,7 +257,7 @@ class EdXClient
           logger.info "  received submission: #{result.inspect}"
           @xheader = result['xqueue_header']
           @xbody = result['xqueue_body']
-          @xfiles = result['xqueue_files'] #his is a url
+          @xfiles = result['xqueue_files']  # this is a url
           
           yield assignment_part_sid, result[:file], result[:part_name]
         end
