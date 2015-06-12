@@ -125,6 +125,7 @@ class EdXController
     file=file_response.body
 
     {:file => file, :part_name => @xbody['grader_payload'], :student_info=>student_info}#:submission_time => student_info["submission_time"]} #lot of redundancy now but no problem
+    # **** part_name will have version, grace_period, assignments(uri,grader_type), due_date
   end
   #this is where we will send the response back to edX
   #should be called from EdXClient

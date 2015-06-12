@@ -7,6 +7,7 @@ require 'base64'
 require 'cgi'
 require 'date'
 require 'ruby-debug'
+#require 'uri'? 
 
 require_relative 'rag_logger'
 require_relative 'edx_controller'
@@ -17,8 +18,10 @@ require_relative 'auto_grader_subprocess'
 class EdXClient
   include RagLogger
   include AutoGraderSubprocess
+  include 
 
   attr_reader :name, :autograders
+
 
   class EdXClient::UnknownAssignmentPart < StandardError ; end
   class EdXClient::SpecNotFound < StandardError ; end
@@ -28,62 +31,78 @@ class EdXClient
   # spec URIs
 
   def initialize(conf_name=nil,config_path='config/conf.yml')
-    conf = EdXClient.load_configurations(conf_name,config_path)
-    @endpoint = conf['queue_uri'] 
+    # conf = EdXClient.load_configurations(conf_name,config_path)
+    # # probably need to add @name for queue_name (which is needed probably in conf.yml)
+    # @endpoint = conf['queue_uri'] 
 
-    @user_auth=conf['user_auth'].values
-    @django_auth=conf['django_auth'].values
+    # @user_auth=conf['user_auth'].values
+    # @django_auth=conf['django_auth'].values
 
-    @controller = EdXController.new(*@django_auth,*@user_auth,@name, @endpoint)
-    @halt = conf['halt']
-    @sleep_duration = conf['sleep_duration'].nil? ? 5*60 : conf['sleep_duration'] # in seconds
+    # @controller = EdXController.new(*@django_auth,*@user_auth,@name, @endpoint)
+    # @halt = conf['halt']
+    # @sleep_duration = conf['sleep_duration'].nil? ? 5*60 : conf['sleep_duration'] # in seconds
 
-    @autograders_conf = conf['autograders_yml']
-    # Load configuration file for assignment_id->spec map
+    # # ****** below lines until the end should not be needed -- replace
+    # @autograders_conf = conf['autograders_yml']
+    # # Load configuration file for assignment_id->spec map
 
-    @autograders = EdXClient.init_autograders(@autograders_conf)
-    @name = @autograders.values.first[:name]
+    # @autograders = EdXClient.init_autograders(@autograders_conf)
+    # @name = @autograders.values.first[:name]
+    @conf_name = conf_name
+    @config_path = config_path
   end
 
   def run
 #later make one package here.
-    each_submission do |assignment_part_sid, submission,part_name,student_info|
-      submission_time=student_info["submission_time"]
-      user_id=student_info["anonymous_student_id"]
-      spec,grader_type = load_spec(assignment_part_sid,part_name)
-      due_date =load_due_date(assignment_part_sid,part_name)
-      grace_period=load_grace_period(assignment_part_sid,part_name)
-      late_period=load_late_period(assignment_part_sid,part_name)
+  #   each_submission do |assignment_part_sid, submission,part_name,student_info|
+  #     submission_time=student_info["submission_time"]
+  #     user_id=student_info["anonymous_student_id"]
+  #     spec,grader_type = load_spec(assignment_part_sid,part_name)
+  #     due_date =load_due_date(assignment_part_sid,part_name)
+  #     grace_period=load_grace_period(assignment_part_sid,part_name)
+  #     late_period=load_late_period(assignment_part_sid,part_name)
       
-      late_scale,late_comments=generate_late_response(submission_time,due_date,grace_period,late_period)
-      logger.info "Lateness scaling factor is #{late_scale}"
-      write_student_submission(user_id,submission,part_name)
-      begin
-        score, comments = run_autograder_subprocess(submission, spec, grader_type) # defined in AutoGraderSubprocess
-      rescue AutoGraderSubprocess::SubprocessError => e
-        score = 0
-        comments = e.to_s
-      rescue AutoGraderSubprocess::OutputParseError => e
-        score = 0
-        comments = e.to_s
-      rescue
-        logger.fatal(submission)
-        raise
-      end
-      comments= late_comments.to_s + " " + comments.to_s
-      get_checkmark=true
+  #     late_scale,late_comments=generate_late_response(submission_time,due_date,grace_period,late_period)
+  #     logger.info "Lateness scaling factor is #{late_scale}"
+  #     write_student_submission(user_id,submission,part_name)
+  #     begin
+  #       score, comments = run_autograder_subprocess(submission, spec, grader_type) # defined in AutoGraderSubprocess
+  #     rescue AutoGraderSubprocess::SubprocessError => e
+  #       score = 0
+  #       comments = e.to_s
+  #     rescue AutoGraderSubprocess::OutputParseError => e
+  #       score = 0
+  #       comments = e.to_s
+  #     rescue
+  #       logger.fatal(submission)
+  #       raise
+  #     end
+  #     comments= late_comments.to_s + " " + comments.to_s
+  #     get_checkmark=true
  
-      if score == 0 or score == 0.0
-        get_checkmark=false
+  #     if score == 0 or score == 0.0
+  #       get_checkmark=false
+  #     end
+  #     score=late_scale*score
+  #     formatted_comments = format_for_html(comments)
+  #     @controller.send_grade_response(get_checkmark, score, formatted_comments) #figure out better thing for true later
+  #     logger.debug "  scored #{score}: #{comments}"
+  #   end
+  # rescue Exception => e
+  #   logger.fatal(e)
+  #   raise
+    # have an abstract class Adapter possibly? for later cases of other adapters
+    # ** based on conf_name, conf_path
+    Main_Adapter.adapter = :xqueue
+    Main_Adapter.looper(@config_name, @config_path) each do |submission, autograder_type, spec|
+      unless ****** autograder_type in somewhere... 
+        logger.fatal "Autograder type #{autograder_type} not found!"
+        raise "Autograder type #{autograder_type} not found!"
       end
-      score=late_scale*score
-      formatted_comments = format_for_html(comments)
-      @controller.send_grade_response(get_checkmark, score, formatted_comments) #figure out better thing for true later
-      logger.debug "  scored #{score}: #{comments}"
+      # find the autograder_type autograder = .....
+      score,comments = autograder.grade(spec, submission)
+      submissionQueue.send_grade_response(score, comments, student_info, submission_info)
     end
-  rescue Exception => e
-    logger.fatal(e)
-    raise
   end
 
   
@@ -183,22 +202,27 @@ class EdXClient
 
   end
 
-  def load_spec(assignment_part_sid,part_id)
+  def load_spec(assignment_part_sid,part_name)
     unless @autograders.include?(assignment_part_sid) 
       logger.fatal "Assignment part #{assignment_part_sid} not found!"
       raise "Assignment part #{assignment_part_sid} not found!"
     end
 
-    unless  @autograders[assignment_part_sid][:parts].include?(part_id)
-      logger.fatal "Assignment part #{part_id} not found!"
-      raise "Assignment part #{part_id} not found!"
+    unless  @autograders[assignment_part_sid][:parts].include?(part_name)
+      logger.fatal "Assignment part #{part_name} not found!"
+      raise "Assignment part #{part_name} not found!"
     end
   
-    autograder = @autograders[assignment_part_sid][:parts][part_id]#prettify later
-    
-    return [autograder["uri"],autograder["type"]] if autograder["uri"] !~ /^http/ # Assume that if uri doesn't start with http, then it is a local file path
+    autograder = @autograders[assignment_part_sid][:parts][part_name]#prettify later
+    # local path then return right away
+    # uri = URI.parse(autograder["uri"])
+    #if !(uri.kind_of?(URI::HTTP))
+    if autograder["uri"] !~ /^http/
+      return [autograder["uri"],autograder["type"]]
+    end  # Assume that if uri doesn't start with http, then it is a local file path
 
     # If not in cache, download and add to cache
+    # not really sure where they got :cache???????
     if autograder[:cache].nil?
       spec_file = Tempfile.new('spec')
       response = Net::HTTP.get_response(URI(autograder[:uri]))
@@ -218,7 +242,7 @@ class EdXClient
     g.grade!
     g
   end
-
+  # ******* shouldn't need this func
   # Returns hash of assignment_part_ids to hashes containing uri and grader type
   # i.e. { "assign-1-part-1" => {:uri => 'solutions/part1_spec.rb', :type => 'RspecGrader' } }
   def self.init_autograders(filename)
@@ -283,19 +307,20 @@ class EdXClient
           end
           all_empty = false
           result = @controller.get_submission()
-          next if result.nil?
+          
           yield assignment_part_sid, result[:file], result[:part_name],result[:student_info]
         end
         if all_empty
           logger.info "sleeping for #{@sleep_duration} seconds"
           sleep @sleep_duration
+          # **** what below should be instead of this line?
           @autograders = EdXClient.init_autograders(@autograders_conf)
         end
       end
     end
   end
 
-  def self.load_configurations(conf_name=nil, config_path='config/conf.yml')
+  def self.load_configurations(conf_name=nil, config_path='config/conf.yml') 
     unless File.file?(config_path)
       puts "Please copy conf.yml.example into conf.yml and configure the parameters"
       exit
