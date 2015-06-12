@@ -1,9 +1,18 @@
+require 'yaml'
+
 module Adapter
   class Base
-    def initialize
+    attr_accessor :conf
+
+    def initialize(path, name)
+      unless File.file?(path)
+        raise "Please copy conf.yml.example into conf.yml and configure the parameters"
+      end
+      confs = YAML.load_file(path)
+      conf = confs[name] || raise "Couldn't load configuration #{conf_name}"
     end
 
-    def run
+    def run(&block)
       raise NotImplementedError, "abstract method"
     end
   end

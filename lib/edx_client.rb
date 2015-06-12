@@ -103,6 +103,17 @@ class EdXClient
       score,comments = autograder.grade(spec, submission)
       submissionQueue.send_grade_response(score, comments, student_info, submission_info)
     end
+
+    Adapter.default.new(@config_path, @config_name).run do |submission|
+      unless ****** autograder_type in somewhere... 
+        logger.fatal "Autograder type #{autograder_type} not found!"
+        raise "Autograder type #{autograder_type} not found!"
+      end
+      # find the autograder_type autograder = .....
+      score,comments = autograder.grade(spec, submission)
+      submissionQueue.send_grade_response(score, comments, student_info, submission_info)
+
+    end
   end
 
   
