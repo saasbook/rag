@@ -18,3 +18,5 @@ spec/graph_example2.xml
 spec/spellcheck_example.xml
 spec/unauthorized_access.xml
 spec/unknown.xml
+
+.vagrant/
