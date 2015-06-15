@@ -54,6 +54,7 @@ class EdXClient
 
   def run
 #later make one package here.
+## assignment_part_sid, result[:file], result[:part_name],result[:student_info]
   #   each_submission do |assignment_part_sid, submission,part_name,student_info|
   #     submission_time=student_info["submission_time"]
   #     user_id=student_info["anonymous_student_id"]
@@ -93,25 +94,39 @@ class EdXClient
   #   raise
     # have an abstract class Adapter possibly? for later cases of other adapters
     # ** based on conf_name, conf_path
-    Main_Adapter.adapter = :xqueue
-    Main_Adapter.looper(@config_name, @config_path) each do |submission, autograder_type, spec|
-      unless ****** autograder_type in somewhere... 
-        logger.fatal "Autograder type #{autograder_type} not found!"
-        raise "Autograder type #{autograder_type} not found!"
-      end
-      # find the autograder_type autograder = .....
-      score,comments = autograder.grade(spec, submission)
-      submissionQueue.send_grade_response(score, comments, student_info, submission_info)
-    end
 
     Adapter.default.new(@config_path, @config_name).run do |submission|
-      unless ****** autograder_type in somewhere... 
-        logger.fatal "Autograder type #{autograder_type} not found!"
-        raise "Autograder type #{autograder_type} not found!"
+      #{queue: xqueue, header: header, files: files, student_id: anonymous_student_id, submission_time: submission_time }
+      submission_time=submission[:submission_time]
+      user_id=submission[:student_id]
+      part_name = submission[:grader_payload] # TODO: add it in XQUEUE GEM ("grader_payload":"assign-0-part-2")
+      spec = part_name[:uri]
+      grader_type = part_name[:type]
+
+      begin
+        score, comments = run_autograder_subprocess(submission, spec, grader_type) # defined in AutoGraderSubprocess
+      rescue AutoGraderSubprocess::SubprocessError => e
+        score = 0
+        comments = e.to_s
+      rescue AutoGraderSubprocess::OutputParseError => e
+        score = 0
+        comments = e.to_s
+      rescue
+        logger.fatal(submission)
+        raise
       end
-      # find the autograder_type autograder = .....
-      score,comments = autograder.grade(spec, submission)
-      submissionQueue.send_grade_response(score, comments, student_info, submission_info)
+      
+      get_checkmark=true
+      if score == 0 or score == 0.0
+        get_checkmark=false
+      end
+
+
+      submission.correct = get_checkmark
+      submission.score = score
+      submission.messag = comments
+
+      submission.post_back()
 
     end
   end
