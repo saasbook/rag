@@ -1,8 +1,9 @@
-require 'xqueue'
+require 'xqueue_ruby'
+
 require_relative 'polling'
 
 module Adapter
-  class Xqueue < Polling
+  class XqueueAdapter < Polling
     def initialize(path, name)
       super(path, name)
       @xqueue_config = {
@@ -12,7 +13,7 @@ module Adapter
         user_name: conf['user_auth']['user_name']
         user_pass: conf['user_auth']['user_pass']
         queue_name: conf['queue_name']
-        # TODO need to add in config file: "BerkeleyX-cs169x"
+        # TODO need to add in config file: "BerkeleyX-cs169x" (for queue_name)
       }
       @halt = conf['halt']
     end
