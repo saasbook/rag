@@ -33,8 +33,9 @@ class EdXClient
 
   def run
     #assuming .default() func works
-    Adapter.default().new(@conf_path, @conf_name).run do |submission|
+    Adapter.default.new(@conf_path, @conf_name).run do |submission|
       inside_loop(submission) #helper func below
+    end
   end
 
   private
@@ -67,13 +68,9 @@ class EdXClient
       end
 
       comments= late_comments.to_s + " " + comments.to_s
-      get_checkmark=true
-      if score == 0 or score == 0.0
-        get_checkmark=false
-      end
-
+      get_checkmark = !(score == 0) 
       submission.correct = get_checkmark
-      submission.score = late_scale*score
+      submission.score = late_scale * score
       submission.message = format_for_html(comments)
 
       submission.post_back()
