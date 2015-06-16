@@ -3,7 +3,7 @@ require 'xqueue_ruby'
 require_relative 'polling'
 
 module Adapter
-  class XqueueAdapter < Polling
+  class Xqueue < Polling
     def initialize(path, name)
       super(path, name)
       @xqueue_config = {
@@ -16,10 +16,7 @@ module Adapter
         # TODO need to add in config file: "BerkeleyX-cs169x" (for queue_name)
       }
       @halt = conf['halt']
-    end
-
-    def connect
-      @xqueue = XQueue.new(@xqueue_config)
+      @xqueue = ::XQueue.new(@xqueue_config)
     end
 
     def poll

@@ -1,6 +1,14 @@
+require_relative 'adapter/xqueue'
+
 module Adapter
+  ALL_BY_NAME = {
+    xqueue: Xqueue
+  }
+
+  DEFAULT_NAME = :xqueue
+
   # not too sure if this is valid..... 
-  def default(str="XqueueAdapter")
-    return eval("Adapter::"+str)
+  def get(name = DEFAULT_NAME)
+    ALL[name]
   end
 end
