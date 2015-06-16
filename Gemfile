@@ -5,6 +5,7 @@ gem 'metric_fu'
 gem 'mechanize'
 gem 'octokit'
 gem 'term-ansicolor'
+gem 'xqueue_ruby', :git => 'https://github.com/zhangaaron/xqueue-ruby'
 
 group :development, :testing do
   gem 'ZenTest'

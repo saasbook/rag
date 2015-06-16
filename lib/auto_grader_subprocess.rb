@@ -17,6 +17,7 @@ module AutoGraderSubprocess
   def self.run_autograder_subprocess(submission, spec, grader_type)
     stdout_text = stderr_text = nil
     exitstatus = 0
+    #create a new temp file
     Tempfile.open(['test', '.rb']) do |file|
       file.write(submission)
       file.flush
