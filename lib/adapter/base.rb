@@ -3,6 +3,7 @@ require 'yaml'
 module Adapter
   class Base
     attr_accessor :conf
+    attr_accessor :autograder
 
     def initialize(path, name)
       unless File.file?(path)

@@ -9,19 +9,27 @@ module Adapter
       @sleep_duration = conf['sleep_duration'] || 5 * 60
     end
 
-    def run(&block)
-      connect
+    def run
       while true
-        next_sleep_duration = poll(&block) || sleep_duration
-        next_sleep_duration = 0 if next_sleep_duration == true
-        sleep next_sleep_duration
+        submission = get_submission
+        if not submission
+          sleep sleep_duration
+        else
+          graded_submission = @autograder.grade(submission)
+          submit_response(graded_submission)
+        end
       end
     end
 
     def connect
     end
 
-    def poll
+    #returns nil if no submission otherwise returns submission object. For XQueue this will be an XQueueSubmission. Others should conform to certain standards. 
+    def get_submission
+      raise NotImplementedError, "abstract method"
+    end
+
+    def submit_response
       raise NotImplementedError, "abstract method"
     end
   end
