@@ -13,15 +13,9 @@ module Adapter
     In conf file: %s
   EOS
 
-  # Returns hash of assignment_part_ids to hashes containing uri and grader type
-  # i.e. { "assign-1-part-1" => {:uri => 'solutions/part1_spec.rb', :type => 'RspecGrader' } }
-  def initialize_autograders(filename)
-    # TODO: Verify file format
-    yml = YAML::load(File.open(filename, 'r'))
-    yml.each_pair do |id, obj|
-      # Convert keys from string to sym
-      yml[id] = obj.inject({}){|memo, (k,v)| memo[k.to_sym] = v; memo}
-    end
+    # Formats autograder ouput for display in browser
+  def format_for_html(text)
+    "<pre>#{CGI::escape_html(text)}</pre>" # sanitize html
   end
 
   def new(path, key)
@@ -31,10 +25,10 @@ module Adapter
 
   private
 
-  def load_conf(path, key)
+  def load_conf(path, config_name='default')
     raise CONF_FILE_NOT_FOUND % path, path unless File.file?(path)
-    confs = YAML.load_file(path)
-    confs[key] || (raise CONF_KEY_NOT_FOUND % key, path)
+    config = YAML.load_file(path)
+    config[config_name] || config[config.keys.first] || (raise CONF_KEY_NOT_FOUND % config_name, path)
   end
 
   def get(name = DEFAULT_NAME)

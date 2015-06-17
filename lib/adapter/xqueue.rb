@@ -4,11 +4,14 @@ require_relative 'polling'
 
 module Adapter
   class Xqueue < Polling
-    def initialize(conf)
-      super(conf)
-      @xqueue_config = translate_file_conf_to_gem_conf(conf)
+
+    attr_reader :x_queue
+
+    def initialize(config_hash)
+      super(config_hash)
+      @xqueue_config = create_xqueue_hash(config_hash)
       # @halt = conf['halt']  # TODO: figure out what this is for
-      @xqueue = ::XQueue.new(@xqueue_config)
+      @x_queue = ::XQueue.new(@xqueue_config)
     end
 
     def poll
@@ -18,21 +21,29 @@ module Adapter
       # {queue: xqueue, header: header, files: files, student_id: anonymous_student_id, submission_time: submission_time }
     end
 
-    def get_submission
-      @xqueue.get_submission
-      # {queue: xqueue, header: header, files: files, student_id: anonymous_student_id, submission_time: submission_time }
+    def get_submission_and_assignment
+      # @x_queues.each do |x_queue| 
+      submission = @x_queue.get_submission
+      if submission 
+        return submission, XQueueAssignment.new(submission)
+      end
+      # end
+      nil, nil
     end
 
-    def translate_file_conf_to_gem_conf(conf)
+    def submit_response(graded_submission)
+      graded_submission.post_back
+    end
+
+    def create_xqueue_hash(config_hash)
       {
-        queue_uri: conf['queue_uri'],
+        queue_name: conf['queue_name'],
         django_name: conf['django_auth']['username'],
         django_pass: conf['django_auth']['password'],
         user_name: conf['user_auth']['user_name'],
-        user_pass: conf['user_auth']['user_pass'],
-        queue_name: conf['queue_name'],
-        # TODO: need to add in config file: "BerkeleyX-cs169x" (for queue_name)
+        user_pass: conf['user_auth']['user_pass']
       }
     end
+
   end
 end
