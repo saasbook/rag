@@ -1,0 +1,17 @@
+{
+  "xqueue_header": "some_secret_001",
+  "xqueue_files": {
+    "my_file.rb": "http://fixture.net/correct_submission.zip"
+  },
+  "xqueue_body": {
+    "grader_payload": {
+      "assignment_name": "assignment1",
+      "assignment_spec_uri": "http://fixture.net/assignment1_spec.txt",
+      "assignment_autograder_type": "RspecGrader"
+    },
+    "student_info": {
+      "anonymous_student_id":  "abc123",
+      "submission_time":  "2013-09-30 00:00:00 GMT"
+    }
+  }
+}
