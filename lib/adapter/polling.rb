@@ -15,7 +15,7 @@ module Adapter
         if not submission
           sleep sleep_duration
         else
-          graded_submission = @autograder.grade(submission)
+          graded_submission = @autograder.grade(submission, submission_specs, submission_grader_type)
           submit_response(graded_submission)
         end
       end
@@ -26,11 +26,11 @@ module Adapter
 
     #returns nil if no submission otherwise returns submission object. For XQueue this will be an XQueueSubmission. Others should conform to certain standards. 
     def get_submission
-      raise NotImplementedError, "abstract method"
+      raise NotImplementedError "abstract method"
     end
 
     def submit_response
-      raise NotImplementedError, "abstract method"
+      raise NotImplementedError "abstract method"
     end
   end
 end

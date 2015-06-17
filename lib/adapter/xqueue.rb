@@ -19,10 +19,8 @@ module Adapter
       @xqueue = ::XQueue.new(@xqueue_config)
     end
 
-    def poll
-      return if xqueue.queue_length == 0
-      submission = xqueue.get_submission || return
-      yield submission
+    def get_submission
+      @xqueue.get_submission
       # {queue: xqueue, header: header, files: files, student_id: anonymous_student_id, submission_time: submission_time }
     end
   end

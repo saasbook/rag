@@ -320,7 +320,7 @@ class EdXClient
     while File.exists?(file_path)
       submission_attempt +=1
     
-      file_name=user_id.to_s + "_attempt_"+submission_attempt.to_s    
+      file_name=user_id.to_s + "_attempt_#{submission_attempt}"
     #  puts "file_name is #{file_name}"
       file_path=File.join(dir_name,file_name)
      # puts "file_path is #{file_path}"    
