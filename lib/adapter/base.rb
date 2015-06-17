@@ -7,11 +7,11 @@ module Adapter
     attr_accessor :conf, :autograder_hash
 
     def initialize(config_hash)
-      raise NotImplementedError 'abstract method'
+      # raise NotImplementedError.new'abstract method'
     end
 
     def run
-      raise NotImplementedError 'abstract method'
+      # raise NotImplementedError.new 'abstract method'
     end
 
   end

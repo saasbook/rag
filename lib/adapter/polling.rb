@@ -5,8 +5,8 @@ module Adapter
     attr_accessor :sleep_duration
 
     def initialize(config_hash)
-      super(path, name)
-      @sleep_duration = conf['sleep_duration'] || 5 * 60
+      super(config_hash)
+      @sleep_duration = config_hash['sleep_duration'] || 5 * 60
     end
 
     def run
@@ -15,7 +15,7 @@ module Adapter
         if not submission
           sleep sleep_duration
         else
-          submission.score, sumbission.message = AutoGraderSubprocess.grade(submission.files, assignment.assignment_spec_uri, assignment.assignment_autograder_type)
+          submission.score, submission.message = AutoGraderSubprocess.grade(submission.files, assignment.assignment_spec_uri, assignment.assignment_autograder_type)
           submit_response(submission)
         end
       end

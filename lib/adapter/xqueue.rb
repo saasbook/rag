@@ -11,7 +11,7 @@ module Adapter
       super(config_hash)
       @xqueue_config = create_xqueue_hash(config_hash)
       # @halt = conf['halt']  # TODO: figure out what this is for
-      @x_queue = ::XQueue.new(@xqueue_config)
+      @x_queue = ::XQueue.new(*@xqueue_config)
     end
 
     def poll
@@ -28,22 +28,24 @@ module Adapter
         return submission, XQueueAssignment.new(submission)
       end
       # end
-      nil, nil
+     return nil, nil
     end
 
     def submit_response(graded_submission)
+      graded.submission.correct = !!graded_submission.score
       graded_submission.post_back
     end
 
     def create_xqueue_hash(config_hash)
       {
-        queue_name: conf['queue_name'],
-        django_name: conf['django_auth']['username'],
-        django_pass: conf['django_auth']['password'],
-        user_name: conf['user_auth']['user_name'],
-        user_pass: conf['user_auth']['user_pass']
+        queue_name: config_hash['queue_name'],
+        django_name: config_hash['django_auth']['username'],
+        django_pass: config_hash['django_auth']['password'],
+        user_name: config_hash['user_auth']['user_name'],
+        user_pass: config_hash['user_auth']['user_pass']
       }
     end
+
 
   end
 end

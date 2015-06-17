@@ -26,4 +26,8 @@ require 'edx_client'
 require 'edx_controller'
 require 'edx_submission'
 
+
 require 'run_with_timeout'
+
+require 'adapter'
+require 'adapter/xqueue.rb'

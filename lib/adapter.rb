@@ -4,11 +4,11 @@ module Adapter
   DEFAULT_NAME = :xqueue
 
   ADAPTER_NOT_FOUND = "Adapter not found: %s"
-  CONF_FILE_NOT_FOUND = <<-EOS.undent
+  CONF_FILE_NOT_FOUND = <<-EOS
     Conf file not found: %s
     Please copy conf.yml.example into %s and configure the parameters.
   EOS
-  CONF_KEY_NOT_FOUND = <<-EOS.undent
+  CONF_KEY_NOT_FOUND = <<-EOS
     Conf key not found: %s
     In conf file: %s
   EOS
@@ -18,8 +18,8 @@ module Adapter
     "<pre>#{CGI::escape_html(text)}</pre>" # sanitize html
   end
 
-  def new(path, key)
-    conf = load_conf(path, key)
+  def create_adapter(path, config_name='default')
+    conf = load_conf(path, config_name)
     get(conf['adapter']).new(conf)
   end
 
@@ -32,7 +32,7 @@ module Adapter
   end
 
   def get(name = DEFAULT_NAME)
-    case name.lower.to_sym
+    case name.downcase.to_sym
     when :xqueue
       require_relative 'adapter/xqueue'
       Xqueue

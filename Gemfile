@@ -6,7 +6,7 @@ gem 'mechanize'
 gem 'octokit'
 gem 'term-ansicolor'
 gem 'xqueue_ruby', :git => 'https://github.com/zhangaaron/xqueue-ruby'
-gem  'activerecord'
+gem 'activerecord'
 
 group :development, :testing do
   gem 'ZenTest'
