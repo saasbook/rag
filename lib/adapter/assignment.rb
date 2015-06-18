@@ -7,7 +7,12 @@ module Adapter
     attr_reader :assignment_spec_uri, :assignment_autograder_type
 
     def initialize(submission)
-      raise NotImplementedError 'abstract method'
+      raise 'abstract method'
+    end
+
+    #default behavior is not to adjust lateness policy. Can be overridden by subclass 
+    def apply_lateness_policy(submission)
+      submission
     end
 
   end
