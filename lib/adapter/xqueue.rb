@@ -25,7 +25,7 @@ module Adapter
     def get_submission_and_assignment
       # @x_queues.each do |x_queue| 
       submission = @x_queue.get_submission
-      if submission 
+      if submission
         return submission, XQueueAssignment.new(submission)
       end
       # end
@@ -33,7 +33,7 @@ module Adapter
     end
 
     def submit_response(graded_submission)
-      graded.submission.correct = !!graded_submission.score
+      graded_submission.correct = !graded_submission.score
       graded_submission.post_back
     end
 
