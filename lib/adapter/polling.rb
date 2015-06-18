@@ -16,6 +16,7 @@ module Adapter
           sleep sleep_duration
         else
           submission.score, submission.message = AutoGraderSubprocess.grade(submission.files, assignment.assignment_spec_uri, assignment.assignment_autograder_type)
+          submission = assignment.apply_lateness submission  # optionally scales submission by lateness and provides comments. 
           submit_response(submission)
         end
       end

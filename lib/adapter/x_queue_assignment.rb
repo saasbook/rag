@@ -9,22 +9,22 @@ module Adapter
     include ActiveModel::Validations
 
     validates_presence_of :due_date, :assignment_name, :assignment_spec_uri,  :assignment_autograder_type
+
     ON_TIME = 0
     GRACE_PERIOD = 1
     LATE_PERIOD = 2
     TOO_LATE = 3
     GRADE_SCALING = [1.0, 0.75, 0.50, 0.0]
+
     def initialize(submission)
       grader_payload = submission.grader_payload
       @assignment_name = grader_payload['assignment_name']
       @assignment_spec_uri = grader_payload['assignment_spec_uri']
       @assignment_autograder_type = grader_payload['assignment_autograder_type']
       @due_date = Time.parse(grader_payload['due_date'])
-      grace_period = Time.parse(grader_payload['grace_period']) || 8.days
-      late_period = Time.parse(grader_payload['late_period']) || 0.days
-      # @grace_date = due_date + grace_period
-      # @late_date = grace_date + late_period
-      @due_dates = [@due_date, due_date + grace_period, due_date + grace_period + late_period]
+      grace_period = (grader_payload['grace_period'] || 8).days
+      late_period = (grader_payload['late_period'] || 0).days
+      @due_dates = [@due_date, @due_date + grace_period, @due_date + grace_period + late_period]
     end
 
     def apply_lateness(submission)
