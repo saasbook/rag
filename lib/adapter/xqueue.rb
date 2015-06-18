@@ -1,6 +1,7 @@
 require 'xqueue_ruby'
 
 require_relative 'polling'
+require_relative 'x_queue_assignment'
 
 module Adapter
   class Xqueue < Polling
@@ -11,7 +12,7 @@ module Adapter
       super(config_hash)
       @xqueue_config = create_xqueue_hash(config_hash)
       # @halt = conf['halt']  # TODO: figure out what this is for
-      @x_queue = ::XQueue.new(*@xqueue_config)
+      @x_queue = ::XQueue.new(*@xqueue_config.values)
     end
 
     def poll
@@ -37,12 +38,13 @@ module Adapter
     end
 
     def create_xqueue_hash(config_hash)
+      #this hash becomes order specific the way we use this. fix
       {
-        queue_name: config_hash['queue_name'],
         django_name: config_hash['django_auth']['username'],
         django_pass: config_hash['django_auth']['password'],
         user_name: config_hash['user_auth']['user_name'],
-        user_pass: config_hash['user_auth']['user_pass']
+        user_pass: config_hash['user_auth']['user_pass'],
+        queue_name: config_hash['queue_name']
       }
     end
 

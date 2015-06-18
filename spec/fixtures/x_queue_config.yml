@@ -13,8 +13,8 @@ queue_nickname_01:
 
 queue_nickname_02:
   adapter: XQueue
-  queue_uri: 'https://xqueue.edx.org/'
-  queue_name: 'cs169x-development'
+  queue_uri: 'https://stage.xqueue.edx.org/'
+  queue_name: 'cs169x-production'
   django_auth:
     username: 'username'
     password: 'password'
