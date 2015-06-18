@@ -40,4 +40,5 @@ module Adapter
       raise ADAPTER_NOT_FOUND % name.inspect
     end
   end
+
 end

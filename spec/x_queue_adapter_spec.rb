@@ -18,8 +18,6 @@ describe Xqueue do
   context 'it can create an assignment from a submission and grade it' do 
     before(:each) do 
       @x_queue_adapter = create_adapter('./spec/fixtures/x_queue_config.yml')
-      # @x_queue_adapter.stub_chain(:x_queue, :get_submission).
-      #         and_return(::XQueueSubmission.parse_JSON(@x_queue_adapter.x_queue, IO.read('spec/fixtures/x_queue_submission.json')))
       ::XQueue.any_instance.stub(:get_submission).and_return(::XQueueSubmission.parse_JSON(@x_queue_adapter.x_queue, IO.read('spec/fixtures/x_queue_submission.json')))
     end
 
@@ -27,5 +25,7 @@ describe Xqueue do
       submission, assignment = @x_queue_adapter.get_submission_and_assignment
       expect(submission).to be
     end
+
+    it 'should be able to get grade a submission with assignment'
   end
 end
