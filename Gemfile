@@ -8,6 +8,7 @@ gem 'term-ansicolor'
 gem 'xqueue_ruby', :git => 'https://github.com/zhangaaron/xqueue-ruby'
 gem 'activerecord'
 
+
 group :development, :testing do
   gem 'ZenTest'
   gem 'debugger'

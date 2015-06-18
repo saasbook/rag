@@ -7,13 +7,13 @@
     "grader_payload": {
       "assignment_name": "assignment1",
       "assignment_autograder_type": "RspecGrader",
-      "due_date": "2015-07-02 14:24:18 -0700",
+      "due_date": "2015-01-01 00:00:00 -0700",
       "grace_period": 3,
       "late_period"  : 2
     },
     "student_info": {
       "anonymous_student_id":  "abc123",
-      "submission_time":  "2013-09-30 00:00:00 GMT"
+      "submission_time":  "2013-01-01 00:00:00 GMT"
     }
   }
 }
