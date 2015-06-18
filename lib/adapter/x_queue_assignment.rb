@@ -7,7 +7,7 @@ module Adapter
 
     def initialize(submission)
       @submission = submission
-      grader_payload = JSON.parse(submission.grader_payload)
+      grader_payload = submission.grader_payload
       @assignment_name = grader_payload['assignment_name']
       @assignment_spec_uri = grader_payload['assignment_spec_uri']
       @assignment_autograder_type = grader_payload['assignment_autograder_type']
