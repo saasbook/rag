@@ -4,3 +4,6 @@ rvm:
 script:
   - bundle exec rspec spec
   - bundle exec cucumber
+install:
+  - gem install ruby-debug19
+  - bundle install
