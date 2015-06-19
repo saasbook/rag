@@ -1,4 +1,4 @@
-source :rubygems
+source 'https://rubygems.org'
 
 gem 'rspec'
 gem 'metric_fu'
@@ -7,8 +7,6 @@ gem 'octokit'
 gem 'term-ansicolor'
 gem 'xqueue_ruby', :git => 'https://github.com/zhangaaron/xqueue-ruby'
 gem 'activerecord'
-
-
 
 group :development, :testing do
   gem 'ZenTest'
@@ -19,4 +17,3 @@ group :development, :testing do
   gem 'addressable'
   gem 'cucumber'
 end
-

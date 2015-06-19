@@ -7,7 +7,7 @@ GIT
       getopt
 
 GEM
-  remote: http://rubygems.org/
+  remote: https://rubygems.org/
   specs:
     ZenTest (4.11.0)
     activemodel (4.0.0)
@@ -194,6 +194,3 @@ DEPENDENCIES
   simplecov-rcov
   term-ansicolor
   xqueue_ruby!
-
-BUNDLED WITH
-   1.10.3
