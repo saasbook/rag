@@ -7,3 +7,5 @@ script:
 install:
   - gem install ruby-debug19
   - bundle install
+notifications:
+  email: false
