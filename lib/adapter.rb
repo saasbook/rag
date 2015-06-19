@@ -13,19 +13,19 @@ module Adapter
     In conf file: %s
   EOS
 
-    # Formats autograder ouput for display in browser
+  # Formats autograder ouput for display in browser
   def format_for_html(text)
-    "<pre>#{CGI::escape_html(text)}</pre>" # sanitize html
+    "<pre>#{CGI.escape_html(text)}</pre>" # sanitize html
   end
 
-  def create_adapter(path, config_name='default')
+  def create_adapter(path, config_name = 'default')
     conf = load_conf(path, config_name)
     get(conf['adapter']).new(conf)
   end
 
   private
 
-  def load_conf(path, config_name='default')
+  def load_conf(path, config_name = 'default')
     raise CONF_FILE_NOT_FOUND % path, path unless File.file?(path)
     config = YAML.load_file(path)
     config[config_name] || config[config.keys.first] || (raise CONF_KEY_NOT_FOUND % config_name, path)
@@ -40,5 +40,4 @@ module Adapter
       raise ADAPTER_NOT_FOUND % name.inspect
     end
   end
-
 end

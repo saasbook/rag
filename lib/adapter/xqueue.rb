@@ -5,7 +5,6 @@ require_relative 'x_queue_assignment'
 
 module Adapter
   class Xqueue < Polling
-
     attr_reader :x_queue
 
     def initialize(config_hash)
@@ -20,7 +19,7 @@ module Adapter
       if submission
         return submission, XQueueAssignment.new(submission)
       end
-     return nil, nil
+      return nil, nil
     end
 
     def submit_response(graded_submission)
@@ -29,7 +28,7 @@ module Adapter
     end
 
     def create_xqueue_hash(config_hash)
-      #this hash becomes order specific the way we use this. fix
+      # this hash becomes order specific the way we use this. fix
       {
         django_name: config_hash['django_auth']['username'],
         django_pass: config_hash['django_auth']['password'],
@@ -38,6 +37,5 @@ module Adapter
         queue_name: config_hash['queue_name']
       }
     end
-
   end
 end

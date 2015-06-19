@@ -10,19 +10,19 @@ module Adapter
     end
 
     def run
-      while true
+      loop do
         submission, assignment = get_submission_and_assignment
         if not submission
           sleep sleep_duration
         else
           submission.score, submission.message = AutoGraderSubprocess.grade(submission.files, assignment.assignment_spec_uri, assignment.assignment_autograder_type)
-          submission = assignment.apply_lateness submission  # optionally scales submission by lateness and provides comments. 
+          submission = assignment.apply_lateness submission  # optionally scales submission by lateness and provides comments.
           submit_response(submission)
         end
       end
     end
 
-    #returns nil if no submission otherwise returns submission object. For XQueue this will be an XQueueSubmission. Others should conform to certain standards. 
+    # returns nil if no submission otherwise returns submission object. For XQueue this will be an XQueueSubmission. Others should conform to certain standards. 
     def get_submission
       raise NotImplementedError "abstract method"
     end
