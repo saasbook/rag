@@ -1,6 +1,6 @@
 GIT
   remote: https://github.com/zhangaaron/xqueue-ruby
-  revision: b1026d9f77618198600ef26808bb0ab6589c612f
+  revision: b49b2f83b5178e5d5ede73b0e0189c457633b75a
   specs:
     xqueue_ruby (0.0.1)
       builder

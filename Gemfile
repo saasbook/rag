@@ -9,10 +9,12 @@ gem 'xqueue_ruby', :git => 'https://github.com/zhangaaron/xqueue-ruby'
 gem 'activerecord'
 
 
+
 group :development, :testing do
   gem 'ZenTest'
   gem 'debugger'
   gem 'simplecov'
+  gem 'fakeweb'
   gem 'simplecov-rcov'
   gem 'addressable'
   gem 'cucumber'
