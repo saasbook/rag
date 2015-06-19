@@ -10,6 +10,3 @@ install:
 notifications:
   email: false
   slack: cs169dev:OPMf1tPzfO3a4gz6gGTOFV7w
-
-
-
