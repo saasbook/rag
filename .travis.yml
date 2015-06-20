@@ -7,3 +7,6 @@ script:
 install:
   - gem install ruby-debug19
   - bundle install
+notifications:
+  email: false
+  slack: cs169dev:OPMf1tPzfO3a4gz6gGTOFV7w
