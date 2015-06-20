@@ -3,16 +3,6 @@ require 'yaml'
 module Adapter
   DEFAULT_NAME = :xqueue
 
-  ADAPTER_NOT_FOUND = "Adapter not found: %s"
-  CONF_FILE_NOT_FOUND = <<-EOS
-    Conf file not found: %s
-    Please copy conf.yml.example into %s and configure the parameters.
-  EOS
-  CONF_KEY_NOT_FOUND = <<-EOS
-    Conf key not found: %s
-    In conf file: %s
-  EOS
-
   # Formats autograder ouput for display in browser
   def format_for_html(text)
     "<pre>#{CGI.escape_html(text)}</pre>" # sanitize html
@@ -26,9 +16,9 @@ module Adapter
   private
 
   def load_conf(path, config_name = 'default')
-    raise CONF_FILE_NOT_FOUND % path, path unless File.file?(path)
+    err_no_confs(path) unless File.file?(path)
     config = YAML.load_file(path)
-    config[config_name] || config[config.keys.first] || (raise CONF_KEY_NOT_FOUND % config_name, path)
+    config[config_name] || err_no_conf(config_name, path)
   end
 
   def get(name = DEFAULT_NAME)
@@ -37,7 +27,27 @@ module Adapter
       require_relative 'adapter/xqueue'
       Xqueue
     else
-      raise ADAPTER_NOT_FOUND % name.inspect
+      err_no_adapter(name.inspect)
     end
+  end
+
+  private
+
+  def err_no_adapter(name)
+    raise "Adapter not found: #{name}"
+  end
+
+  def err_no_confs(path)
+    raise <<-EOS
+      Conf file not found: #{path}
+      Please copy conf.yml.example into #{path} and configure the parameters.
+    EOS
+  end
+
+  def err_no_conf(key, path)
+    raise <<-EOS
+      Conf key not found: #{key}
+      In conf file: #{path}
+    EOS
   end
 end

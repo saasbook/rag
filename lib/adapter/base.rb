@@ -6,13 +6,29 @@ module Adapter
     include AutoGraderSubprocess
     attr_accessor :conf, :autograder_hash
 
-    def initialize(config_hash)
-      # raise NotImplementedError.new'abstract method'
+    def initialize(_config_hash)
+      # raise NotImplementedError.new "abstract method"
     end
 
     def run
-      # raise NotImplementedError.new 'abstract method'
+      raise NotImplementedError, "abstract method"
     end
 
+    def handle_submission(submission)
+      raise "nil submission received" if submission.nil?
+      assignment = submission.assignment
+      submission.score, submission.message =
+      AutoGraderSubprocess.run_autograder_subprocess(
+        submission.files,
+        assignment.assignment_spec_uri,
+        assignment.assignment_autograder_type
+      )
+      assignment.apply_lateness! submission  # optionally scales submission by lateness and provides comments.
+      submit_response(submission)
+    end
+
+    def submit_response(_submission)
+      raise NotImplementedError, "abstract method"
+    end
   end
 end
