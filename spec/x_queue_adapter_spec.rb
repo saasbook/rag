@@ -23,17 +23,18 @@ describe Xqueue do
     end
 
     it 'should create an assignment (correctly) from the grader_payload' do
-      submission, assignment = @x_queue_adapter.get_submission_and_assignment
+      submission = @x_queue_adapter.next_submission_with_assignment
+      assignment = submission.assignment
       expect(submission).to be
       # make sure that it has the correct values
       expect(submission.files.values[0]).to be == "http://fixture.net/correct_submission.zip"
       expect(assignment.assignment_spec_uri).to be == "http://fixture.net/assignment1_spec.txt"
     end
 
-    it 'should pass assignment and submission to the autograder' do 
+    it 'should pass assignment and submission to the autograder' do
       pending 'run in a seperate thread to avoid infinite loop'
     end
-  end 
+  end
 
   context 'when there is no submission in queue' do
     before(:each) do
@@ -42,17 +43,16 @@ describe Xqueue do
     end
 
     it 'it should not create an assignment' do
-      _, assignment = @x_queue_adapter.get_submission_and_assignment
-      expect(assignment).to_not be
+      submission = @x_queue_adapter.next_submission_with_assignment
+      expect(submission).to_not be
     end
 
     it 'it should sleep when' do
       pending 'run in seperate thread to avoid infinite loop'
-      # @x_queue_adapter.stub(:get_submission_and_assignment).and_return([nil, nil])
+      # @x_queue_adapter.stub(:next_submission_and_assignment).and_return([nil, nil])
       # @x_queue_adapter.stub(:submit_response)
       # Xqueue.s(:sleep)
       # @x_queue_adapter.run
     end
-
   end
 end

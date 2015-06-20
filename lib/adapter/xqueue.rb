@@ -1,7 +1,7 @@
 require 'xqueue_ruby'
 
+require_relative '../assignment/xqueue'
 require_relative 'polling'
-require_relative 'x_queue_assignment'
 
 module Adapter
   class Xqueue < Polling
@@ -9,17 +9,17 @@ module Adapter
 
     def initialize(config_hash)
       super(config_hash)
-      @xqueue_config = create_xqueue_hash(config_hash)
       # @halt = conf['halt']  # TODO: figure out what this is for
-      @x_queue = ::XQueue.new(*@xqueue_config.values)
+      @x_queue = ::XQueue.new(*create_xqueue_hash(config_hash))
     end
 
-    def get_submission_and_assignment
+    def next_submission_with_assignment
       submission = @x_queue.get_submission
-      if submission
-        return submission, XQueueAssignment.new(submission)
-      end
-      return nil, nil
+      return if submission.nil?
+      # TODO: update XQueue gem to allow returning subclasses of ::XQueue::Submission
+      class << submission; attr_accessor :assignment; end
+      submission.assignment = Assignment::Xqueue.new(submission)
+      submission
     end
 
     def submit_response(graded_submission)
@@ -28,14 +28,13 @@ module Adapter
     end
 
     def create_xqueue_hash(config_hash)
-      # this hash becomes order specific the way we use this. fix
-      {
-        django_name: config_hash['django_auth']['username'],
-        django_pass: config_hash['django_auth']['password'],
-        user_name: config_hash['user_auth']['user_name'],
-        user_pass: config_hash['user_auth']['user_pass'],
-        queue_name: config_hash['queue_name']
-      }
+      [
+        config_hash['django_auth']['username'],  # django_name
+        config_hash['django_auth']['password'],  # django_pass
+        config_hash['user_auth']['user_name'],   # user_name
+        config_hash['user_auth']['user_pass'],   # user_pass
+        config_hash['queue_name']                # queue_name
+      ]
     end
   end
 end
