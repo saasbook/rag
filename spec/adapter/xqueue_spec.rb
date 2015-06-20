@@ -1,9 +1,10 @@
 require 'spec_helper'
-include Adapter
-describe Xqueue do
+
+describe Adapter::Xqueue do
   context 'initialization from adapter factory with config file' do
     before(:each) do
-      @x_queue_adapter = create_adapter('./spec/fixtures/x_queue_config.yml')
+      require 'adapter'
+      @x_queue_adapter = Adapter.load('./spec/fixtures/x_queue_config.yml')
     end
 
     it 'should not crash' do
@@ -18,7 +19,7 @@ describe Xqueue do
 
   context 'it can create an assignment from a submission and grade it' do
     before(:each) do
-      @x_queue_adapter = create_adapter('./spec/fixtures/x_queue_config.yml')
+      @x_queue_adapter = Adapter.load('./spec/fixtures/x_queue_config.yml')
       ::XQueue.any_instance.stub(:get_submission).and_return(::XQueueSubmission.parse_JSON(@x_queue_adapter.x_queue, IO.read('spec/fixtures/x_queue_submission.json')))
     end
 
@@ -38,7 +39,7 @@ describe Xqueue do
 
   context 'when there is no submission in queue' do
     before(:each) do
-      @x_queue_adapter = create_adapter('./spec/fixtures/x_queue_config.yml')
+      @x_queue_adapter = Adapter.load('./spec/fixtures/x_queue_config.yml')
       ::XQueue.any_instance.stub(:get_submission).and_return(nil)
     end
 
