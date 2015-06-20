@@ -26,3 +26,12 @@ Given(/^an XQueue that has submission "(.*?)" in queue$/) do |submission|
   XQueue.any_instance.stub(:authenticated?).and_return(true)
   XQueue.any_instance.stub(:queue_length).and_return(1)
 end
+
+Given(/^has been setup with the config file "(.*?)"$/) do |arg1|
+  pending # express the regexp above with the code you wish you had
+end
+
+Then(/^I should recieve a grade for my assignment$/) do
+  pending # express the regexp above with the code you wish you had
+end
+
