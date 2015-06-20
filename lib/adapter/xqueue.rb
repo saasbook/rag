@@ -1,5 +1,4 @@
 require 'xqueue_ruby'
-
 require_relative '../assignment/xqueue'
 require_relative 'polling'
 

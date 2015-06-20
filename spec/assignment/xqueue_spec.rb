@@ -1,5 +1,5 @@
 require 'spec_helper'
-include Adapter
+
 describe Assignment::Xqueue do
   context 'it can be initialized from a valid XQueueSubmission' do
     before(:each) do
@@ -27,7 +27,8 @@ describe Assignment::Xqueue do
       double = double('XQueue')
       @submission = ::XQueueSubmission.parse_JSON(double, IO.read('spec/fixtures/x_queue_submission.json'))
       @assignment = Assignment::Xqueue.new(@submission)
-      @submission.score, @submission.message = 1.0, 'good jerb student!!!!' # mock grading so that we can test penalization
+      @submission.score = 1.0
+      @submission.message = 'good jerb student!!!!' # mock grading so that we can test penalization
     end
 
     it 'should not penalize for on time submissions' do
