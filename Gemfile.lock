@@ -64,6 +64,7 @@ GEM
     domain_name (0.5.13)
       unf (>= 0.0.5, < 1.0.0)
     erubis (2.7.0)
+    fakeweb (1.3.0)
     faraday (0.8.8)
       multipart-post (~> 1.2.0)
     fattr (2.2.1)
@@ -186,6 +187,7 @@ DEPENDENCIES
   addressable
   cucumber
   debugger
+  fakeweb
   mechanize
   metric_fu
   octokit
@@ -194,3 +196,6 @@ DEPENDENCIES
   simplecov-rcov
   term-ansicolor
   xqueue_ruby!
+
+BUNDLED WITH
+   1.10.3
