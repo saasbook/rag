@@ -1,8 +1,9 @@
 GIT
-  remote: https://github.com/zhangaaron/xqueue-ruby
-  revision: b49b2f83b5178e5d5ede73b0e0189c457633b75a
+  remote: https://github.com/apelade/xqueue-ruby
+  revision: 36d4486d458b8ee88279efb568e8e4648eb08658
   specs:
     xqueue_ruby (0.0.1)
+      activemodel
       builder
       getopt
 
