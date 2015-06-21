@@ -1,4 +1,4 @@
-require 'ruby-debug'
+#require 'ruby-debug'
 
 class AutoGrader
   class AutoGrader::NoSuchGraderError < StandardError ; end
