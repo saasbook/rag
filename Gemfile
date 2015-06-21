@@ -10,7 +10,7 @@ gem 'activerecord'
 
 group :development, :testing do
   gem 'ZenTest'
-  gem 'debugger'
+  #gem 'debugger'
   gem 'simplecov'
   gem 'fakeweb'
   gem 'simplecov-rcov'
