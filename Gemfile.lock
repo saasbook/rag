@@ -1,6 +1,6 @@
 GIT
-  remote: https://github.com/apelade/xqueue-ruby
-  revision: 36d4486d458b8ee88279efb568e8e4648eb08658
+  remote: https://github.com/zhangaaron/xqueue-ruby
+  revision: 7175662b064b771327339bfb063d0f91a52c125d
   specs:
     xqueue_ruby (0.0.1)
       activemodel
@@ -189,3 +189,6 @@ DEPENDENCIES
   simplecov-rcov
   term-ansicolor
   xqueue_ruby!
+
+BUNDLED WITH
+   1.10.4
