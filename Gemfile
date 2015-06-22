@@ -7,9 +7,7 @@ gem 'metric_fu'
 gem 'mechanize'
 gem 'octokit'
 gem 'term-ansicolor'
-# temporarily point at apelade repo with ruby-debug removed
-#gem 'xqueue_ruby', :git => 'https://github.com/zhangaaron/xqueue-ruby'
-gem 'xqueue_ruby', :git => 'https://github.com/apelade/xqueue-ruby'
+gem 'xqueue_ruby', :git => 'https://github.com/zhangaaron/xqueue-ruby'
 gem 'activerecord'
 
 group :development, :testing do
