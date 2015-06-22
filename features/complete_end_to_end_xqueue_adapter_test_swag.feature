@@ -6,5 +6,7 @@ Feature: Pulls code submissions from XQueue and grades them using information su
 
   Scenario: autograder is configured to mocked queue and pulls submission and submits response
     Given an XQueue that has submission "submission.json" in queue
+
     And has been setup with the config file "conf.yml"
     Then I should recieve a grade for my assignment 
+

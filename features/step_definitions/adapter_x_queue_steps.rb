@@ -3,7 +3,6 @@ require 'xqueue_ruby'
 require 'json'
 require 'adapter'
 
-
 BASE_FOLDER = 'features/support/'
 
 class PutResultException < StandardError ; end
@@ -23,8 +22,7 @@ end
 
 Given(/^an XQueue that has submission "(.*?)" in queue$/) do |submission|
   response_file = "#{BASE_FOLDER}#{submission}"
-  FakeWeb.register_uri(:get, %r|https://xqueue.edx.org/xqueue/get_submission/|, 
-            :body => response_file)
+  FakeWeb.register_uri(:get, %r|https://xqueue.edx.org/xqueue/get_submission/|, body: response_file)
   JSON_string = JSON.parse(IO.read(response_file))['content']
   submission = XQueueSubmission.parse_JSON(double('XQueue'), JSON_string)
   puts submission.files.values
@@ -56,4 +54,3 @@ Then(/^I should recieve a grade for my assignment$/) do
   expect(@results[:score]).to be == 0
   # puts @results[:message]
 end
-
