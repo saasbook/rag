@@ -30,10 +30,15 @@ Given(/^an XQueue that has submission "(.*?)" in queue$/) do |submission|
 end
 
 Given(/^has been setup with the config file "(.*?)"$/) do |file_name|
-  @adapter = Adapter::create_adapter("config/features/#{file_name}")
+  @adapter = Adapter::load("features/support/#{file_name}")
 end
 
 Then(/^I should recieve a grade for my assignment$/) do
-  expect()
+  expect_any_instance_of(XQueue).to receive(:put_result)
+  thread = Thread.new do 
+    @adapter.run
+  end
+  sleep(1.0)
+  thread.kill
 end
 
