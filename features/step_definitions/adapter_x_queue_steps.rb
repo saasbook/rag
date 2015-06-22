@@ -5,6 +5,9 @@ require 'adapter'
 
 
 BASE_FOLDER = 'features/support/'
+
+class PutResultException < StandardError ; end
+
 def fake_files(file_uris)
   if file_uris.is_a? Enumerable 
     file_uris.each do |file_uri| 
@@ -31,7 +34,7 @@ Given(/^an XQueue that has submission "(.*?)" in queue$/) do |submission|
   XQueue.any_instance.stub(:queue_length).and_return(1)
   XQueue.any_instance.stub(:put_result) do |header, score, correct, message| 
     @results = {header: header, score: score, correct: correct, message: message}
-    raise 'need to throw exception to stop infinite loop'
+    raise PutResultException
   end
 
 end
@@ -47,11 +50,10 @@ Then(/^I should recieve a grade for my assignment$/) do
     thread = Thread.new do 
       @adapter.run
     end
-    sleep(3.0)
-    expect(@results).to be
+    sleep(5.0) #5 seconds longest reasonable time for submission before test fails 
     thread.kill
-  end.to raise_error
-  # puts @results[:score]
-  puts @results[:message]
+  end.to raise_error(PutResultException)
+  expect(@results[:score]).to be == 0
+  # puts @results[:message]
 end
 
