@@ -1,8 +1,9 @@
 GIT
-  remote: https://github.com/zhangaaron/xqueue-ruby
-  revision: b49b2f83b5178e5d5ede73b0e0189c457633b75a
+  remote: https://github.com/apelade/xqueue-ruby
+  revision: 36d4486d458b8ee88279efb568e8e4648eb08658
   specs:
     xqueue_ruby (0.0.1)
+      activemodel
       builder
       getopt
 
@@ -47,19 +48,12 @@ GEM
     code_metrics (0.1.1)
     coderay (1.1.0)
     colored (1.2)
-    columnize (0.3.6)
     cucumber (1.3.10)
       builder (>= 2.1.2)
       diff-lcs (>= 1.1.3)
       gherkin (~> 2.12)
       multi_json (>= 1.7.5, < 2.0)
       multi_test (>= 0.0.2)
-    debugger (1.6.2)
-      columnize (>= 0.3.1)
-      debugger-linecache (~> 1.2.0)
-      debugger-ruby_core_source (~> 1.2.3)
-    debugger-linecache (1.2.0)
-    debugger-ruby_core_source (1.2.3)
     diff-lcs (1.2.4)
     domain_name (0.5.13)
       unf (>= 0.0.5, < 1.0.0)
@@ -186,7 +180,6 @@ DEPENDENCIES
   activerecord
   addressable
   cucumber
-  debugger
   fakeweb
   mechanize
   metric_fu

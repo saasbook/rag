@@ -1,7 +1,7 @@
 # Courtesy of https://gist.github.com/1032297
 require 'open3'
 require 'timeout'
-require 'ruby-debug'
+#require 'ruby-debug'
 
 # Runs a specified shell command in a separate thread.
 # If it exceeds the given timeout in seconds, kills it.
