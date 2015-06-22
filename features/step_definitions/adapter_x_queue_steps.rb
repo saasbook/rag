@@ -8,12 +8,13 @@ BASE_FOLDER = 'features/support/'
 def fake_files(file_uris)
   if file_uris.is_a? Enumerable 
     file_uris.each do |file_uri| 
-      file_uri = (file_uri.split'/')[-1]
-      FakeWeb.register_uri(:get, file_uri, :body => IO.read("#{BASE_FOLDER}#{file_uri}"))
+      local_file = (file_uri.split'/')[-1]
+      puts "register_uri for : #{file_uri}"
+      FakeWeb.register_uri(:get, file_uri, :body => IO.read("#{BASE_FOLDER}#{local_file}"))
     end
   else 
-    file_uris = (file_uris.split'/')[-1]
-    FakeWeb.register_uri(:get, file_uris, :body => IO.read("#{BASE_FOLDER}#{file_uris}"))
+    local_file = (file_uris.split'/')[-1]
+    FakeWeb.register_uri(:get, file_uris, :body => IO.read("#{BASE_FOLDER}#{local_file}"))
   end
 end
 
@@ -23,6 +24,7 @@ Given(/^an XQueue that has submission "(.*?)" in queue$/) do |submission|
             :body => response_file)
   JSON_string = JSON.parse(IO.read(response_file))['content']
   submission = XQueueSubmission.parse_JSON(double('XQueue'), JSON_string)
+  puts submission.files.values
   fake_files(submission.files.values)
   fake_files(submission.grader_payload['assignment_spec_uri'])
   XQueue.any_instance.stub(:authenticated?).and_return(true)
@@ -35,10 +37,13 @@ Given(/^has been setup with the config file "(.*?)"$/) do |file_name|
 end
 
 Then(/^I should recieve a grade for my assignment$/) do
-  thread = Thread.new do 
-    @adapter.run
-  end
-  sleep(1.0)
-  expect(@results).to be
+  # thread = Thread.new do 
+  #   @adapter.run
+  # end
+  # sleep(3.0)
+  # puts "STATUS #{thread.status} -----------------------"  
+  # expect(@results).to be
+  # thread.kill
+  @adapter.run
 end
 
