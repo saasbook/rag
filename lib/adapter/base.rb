@@ -19,12 +19,11 @@ module Adapter
       assignment = submission.assignment
       submission.score, submission.message =
       AutoGraderSubprocess.run_autograder_subprocess(
-        submission.files,
+        submission.files[0],
         assignment.assignment_spec_file,
         assignment.assignment_autograder_type
       )
       assignment.apply_lateness! submission  # optionally scales submission by lateness and provides comments.
-      # puts 'GOT HERE BUDDY!!'
       submit_response(submission)
     end
 

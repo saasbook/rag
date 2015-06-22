@@ -40,6 +40,7 @@ Given(/^has been setup with the config file "(.*?)"$/) do |file_name|
   @adapter = Adapter::load("features/support/#{file_name}")
 end
 
+#Starts a thread with stubbed out put_result to make a exception
 Then(/^I should recieve a grade for my assignment$/) do
   expect do 
     Thread.abort_on_exception = true
@@ -50,7 +51,7 @@ Then(/^I should recieve a grade for my assignment$/) do
     expect(@results).to be
     thread.kill
   end.to raise_error
-  puts @results[:score]
+  # puts @results[:score]
   puts @results[:message]
 end
 

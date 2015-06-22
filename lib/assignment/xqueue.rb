@@ -63,7 +63,6 @@ module Assignment
         f.rewind
         f
       end
-      puts "FILE PATH----- #{file.path}"
       raise 'yolo' unless File.readable?(file.path)
       file.path
     end

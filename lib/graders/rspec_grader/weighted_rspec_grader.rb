@@ -2,6 +2,9 @@ require_relative 'rspec_grader'
 
 class WeightedRspecGrader < RspecGrader
   def grade!
+    File.open('received_file', 'w') do |f|
+      f.write(@code)
+    end
     runner =  RspecRunner.new(@code, @specfile)
     runner.run
 
