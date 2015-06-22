@@ -27,28 +27,27 @@ Given(/^an XQueue that has submission "(.*?)" in queue$/) do |submission|
   fake_files(submission.grader_payload['assignment_spec_uri'])
   XQueue.any_instance.stub(:authenticated?).and_return(true)
   XQueue.any_instance.stub(:queue_length).and_return(1)
-  XQueue.any_instance.stub(:put_result) {|header, score, correct, message| @results = [header, score, correct, message]}
+  XQueue.any_instance.stub(:put_result) do |header, score, correct, message| 
+    @results = {header: header, score: score, correct: correct, message: message}
+    raise 'need to throw exception to stop infinite loop'
+  end
+
 end
 
 Given(/^has been setup with the config file "(.*?)"$/) do |file_name|
-<<<<<<< HEAD
-  @adapter = Adapter.create_adapter("config/features/#{file_name}")
-end
-
-Then(/^I should receive a grade for my assignment$/) do
-  expect()
-=======
   @adapter = Adapter::load("features/support/#{file_name}")
 end
 
 Then(/^I should recieve a grade for my assignment$/) do
-  # thread = Thread.new do 
-  #   @adapter.run
-  # end
-  # sleep(3.0)
-  # puts "STATUS #{thread.status} -----------------------"  
-  # expect(@results).to be
-  # thread.kill
-  @adapter.run
->>>>>>> cbb3cfd29e7755020b518aeaaf3afd9afe5ff0b3
+  expect do 
+    Thread.abort_on_exception = true
+    thread = Thread.new do 
+      @adapter.run
+    end
+    sleep(3.0)
+    expect(@results).to be
+    thread.kill
+  end.to raise_error
+  puts @results[:score]
+  puts @results[:message]
 end

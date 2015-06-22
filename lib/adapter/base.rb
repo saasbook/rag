@@ -24,7 +24,7 @@ module Adapter
         assignment.assignment_autograder_type
       )
       assignment.apply_lateness! submission  # optionally scales submission by lateness and provides comments.
-      puts 'GOT HERE BUDDY!!'
+      # puts 'GOT HERE BUDDY!!'
       submit_response(submission)
     end
 
