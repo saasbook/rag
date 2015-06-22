@@ -27,6 +27,7 @@ Given(/^an XQueue that has submission "(.*?)" in queue$/) do |submission|
   fake_files(submission.grader_payload['assignment_spec_uri'])
   XQueue.any_instance.stub(:authenticated?).and_return(true)
   XQueue.any_instance.stub(:queue_length).and_return(1)
+  XQueue.any_instance.stub(:put_result) {|header, score, correct, message| @results = [header, score, correct, message]}
 end
 
 Given(/^has been setup with the config file "(.*?)"$/) do |file_name|
@@ -34,11 +35,10 @@ Given(/^has been setup with the config file "(.*?)"$/) do |file_name|
 end
 
 Then(/^I should recieve a grade for my assignment$/) do
-  expect_any_instance_of(XQueue).to receive(:put_result)
   thread = Thread.new do 
     @adapter.run
   end
   sleep(1.0)
-  thread.kill
+  expect(@results).to be
 end
 
