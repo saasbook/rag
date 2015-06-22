@@ -58,10 +58,13 @@ module Assignment
 
     def fetch_spec_file(spec_uri)
       session = Mechanize.new
-      file = Tempfile.open('spec_file') do |f| 
+      file = File.open('spec_file.rb', 'w') do |f| 
         f.write(session.get(spec_uri).body)
+        f.rewind
         f
       end
+      puts "FILE PATH----- #{file.path}"
+      raise 'yolo' unless File.readable?(file.path)
       file.path
     end
   end
