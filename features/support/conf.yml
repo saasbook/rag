@@ -1,0 +1,25 @@
+default:
+  adapter: XQueue
+  queue_uri: 'https://xqueue.edx.org/'
+  queue_name: 'cs169x-development'
+  django_auth:
+    username: 'username'
+    password: 'password'
+  user_auth:
+    user_name: 'username' 
+    user_pass: 'password'
+  halt: false # default: true, exit when all submission queues are empty
+  sleep_duration: 30 # default 300, time in seconds to sleep when all queues are empty, only valid when halt == false doesn't matter yet
+
+queue_nickname_02:
+  adapter: XQueue
+  queue_uri: 'https://xqueue.edx.org/'
+  queue_name: 'cs169x-development'
+  django_auth:
+    username: 'username'
+    password: 'password'
+  user_auth:
+    user_name: 'username' 
+    user_pass: 'password'
+  halt: false # default: true, exit when all submission queues are empty
+  sleep_duration: 30 # default 300, time in seconds to sleep when all queues are empty, only valid when halt == false doesn't matter yet

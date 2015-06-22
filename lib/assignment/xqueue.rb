@@ -2,7 +2,9 @@ require 'json'
 require 'date'
 require 'active_support'
 require 'active_support/all' # lazy loading so this should be OK.
+require 'mechanize'
 require_relative 'base'
+
 
 module Assignment
   # this class contains both the assignment info extracted from grader_payload
@@ -12,10 +14,9 @@ module Assignment
     def initialize(submission)
       grader_payload = submission.grader_payload
       @assignment_name = grader_payload['assignment_name']
-      @assignment_spec_uri = grader_payload['assignment_spec_uri']
+      @assignment_spec_file = fetch_spec_file(grader_payload['assignment_spec_uri'])
       @assignment_autograder_type = grader_payload['assignment_autograder_type']
       @due_date = Time.parse(grader_payload['due_date'])
-
       grace_period = (grader_payload['grace_period'] || 8).days
       late_period = (grader_payload['late_period'] || 0).days
       @latenesses = [
@@ -53,6 +54,15 @@ module Assignment
         return lateness if submission_time < lateness[:cutoff]
       end
       raise ScriptError
+    end
+
+    def fetch_spec_file(spec_uri)
+      session = Mechanize.new
+      file = Tempfile.open('spec_file') do |f| 
+        f.write(session.get(spec_uri).body)
+        f
+      end
+      file.path
     end
   end
 end
