@@ -12,6 +12,6 @@ rvm:
 script:
   - bundle exec rspec spec
   - bundle exec cucumber features
-#notifications:
-#  email: false
-#  slack: cs169dev:OPMf1tPzfO3a4gz6gGTOFV7w
+notifications:
+  email: false
+  slack: cs169dev:OPMf1tPzfO3a4gz6gGTOFV7w
