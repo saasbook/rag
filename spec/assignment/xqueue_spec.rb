@@ -3,11 +3,16 @@ require 'spec_helper'
 describe Assignment::Xqueue do
   context 'it can be initialized from a valid XQueueSubmission' do
     before(:each) do
+      puts 'hello world'
       double = double('XQueue')
+      puts '1'
       @submission = ::XQueueSubmission.parse_JSON(double, IO.read('spec/fixtures/x_queue_submission.json'))
+      puts '2'
     end
     it 'properly validates fields that need to exist when created' do
+      puts '3'
       expect(Assignment::Xqueue.new(@submission)).to be
+      puts '4'
     end
   end
 

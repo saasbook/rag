@@ -19,7 +19,7 @@ module Adapter
       assignment = submission.assignment
       submission.score, submission.message =
       AutoGraderSubprocess.run_autograder_subprocess(
-        submission.files[0],
+        submission.files[0], #currently
         assignment.assignment_spec_file,
         assignment.assignment_autograder_type
       )

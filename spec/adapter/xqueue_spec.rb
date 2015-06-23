@@ -19,16 +19,22 @@ describe Adapter::Xqueue do
 
   context 'it can create an assignment from a submission and grade it' do
     before(:each) do
+      puts 'n'
       @x_queue_adapter = Adapter.load('./spec/fixtures/x_queue_config.yml')
+      puts 'a'
       ::XQueue.any_instance.stub(:get_submission).and_return(::XQueueSubmission.parse_JSON(@x_queue_adapter.x_queue, IO.read('spec/fixtures/x_queue_submission.json')))
+      puts 'b'
     end
 
     it 'should create an assignment (correctly) from the grader_payload' do
       submission = @x_queue_adapter.next_submission_with_assignment
       assignment = submission.assignment
+      puts '1'
       expect(submission).to be
       # make sure that it has the correct values
+      puts '2'
       expect(submission.files.values[0]).to be == "http://fixture.net/correct_submission.zip"
+      puts '3'
       expect(assignment.assignment_spec_uri).to be == "http://fixture.net/assignment1_spec.txt"
     end
 
