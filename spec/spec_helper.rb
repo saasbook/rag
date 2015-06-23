@@ -3,9 +3,9 @@ SimpleCov.start do
   add_filter "/spec/"
 end
 
-# RSpec.configure do |c|
-#   c.filter_run_excluding :sandbox => true
-# end
+RSpec.configure do |c|
+  c.filter_run_excluding :sandbox => true
+end
 
 require 'grader'
 require 'auto_grader'
@@ -31,3 +31,7 @@ require 'run_with_timeout'
 
 require 'adapter'
 require 'adapter/xqueue.rb'
+
+require 'fakeweb'
+
+FakeWeb.allow_net_connect = false 

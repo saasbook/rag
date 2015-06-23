@@ -22,8 +22,8 @@ describe Assignment::Xqueue do
       @submission = ::XQueueSubmission.parse_JSON(double, IO.read('spec/fixtures/invalid_x_queue_submission.json'))
     end
 
-    it 'should validate presence of required fields' do
-      expect(Assignment::Xqueue.new(@submission).valid?).to be_false
+    it 'should raise error when invalid' do
+      expect{Assignment::Xqueue.new(@submission)}.to raise_error
     end
   end
 
