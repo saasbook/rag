@@ -1,14 +1,6 @@
 language: ruby
 rvm:
-# try eliminate ruby-debug and debugger for switch to ruby2
-#  - "1.9.3"
-  - "2.0.0"
-#before_install:
-#  - rvm use 1.9.3
-#  - gem install ruby-debug19
-#install:
-#  - rvm use 2.0.0
-#  - bundle install
+  - "2.2.2"
 script:
   - bundle exec rspec spec
   - bundle exec cucumber features
