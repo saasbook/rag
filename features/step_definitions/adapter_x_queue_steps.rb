@@ -24,7 +24,7 @@ Given(/^an XQueue that has submission "(.*?)" in queue$/) do |submission|
   response_file = "#{BASE_FOLDER}#{submission}"
   FakeWeb.register_uri(:get, %r|https://xqueue.edx.org/xqueue/get_submission/|, body: response_file)
   JSON_string = JSON.parse(IO.read(response_file))['content']
-  submission = XQueueSubmission.parse_JSON(double('XQueue'), JSON_string)
+  submission = XQueueSubmission.create_from_JSON(double('XQueue'), JSON_string)
   puts submission.files.values
   fake_files(submission.files.values)
   fake_files(submission.grader_payload['assignment_spec_uri'])

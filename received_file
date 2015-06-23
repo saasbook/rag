@@ -1,7 +1,1 @@
-
-    class MyClass
-      def self.my_method
-        return 'foo'
-      end
-    end
-  
+foo

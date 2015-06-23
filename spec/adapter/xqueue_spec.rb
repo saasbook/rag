@@ -25,7 +25,7 @@ describe Adapter::Xqueue do
       puts 'n'
       @x_queue_adapter = Adapter.load('./spec/fixtures/x_queue_config.yml')
       puts 'a'
-      ::XQueue.any_instance.stub(:get_submission).and_return(::XQueueSubmission.parse_JSON(@x_queue_adapter.x_queue, IO.read('spec/fixtures/x_queue_submission.json')))
+      ::XQueue.any_instance.stub(:get_submission).and_return(::XQueueSubmission.create_from_JSON(@x_queue_adapter.x_queue, IO.read('spec/fixtures/x_queue_submission.json')))
       puts 'b'
     end
 

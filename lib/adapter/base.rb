@@ -4,7 +4,6 @@ module Adapter
   class Base
     include RagLogger
     include AutoGraderSubprocess
-    attr_accessor :conf, :autograder_hash
 
     def initialize(_config_hash)
       # raise NotImplementedError.new "abstract method"
@@ -19,7 +18,7 @@ module Adapter
       assignment = submission.assignment
       submission.score, submission.message =
       AutoGraderSubprocess.run_autograder_subprocess(
-        submission.files[0], #currently
+        submission.files.first.last, #for now autograder only can handle one file. This can be easily changed in the future once we refactor the autograder engine
         assignment.assignment_spec_file,
         assignment.assignment_autograder_type
       )
