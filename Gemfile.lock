@@ -189,6 +189,3 @@ DEPENDENCIES
   simplecov-rcov
   term-ansicolor
   xqueue_ruby!
-
-BUNDLED WITH
-   1.10.4
