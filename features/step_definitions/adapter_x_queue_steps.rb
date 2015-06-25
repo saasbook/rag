@@ -38,7 +38,7 @@ Given(/^an XQueue that has submission "(.*?)" in queue$/) do |submission|
 end
 
 Given(/^has been setup with the config file "(.*?)"$/) do |file_name|
-  @adapter = Adapter::load("features/support/#{file_name}")
+  @adapter = SubmissionAdapter::load("features/support/#{file_name}")
 end
 
 #Starts a thread with stubbed out put_result to make a exception

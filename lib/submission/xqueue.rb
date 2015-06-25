@@ -2,7 +2,7 @@ require 'xqueue_ruby'
 require_relative '../assignment/xqueue'
 require_relative 'polling'
 
-module Adapter
+module SubmissionAdapter
   class Xqueue < Polling
     attr_reader :x_queue
 

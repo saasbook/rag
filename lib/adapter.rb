@@ -1,6 +1,6 @@
 require 'yaml'
 
-module Adapter
+module SubmissionAdapter
   DEFAULT_NAME = :xqueue
 
   # Formats autograder ouput for display in browser
@@ -24,7 +24,7 @@ module Adapter
   def self.get(name = DEFAULT_NAME)
     case name.downcase.to_sym
     when :xqueue
-      require_relative 'adapter/xqueue'
+      require_relative 'submission/xqueue'
       Xqueue
     else
       err_no_adapter(name.inspect)

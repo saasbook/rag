@@ -1,6 +1,9 @@
 require 'spec_helper'
 
 describe Assignment::Xqueue do
+  before(:all) do
+    FakeWeb.register_uri(:get, 'http://fixture.net/assignment1_spec.txt', :body => IO.read('spec/fixtures/ruby_intro_part1.rb'))
+  end
   context 'it can be initialized from a valid XQueueSubmission' do
     before(:each) do
       double = double('XQueue')

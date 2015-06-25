@@ -30,7 +30,7 @@ require 'edx_submission'
 require 'run_with_timeout'
 
 require 'adapter'
-require 'adapter/xqueue.rb'
+require 'submission/xqueue.rb'
 
 require 'fakeweb'
 

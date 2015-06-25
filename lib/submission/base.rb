@@ -1,6 +1,6 @@
 require 'yaml'
 
-module Adapter
+module SubmissionAdapter
   class Base
     include RagLogger
     include AutoGraderSubprocess

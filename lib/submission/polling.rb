@@ -1,6 +1,6 @@
 require_relative 'base'
 
-module Adapter
+module SubmissionAdapter
   class Polling < Base
     attr_accessor :sleep_duration
 
