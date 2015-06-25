@@ -4,6 +4,7 @@ Feature: Test Simple Ruby Code
   So that I can improve my ruby skills 
   I want to receive feedback on my errors
 
+  @wip
   Scenario Outline: check buggy code in HW0-1
 
     Given a simple ruby submission containing "<buggy_code>"
@@ -21,7 +22,7 @@ Feature: Test Simple Ruby Code
     |def sum_to_n?(array, p); false; end|Failure/Error: sum_to_n?([1,2,3,4,5], 5).should be_true|  expected: true value| got: false|
     |def sum_to_n?(array, p); false; end|Failure/Error: sum_to_n?([], 0).should be_true|expected: true value| got: false|
 
-
+  @wip
   Scenario Outline: check buggy code in Hw0-2
 
     Given a simple ruby submission containing "<buggy_code>"
@@ -35,7 +36,8 @@ Feature: Test Simple Ruby Code
     | def hello(name); name; end | Failure/Error: hello("Dan").should eq('Hello, Dan'), "Incorrect results for input: \"Dan\"" |||
     | def starts_with_consonant?(s); false; end |  Failure/Error: starts_with_consonant?("Veeeeeeee").should be_true, "Incorrect results for input: \"Veeeeeeee\""|||
     | def binary_multiple_of_4?(s); false end | Failure/Error: binary_multiple_of_4?("1010101010100").should be_true, "Incorrect results for input: \"1010101010100\""|||
-
+  
+  @wip
   Scenario Outline: check buggy code in Hw0-3
 
     Given a simple ruby submission containing "<buggy_code>"

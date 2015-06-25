@@ -4,6 +4,7 @@ Feature: test dangerous code
   So that I can grade thousands and thousands of programming hw's efficiently
   I want to fail safely when dangerous code is submitted
 
+@wip
 Scenario Outline: kinds of dangerous code
   # this functionality not supported yet
 

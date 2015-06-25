@@ -3,7 +3,7 @@ rvm:
   - "2.2.2"
 script:
   - bundle exec rspec spec
-  - bundle exec cucumber features
+  - bundle exec cucumber features --tags ~@wip
 notifications:
   email: false
   slack: cs169dev:OPMf1tPzfO3a4gz6gGTOFV7w

@@ -5,6 +5,7 @@ end
 
 RSpec.configure do |c|
   c.filter_run_excluding :sandbox => true
+  # c.raise_errors_for_deprecations!
 end
 
 require 'grader'

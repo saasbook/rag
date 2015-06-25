@@ -23,6 +23,7 @@ describe SubmissionAdapter::Xqueue do
     before(:each) do
       @x_queue_adapter = SubmissionAdapter.load('./spec/fixtures/x_queue_config.yml')
       ::XQueue.any_instance.stub(:get_submission).and_return(::XQueueSubmission.create_from_JSON(@x_queue_adapter.x_queue, IO.read('spec/fixtures/x_queue_submission.json')))
+
     end
 
     it 'should create an assignment (correctly) from the grader_payload' do
@@ -34,6 +35,7 @@ describe SubmissionAdapter::Xqueue do
 
     it 'should pass assignment and submission to the autograder' do
       pending 'run in a seperate thread to avoid infinite loop'
+      expect(true).to be_false
     end
   end
 
@@ -50,6 +52,7 @@ describe SubmissionAdapter::Xqueue do
 
     it 'it should sleep when' do
       pending 'run in seperate thread to avoid infinite loop'
+      expect(true).to be_false
     end
   end
 end
