@@ -20,7 +20,7 @@ module SubmissionAdapter
       AutoGraderSubprocess.run_autograder_subprocess(
         submission.files.first.last, #for now autograder only can handle one file. This can be easily changed in the future once we refactor the autograder engine
         assignment.assignment_spec_file,
-        assignment.assignment_autograder_type
+        assignment.autograder_type
       )
       assignment.apply_lateness! submission  # optionally scales submission by lateness and provides comments.
       submit_response(submission)

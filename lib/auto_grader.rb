@@ -47,15 +47,11 @@ class AutoGrader
   #   end
   # end
 
-    def self.create(assignment, submission_path)
-    @@initialized ||= AutoGrader.class_init
-      begin
-        obj = Object.const_get(grader).send(:new, submitted_answer, grading_rules)
-        obj.assignment_id = assignment_id
-        return obj
-      rescue NameError => e
-        raise AutoGrader::NoSuchGraderError, "Can't find grading strategy for #{grader}"
-      end
+  def self.create(assignment, submission_path)
+    begin
+      autograder = Autograder.const_get(assignment.autograder_type).new(assignment, submission_path)
+    rescue NameError => e
+      raise AutoGrader::NoSuchGraderError, "Can't find grading strategy for #{grader}"
     end
   end
 
@@ -73,17 +69,15 @@ class AutoGrader
   private
 
   def self.class_init
-    Dir["lib/graders/*_grader/*.rb"].each { |file| load file }
+    Dir["lib/graders/*_grader/*.rb"].each { |file| load fxile }
   end
   
-  #:nodoc: not to be used externally
-  private
-  def initialize(assignment_id)
-    @raw_max = @raw_score = 0
-    @comments = 'You did not submit any answer.'
-    @assignment_id = assignment_id
-    @errors = nil
-  end
+  
+  protected
 
+  # Superclass method to be called by 
+  def initialize(assignment, submission_path)
+    raw_max = assignment.score
+  end
 end
 

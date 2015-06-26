@@ -10,12 +10,11 @@ class RspecGrader < AutoGrader
   #   +require+ or +include+ the subject code file, but it can +require+
   #   or +include+ any other Ruby libraries needed for the specs to run.
 
-  def initialize(submitted_answer, grading_rules)
-    @code = submitted_answer
-    @raw_score = @raw_max = 0
-    @comments = ''
-    # make sure exactly one of specdir, specfile is given
-    @specfile = grading_rules[:spec]
+  def initialize(submission_path, assignment)
+    super(submitted_answer, grading_rules)
+    @code = submitted_answer  # this be a string
+    @specfile = assignment.assignment_spec_file
+
     raise NoSpecsGivenError if @specfile.nil? || @specfile.empty?
     raise NoSuchSpecError, "Specfile #{@specfile} not found" unless File.readable?(@specfile)
   end

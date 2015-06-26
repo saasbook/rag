@@ -7,7 +7,7 @@
     "grader_payload": {
       "assignment_name": "assignment1",
       "assignment_spec_uri": "http://fixture.net/assignment1_spec.txt",
-      "assignment_autograder_type": "RspecGrader",
+      "autograder_type": "RspecGrader",
       "due_date": "2015-01-01 00:00:00 -0700",
       "grace_period": 3,
       "late_period"  : 2

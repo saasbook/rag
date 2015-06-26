@@ -6,7 +6,7 @@
 require './lib/auto_grader.rb'
 require 'ruby-debug'
 
-def grade(file,spec)
+def grade(file, spec)
 end
 
 def usage
