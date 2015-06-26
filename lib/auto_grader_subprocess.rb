@@ -14,71 +14,77 @@ module AutoGraderSubprocess
   # FIXME: This is a hack, remove later
   # This, and run_autograder, should really be part of a different module/class
   # Runs a separate process for grading
-  def self.run_autograder_subprocess(submission, spec, grader_type)
-    stdout_text = stderr_text = nil
-    exitstatus = 0
-    #create a new temp file
-    Tempfile.open(['test', '.rb']) do |file|
-      file.write(submission)
-      file.flush
+  def self.run_autograder_subprocess(submission_path, spec, grader_type)
+  #   stdout_text = stderr_text = nil
+  #   exitstatus = 0
+  #   #create a new temp file
+  #   Tempfile.open(['test', '.rb']) do |file|
+  #     file.write(submission)
+  #     file.flush
 
-      opts = {
-        :timeout => 4,
-        :cmd => %Q{./grade "#{file.path}" "#{spec}"}
-      }.merge case grader_type
-      when 'HerokuRspecGrader'
-        { :timeout => 180,
-          :cmd => %Q{./grade_heroku "#{submission}" "#{spec}"}
-        }
-      when 'GithubRspecGrader'
-        { :timeout => 180,
-          :cmd => %Q{./new_grader -t GithubRspecGrader "#{submission}" "#{spec}"}
-        }
-      when 'HW3Grader'
-        {
-          :timeout => 400,
-          :cmd => %Q{./grade3 -a ../rottenpotatoes "#{file.path}" "#{spec}"}
-        }
-      when 'HW4Grader'
-        {
-          :timeout => 300,
-          :cmd => %Q{./grade4 "#{file.path}" "#{spec}"}
-        }
-      when 'HW5Grader'
-        submission = escape_all_fields(submission)
-        {
-          :timeout => 300,
-          :cmd => %Q{./grade5 #{submission} "#{spec}"}
-        }
-      when 'MigrationGrader'
-        {
-          :timeout => 300,
-          :cmd => %Q{./grade6 "#{file.path}" "#{spec}"}
-        }
-      else
-        {}
-      end
+  #     opts = {
+  #       :timeout => 4,
+  #       :cmd => %Q{./grade "#{file.path}" "#{spec}"}
+  #     }.merge case grader_type
+  #     when 'HerokuRspecGrader'
+  #       { :timeout => 180,
+  #         :cmd => %Q{./grade_heroku "#{submission}" "#{spec}"}
+  #       }
+  #     when 'GithubRspecGrader'
+  #       { :timeout => 180,
+  #         :cmd => %Q{./new_grader -t GithubRspecGrader "#{submission}" "#{spec}"}
+  #       }
+  #     when 'HW3Grader'
+  #       {
+  #         :timeout => 400,
+  #         :cmd => %Q{./grade3 -a ../rottenpotatoes "#{file.path}" "#{spec}"}
+  #       }
+  #     when 'HW4Grader'
+  #       {
+  #         :timeout => 300,
+  #         :cmd => %Q{./grade4 "#{file.path}" "#{spec}"}
+  #       }
+  #     when 'HW5Grader'
+  #       submission = escape_all_fields(submission)
+  #       {
+  #         :timeout => 300,
+  #         :cmd => %Q{./grade5 #{submission} "#{spec}"}
+  #       }
+  #     when 'MigrationGrader'
+  #       {
+  #         :timeout => 300,
+  #         :cmd => %Q{./grade6 "#{file.path}" "#{spec}"}
+  #       }
+  #     else
+  #       {}
+  #     end
 
-      begin
-        stdout_text, stderr_text, exitstatus = run_with_timeout(opts[:cmd], opts[:timeout])
-      rescue Timeout::Error => e
-        exitstatus = -1
-        stderr_text = "Program timed out"
-      end
+  #     begin
+  #       stdout_text, stderr_text, exitstatus = run_with_timeout(opts[:cmd], opts[:timeout])
+  #     rescue Timeout::Error => e
+  #       exitstatus = -1
+  #       stderr_text = "Program timed out"
+  #     end
 
-      if exitstatus != 0
-        logger.fatal "AutograderSubprocess error: #{stderr_text}"
-        raise AutoGraderSubprocess::SubprocessError, "AutograderSubprocess error: #{stderr_text}"
-      end
-    end
-    score, comments = parse_grade(stdout_text)
-    comments.gsub!(spec, 'spec.rb')
-    [score, comments]
-  rescue ArgumentError => e
-    logger.error e.to_s
-    score = 0
-    comments = e.to_s
-    [score, comments]
+  #     if exitstatus != 0
+  #       logger.fatal "AutograderSubprocess error: #{stderr_text}"
+  #       raise AutoGraderSubprocess::SubprocessError, "AutograderSubprocess error: #{stderr_text}"
+  #     end
+  #   end
+  #   File.open('stdout.txt', 'w') { |f| f.write stdout_text }
+  #   score, comments = parse_grade(stdout_text)
+  #   comments.gsub!(spec, 'spec.rb')
+  #   [score, comments]
+  # rescue ArgumentError => e
+  #   logger.error e.to_s
+  #   score = 0
+  #   comments = e.to_s
+  #   [score, comments]
+
+    grader = AutoGrader.create(submission_path, assignment)
+    grading_thread = Thread.new grader.grade!
+    grading_thread.join(10.0)  # max 10 sec timeout
+    [score, commnets] = grading_thread.value
   end
 
   def run_autograder_subprocess(submission, spec, grader_type)

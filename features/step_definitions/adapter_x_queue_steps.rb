@@ -53,4 +53,5 @@ Then(/^I should receive a grade for my assignment$/) do
   end.to raise_error(PutResultException)
   expect(@results[:score]).to be == 0
   puts @results[:comments]
+  puts @results[:score]
 end

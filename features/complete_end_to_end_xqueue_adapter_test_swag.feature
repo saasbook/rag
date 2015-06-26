@@ -9,6 +9,7 @@ Feature: Pulls code submissions from XQueue and grades them using information su
     And has been setup with the config file "conf.yml"
     Then I should receive a grade for my assignment 
 
+  @wip
   Scenario: student submits a heroku deployment on edX
     Given an XQueue that has submission "hw2_submission.json" in queue
     And has been setup with the config file "conf.yml"

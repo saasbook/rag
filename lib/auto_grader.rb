@@ -32,11 +32,23 @@ class AutoGrader
   #   expected or required by that strategy.
   # * +normalize+ - if given, normalize score to this maximum; default 100
   
-  def self.create(assignment_id, grader, submitted_answer, grading_rules, normalize=100)
+  # def self.create(assignment_id, grader, submitted_answer, grading_rules, normalize=100)
+  #   @@initialized ||= AutoGrader.class_init
+  #   if submitted_answer.nil? || submitted_answer.empty?
+  #     AutoGrader.new(assignment_id)
+  #   else
+  #     begin
+  #       obj = Object.const_get(grader).send(:new, submitted_answer, grading_rules)
+  #       obj.assignment_id = assignment_id
+  #       return obj
+  #     rescue NameError => e
+  #       raise AutoGrader::NoSuchGraderError, "Can't find grading strategy for #{grader}"
+  #     end
+  #   end
+  # end
+
+    def self.create(assignment, submission_path)
     @@initialized ||= AutoGrader.class_init
-    if submitted_answer.nil? || submitted_answer.empty?
-      AutoGrader.new(assignment_id)
-    else
       begin
         obj = Object.const_get(grader).send(:new, submitted_answer, grading_rules)
         obj.assignment_id = assignment_id

@@ -4,7 +4,7 @@ module Assignment
   # type of submission and return a response.
   class Base
     include ActiveModel::Validations
-    attr_reader :due_date, :assignment_name, :assignment_spec_file,  :assignment_autograder_type
+    attr_reader :due_date, :assignment_name, :assignment_spec_file,  :assignment_autograder_type, :score
     validates_presence_of :due_date, :assignment_name, :assignment_spec_file, :assignment_autograder_type
 
     def initialize(_submission)

@@ -1,12 +1,4 @@
-# Ruby intro part 1 solutions
-
-# Returns the sum of all the numbers in `collection`, which must be 
-# enumerable
-def sum(collection)
-  # collection.inject(0) do |total, n|
-  #   total + n
-  # end
-  rspec_comments = <<EOF 
+Score out of 100: 500
   ---BEGIN rspec comments---
 --------------------------------------------------------------------------------
 
@@ -69,19 +61,3 @@ rspec /tmp/rspec20150625-20765-l5ul61.rb:63 # Ruby intro part 1 #sum works on th
 
 --------------------------------------------------------------------------------
 ---END rspec comments---
-EOF
- puts "Score out of 100: 500\n"
- # ENV.each {|a| puts a}
- puts rspec_comments
-
- eval('def puts(h); 1;end')
-end
-
-# Return the sum of the 2 largest elements in a collection
-def max_2_sum(collection)
-end
-
-# Return true iff exactly 2 elements of collection sum to the given number
-# Uses the handy `permutation` instance method of `Array`.
-def sum_to_n?(collection, total)
-end

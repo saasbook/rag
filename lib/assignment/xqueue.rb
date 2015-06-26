@@ -17,6 +17,7 @@ module Assignment
       @assignment_spec_file = fetch_spec_file(grader_payload['assignment_spec_uri'])
       @assignment_autograder_type = grader_payload['assignment_autograder_type']
       @due_date = Time.parse(grader_payload['due_date'])
+      @max_score = grader_payload['max_score'] || 100.0
       grace_period = (grader_payload['grace_period'] || 8).days
       late_period = (grader_payload['late_period'] || 0).days
       @latenesses = [
