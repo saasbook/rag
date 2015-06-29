@@ -57,6 +57,7 @@ module Graders
       if @output.force_encoding('us-ascii').encode('utf-8', :invalid => :replace, :undef => :replace, :replace => '?') =~ regex
         @total, @failed, @pending = $1.to_i, $2.to_i, $4.to_i
         @passed = @total - @failed - @pending
+
       else
         @output << "\nCan't parse output: #{@output_stream}"
       end

@@ -22,9 +22,8 @@ module Graders
     end
 
     def grade!(weighted=false)
-      runner =  runner_block
-      runner.run
-      @comments = runner.output
+      @comments = run_in_thread_with_sandbox_timeout(runner_block)
+      parse_stats!(@comments)
       if weighted
         @raw_score = runner.passed
         @raw_max = runner.total
@@ -42,8 +41,17 @@ module Graders
       end
     end
 
+    def parse_stats!(output)
+      regex = /(\d+)\s+examples?,\s+(\d+)\s+failures?(,\s+(\d+)\s+pending)?$/
+      if output.force_encoding('us-ascii').encode('utf-8', :invalid => :replace, :undef => :replace, :replace => '?') =~ regex
+        @raw_max, @failed, @pending = $1.to_i, $2.to_i, $4.to_i
+        @raw_score = @total - @failed - @pending
+      else
+        raise 'Output could not be parsed'
+      end
+    end
+
     def runner_block
-      $SAFE = 3
       errs = StringIO.new('', 'w')
       output = StringIO.new('', 'w')
       Tempfile.open(['rspec', '.rb']) do |file|
