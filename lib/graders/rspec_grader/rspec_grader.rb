@@ -22,12 +22,7 @@ module Graders
     end
 
     def grade!(weighted=false)
-      # runner =  RspecRunner.new(@code, @specfile)
-      # runner.run
-      # @raw_score = runner.passed
-      # @raw_max = runner.total
-      # @comments = runner.output
-      runner =  RspecRunner.new(@code, @specfile)
+      runner =  runner_block
       runner.run
       @comments = runner.output
       if weighted
@@ -45,6 +40,29 @@ module Graders
           end
         end
       end
+    end
+
+    def runner_block
+      $SAFE = 3
+      errs = StringIO.new('', 'w')
+      output = StringIO.new('', 'w')
+      Tempfile.open(['rspec', '.rb']) do |file|
+        begin
+          # don't put anything before student code, so line numbers are preserved
+          file.write(@code)
+          # sandbox the code with timeouts
+          file.write(@@preamble)
+          # the specs that go with this code
+          file.write(@specs)
+          file.flush
+          RSpec::Core::Runner::run([file.path], errs, output)
+        rescue Exception => e
+          # if tmpfile name appears in err msg, replace with 'your_code.rb' to be friendly
+          output.string << e.message.gsub(file.path, 'your_code.rb')
+          @errors = true
+        end
+      end
+      return [output.string, errs.string].join("\n")
     end
   end
 end

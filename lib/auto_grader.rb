@@ -55,8 +55,13 @@ module Graders
 
     protected
 
-    def run_in_thread_with_sandbox_timeout(&block)
-
+    def run_in_thread_with_sandbox_timeout(grading_func)
+      begin
+        thr = Thread.new {$SAFE = 3; grading_func}
+        thr.join(@timeout)
+      rescue SecurityError => err
+      end
+      thr.status
     end
 
     # Superclass method to be called by
