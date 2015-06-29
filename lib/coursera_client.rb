@@ -9,6 +9,7 @@ require_relative 'coursera_submission'
 require_relative 'auto_grader'
 require_relative 'auto_grader_subprocess'
 
+## DEPRECIATED --AARON
 class CourseraClient
   include RagLogger
   include AutoGraderSubprocess

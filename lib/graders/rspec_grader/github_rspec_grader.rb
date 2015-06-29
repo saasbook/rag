@@ -1,8 +1,11 @@
 require_relative 'weighted_rspec_grader'
 
-class GithubRspecGrader < WeightedRspecGrader
-  def initialize(username, grading_rules)
-    super('', grading_rules)
-    ENV['GITHUB_USERNAME'] = username.strip.delete("\n")
+
+module Graders
+  class GithubRspecGrader < WeightedRspecGrader
+    def initialize(username, grading_rules)
+      super('', grading_rules)
+      ENV['GITHUB_USERNAME'] = username.strip.delete("\n")
+    end
   end
 end

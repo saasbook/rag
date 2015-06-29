@@ -8,7 +8,7 @@ class CourseraController
 
   require 'net/https'
   require 'json'
-
+## DEPRECIATED --AARON
   attr_accessor :base_uri
 
   HTTP_MODES = [:get, :post]

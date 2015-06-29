@@ -11,7 +11,7 @@ class CourseraSubmission
   attr_accessor :submission
   # optional auxiliary text
   attr_accessor :submission_aux
-
+  ## DEPRECIATED --AARON
   def initialize(assignment_part_sid, email_address, submission, 
                  submission_aux="")
     @assignment_part_sid = assignment_part_sid

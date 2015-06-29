@@ -13,7 +13,7 @@ require_relative 'edx_controller'
 require_relative 'edx_submission'
 require_relative 'auto_grader'
 require_relative 'auto_grader_subprocess'
-
+## DEPRECIATED --AARON
 class EdXClient
   include RagLogger
   include AutoGraderSubprocess

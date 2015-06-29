@@ -1,6 +1,6 @@
 require 'yaml'
 
-module SubmissionAdapter
+module Submission
   class Base
     include RagLogger
     include AutoGraderSubprocess
@@ -10,11 +10,11 @@ module SubmissionAdapter
     end
 
     def run
-      raise NotImplementedError, "abstract method"
+      raise NotImplementedError, 'abstract method'
     end
 
     def handle_submission(submission)
-      raise "nil submission received" if submission.nil?
+      raise 'No submission received' if submission.nil?
       assignment = submission.assignment
       submission.score, submission.message =
       AutoGraderSubprocess.run_autograder_subprocess(
@@ -27,7 +27,7 @@ module SubmissionAdapter
     end
 
     def submit_response(_submission)
-      raise NotImplementedError, "abstract method"
+      raise NotImplementedError.new('abstract method')
     end
   end
 end

@@ -11,7 +11,7 @@ module AutoGraderSubprocess
   class AutoGraderSubprocess::OutputParseError < StandardError ; end
   class AutoGraderSubprocess::SubprocessError < StandardError ; end
 
-  # FIXME: This is a hack, remove later
+  # FIXME: This is a hack, remove later  WILL BE DEPRECIATED --AARON
   # This, and run_autograder, should really be part of a different module/class
   # Runs a separate process for grading
   def self.run_autograder_subprocess(submission_path, spec, grader_type)
@@ -83,8 +83,8 @@ module AutoGraderSubprocess
 
     grader = AutoGrader.create(submission_path, assignment)
     grading_thread = Thread.new grader.grade!
-    grading_thread.join(10.0)  # max 10 sec timeout
-    [score, commnets] = grading_thread.value
+    grading_thread.join(20)  # max 20 sec timeout
+    [score, comments] = grading_thread.value
   end
 
   def run_autograder_subprocess(submission, spec, grader_type)

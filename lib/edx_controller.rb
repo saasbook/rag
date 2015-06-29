@@ -1,5 +1,5 @@
 require_relative 'rag_logger'
-
+## DEPRECIATED --AARON
 class EdXController
 
   include RagLogger

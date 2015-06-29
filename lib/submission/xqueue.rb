@@ -8,7 +8,6 @@ module SubmissionAdapter
 
     def initialize(config_hash)
       super(config_hash)
-      # @halt = conf['halt']  # TODO: figure out what this is for
       @x_queue = ::XQueue.new(*create_xqueue_hash(config_hash))
     end
 

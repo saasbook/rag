@@ -1,13 +1,13 @@
 require 'spec_helper'
 
-describe SubmissionAdapter::Xqueue do
+describe Submission::Xqueue do
   before(:all) do
     FakeWeb.register_uri(:get, 'http://fixture.net/assignment1_spec.txt', :body => IO.read('spec/fixtures/ruby_intro_part1.rb'))
   end
   context 'initialization from adapter factory with config file' do
     before(:each) do
       require 'adapter'
-      @x_queue_adapter = SubmissionAdapter.load('./spec/fixtures/x_queue_config.yml')
+      @x_queue_adapter = Submission.load('./spec/fixtures/x_queue_config.yml')
     end
 
     it 'should not crash' do
@@ -21,7 +21,7 @@ describe SubmissionAdapter::Xqueue do
 
   context 'it can create an assignment from a submission and grade it' do
     before(:each) do
-      @x_queue_adapter = SubmissionAdapter.load('./spec/fixtures/x_queue_config.yml')
+      @x_queue_adapter = Submission.load('./spec/fixtures/x_queue_config.yml')
       ::XQueue.any_instance.stub(:get_submission).and_return(::XQueueSubmission.create_from_JSON(@x_queue_adapter.x_queue, IO.read('spec/fixtures/x_queue_submission.json')))
 
     end
@@ -41,7 +41,7 @@ describe SubmissionAdapter::Xqueue do
 
   context 'when there is no submission in queue' do
     before(:each) do
-      @x_queue_adapter = SubmissionAdapter.load('./spec/fixtures/x_queue_config.yml')
+      @x_queue_adapter = Submission.load('./spec/fixtures/x_queue_config.yml')
       ::XQueue.any_instance.stub(:get_submission).and_return(nil)
     end
 

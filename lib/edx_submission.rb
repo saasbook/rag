@@ -1,4 +1,5 @@
 require 'json'
+## DEPRECIATED --AARON
 class EdxSubmission
   # sid that corresponds to an assignment part on Coursera
   attr_accessor :assignment_part_sid

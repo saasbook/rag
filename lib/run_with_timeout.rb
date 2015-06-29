@@ -2,7 +2,7 @@
 require 'open3'
 require 'timeout'
 #require 'ruby-debug'
-
+## DEPRECIATED --AARON
 # Runs a specified shell command in a separate thread.
 # If it exceeds the given timeout in seconds, kills it.
 # Returns any output produced by the command (stdout or stderr) as a String.
