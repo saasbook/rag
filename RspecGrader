@@ -1,0 +1,27 @@
+Score out of 100: 100
+---BEGIN rspec comments---
+--------------------------------------------------------------------------------
+
+Ruby intro part 1
+  #sum
+    should be defined
+    returns correct sum [20 points]
+    works on the empty array [10 points]
+  #max_2_sum
+    should be defined
+    returns the correct sum [7 points]
+    works even if 2 largest values are the same [3 points]
+    returns zero if array is empty [10 points]
+    returns value of the element if just one element [10 points]
+  #sum_to_n
+    should be defined
+    returns true when any two elements sum to the second argument [30 points]
+    returns false for the single element array [5 points]
+    returns false for the empty array [5 points]
+
+Finished in 0.01005 seconds
+12 examples, 0 failures
+
+
+--------------------------------------------------------------------------------
+---END rspec comments---

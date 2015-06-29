@@ -25,7 +25,7 @@ describe AutoGrader do
     end
     describe 'with wonky input', :shared => true do
       it 'should not choke' do
-        pending "Code to test chokage with bad file inputs"
+        skip "Code to test chokage with bad file inputs"
       end
     end
     # commented out the below so that rspec continues to run and build stays green SRHJ

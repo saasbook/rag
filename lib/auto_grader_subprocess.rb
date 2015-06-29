@@ -71,6 +71,7 @@ module AutoGraderSubprocess
         raise AutoGraderSubprocess::SubprocessError, "AutograderSubprocess error: #{stderr_text}"
       end
     end
+    #File.open("#{grader_type}", 'w') {|f| f.write("#{stdout_text}")}
     score, comments = parse_grade(stdout_text)
     comments.gsub!(spec, 'spec.rb')
     [score, comments]
