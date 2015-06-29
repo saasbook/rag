@@ -15,18 +15,36 @@ module Graders
       super(submitted_answer, grading_rules)
       @code = submitted_answer  # this be a string
       @specfile = assignment.assignment_spec_file
-
+      @raw_score = 0
+      @raw_max = 0
       raise NoSpecsGivenError if @specfile.nil? || @specfile.empty?
       raise NoSuchSpecError, "Specfile #{@specfile} not found" unless File.readable?(@specfile)
     end
 
-    def grade!
+    def grade!(weighted=false)
+      # runner =  RspecRunner.new(@code, @specfile)
+      # runner.run
+      # @raw_score = runner.passed
+      # @raw_max = runner.total
+      # @comments = runner.output
       runner =  RspecRunner.new(@code, @specfile)
       runner.run
-      @raw_score = runner.passed
-      @raw_max = runner.total
       @comments = runner.output
+      if weighted
+        @raw_score = runner.passed
+        @raw_max = runner.total
+      else
+        runner.output.each_line do |line|  # TODO: this not the best code fix this when possible
+          if line =~ /\[(\d+) points?\]/
+            points = $1.to_i
+            @raw_max += points
+            @raw_score += points unless line =~ /\(FAILED([^)])*\)/
+          elsif line =~ /^Failures:/
+            mode = :log_failures
+            break
+          end
+        end
+      end
     end
-
   end
 end
