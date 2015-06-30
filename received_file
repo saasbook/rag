@@ -1,1 +1,2 @@
-foo
+
+        class BookInStock; def initialize(isbn, price); @isbn = isbn; @price = price; end; def price_as_string; @price; end; end
