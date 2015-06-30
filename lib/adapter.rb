@@ -1,6 +1,6 @@
 require 'yaml'
 
-module SubmissionAdapter
+module Submission
   DEFAULT_NAME = :xqueue
 
   # Formats autograder ouput for display in browser
