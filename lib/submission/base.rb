@@ -17,11 +17,7 @@ module Submission
       raise 'No submission received' if submission.nil?
       assignment = submission.assignment
       submission.score, submission.message =
-      AutoGraderSubprocess.run_autograder_subprocess(
-        submission.files.first.last, #for now autograder only can handle one file. This can be easily changed in the future once we refactor the autograder engine
-        assignment.assignment_spec_file,
-        assignment.autograder_type
-      )
+      Graders::AutoGrader.create(submission.files, assignment)
       assignment.apply_lateness! submission  # optionally scales submission by lateness and provides comments.
       submit_response(submission)
     end
