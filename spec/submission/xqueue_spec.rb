@@ -23,7 +23,6 @@ describe Submission::Xqueue do
     before(:each) do
       @x_queue_adapter = Submission.load('./spec/fixtures/x_queue_config.yml')
       ::XQueue.any_instance.stub(:get_submission).and_return(::XQueueSubmission.create_from_JSON(@x_queue_adapter.x_queue, IO.read('spec/fixtures/x_queue_submission.json')))
-
     end
 
     it 'should create an assignment (correctly) from the grader_payload' do
