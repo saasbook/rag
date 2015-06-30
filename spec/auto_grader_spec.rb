@@ -37,7 +37,6 @@ describe AutoGrader do
       expect(true).to be_false
     end
   end
-
   context 'protects against malicious code' do 
     before(:each) do 
       @submission_path = 'grader_files/submission_abc/'

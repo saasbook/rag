@@ -31,8 +31,9 @@ Given(/^an XQueue that has submission "(.*?)" in queue$/) do |submission|
   fake_files(submission.grader_payload['assignment_spec_uri'])
   XQueue.any_instance.stub(:authenticated?).and_return(true)
   XQueue.any_instance.stub(:queue_length).and_return(1)
-  XQueue.any_instance.stub(:put_result) do |header, score, correct, message| 
+  allow_any_instance_of(XQueue).to receive(:put_result) do |instance, header, score, correct, message| 
     @results = {header: header, score: score, correct: correct, message: message}
+    #puts @results
     raise PutResultException
   end
 end
@@ -48,8 +49,9 @@ Then(/^I should receive a grade for my assignment$/) do
     thread = Thread.new do 
       @adapter.run
     end
-    sleep(5.0) #5 seconds longest reasonable time for submission before test fails 
-    thread.kill
+     # sleep(10.0) #5 seconds longest reasonable time for submission before test fails 
+     # thread.kill
+     thread.join
   end.to raise_error(PutResultException)
   expect(@results[:score]).to be == 0
   puts @results[:comments]

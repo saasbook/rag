@@ -3,6 +3,17 @@ SimpleCov.start do
   add_filter "/spec/"
 end
 
+module DoubleAliases
+  def mock(*args, &block)
+    double(*args, &block)
+  end
+  alias stub mock
+end
+
+RSpec.configure do |config|
+  config.include DoubleAliases
+end
+
 RSpec.configure do |c|
   c.filter_run_excluding :sandbox => true
   # c.raise_errors_for_deprecations!

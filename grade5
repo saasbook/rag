@@ -4,7 +4,7 @@
 # An example use of the Ruby autograder
 
 require './lib/auto_grader.rb'
-require 'ruby-debug'
+#require 'ruby-debug'
 
 def grade(file, spec)
 end
