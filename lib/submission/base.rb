@@ -1,9 +1,9 @@
 require 'yaml'
+require 'rag_logger'
 
 module Submission
   class Base
     include RagLogger
-    include AutoGraderSubprocess
 
     def initialize(_config_hash)
       # raise NotImplementedError.new "abstract method"
