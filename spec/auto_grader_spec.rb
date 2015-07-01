@@ -100,5 +100,4 @@ describe AutoGrader do
       expect(true).to be_false
     end
   end
-
 end
