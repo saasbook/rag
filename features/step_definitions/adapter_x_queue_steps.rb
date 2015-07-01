@@ -2,6 +2,7 @@ require 'tempfile'
 require 'xqueue_ruby'
 require 'json'
 require 'adapter'
+require 'submission/xqueue'
 
 BASE_FOLDER = 'features/support/'
 

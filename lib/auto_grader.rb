@@ -35,11 +35,11 @@ module Graders
 
     #TODO: FIGURE OUT HOW TO LOAD OTHER AUTOGRADERS IN SMART WAY. PROBABLY SHOULD BE DONE THROUGH EXTERNAL GEMS
 
-    def self.create(assignment, submission_path)
+    def self.create(submission_path, assignment)
       begin
-        autograder = AutoGraders.const_get(assignment.autograder_type).new(assignment, submission_path)
+        autograder = AutoGrader.const_get(assignment.autograder_type).new(assignment, submission_path)
       rescue NameError => e
-        raise AutoGrader::NoSuchGraderError, "Can't find grading strategy for #{grader}"
+        raise AutoGrader::NoSuchGraderError, "Can't find grading strategy for #{assignment.autograder_type}"
       end
     end
 

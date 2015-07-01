@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe AutoGrader do
+describe "AutoGrader" do
   context 'initialization' do 
     before(:each) do 
       @submission_path = 'grader_files/submission_abc/'
