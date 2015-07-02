@@ -1,6 +1,7 @@
 require 'spec_helper'
 
-describe "RspecGrader" do
+include Graders
+describe RspecGrader do
   def fake_rspec_output(str)
     ::RspecRunner.any_instance.stub(:run_rspec).and_return(str)
   end

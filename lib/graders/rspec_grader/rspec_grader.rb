@@ -1,3 +1,4 @@
+require 'rspec'
 module Graders
   class RspecGrader < AutoGrader
     class RspecGrader::NoSuchSpecError < StandardError ; end
@@ -12,17 +13,16 @@ module Graders
     #   or +include+ any other Ruby libraries needed for the specs to run.
 
     def initialize(submission_path, assignment)
-      super(submitted_answer, grading_rules)
-      @code = submitted_answer  # this be a string
-      @specfile = assignment.assignment_spec_file
+      super(submission_path, grading_rules)
+      @spec_file_path = assignment.assignment_spec_file
       @raw_score = 0
       @raw_max = 0
       raise NoSpecsGivenError if @specfile.nil? || @specfile.empty?
       raise NoSuchSpecError, "Specfile #{@specfile} not found" unless File.readable?(@specfile)
     end
 
-    def grade!(weighted=false)
-      @comments = run_in_thread_with_sandbox_timeout(runner_block)
+    def grade(weighted=false)
+      @comments = run_in_thread(runner_block)
       parse_stats!(@comments)
       if weighted
         @raw_score = runner.passed
@@ -45,7 +45,7 @@ module Graders
       regex = /(\d+)\s+examples?,\s+(\d+)\s+failures?(,\s+(\d+)\s+pending)?$/
       if output.force_encoding('us-ascii').encode('utf-8', :invalid => :replace, :undef => :replace, :replace => '?') =~ regex
         @raw_max, @failed, @pending = $1.to_i, $2.to_i, $4.to_i
-        @raw_score = @total - @failed - @pending
+        @raw_score = @raw_max - @failed - @pending
       else
         raise 'Output could not be parsed'
       end
@@ -54,23 +54,15 @@ module Graders
     def runner_block
       errs = StringIO.new('', 'w')
       output = StringIO.new('', 'w')
-      Tempfile.open(['rspec', '.rb']) do |file|
-        begin
-          # don't put anything before student code, so line numbers are preserved
-          file.write(@code)
-          # sandbox the code with timeouts
-          file.write(@@preamble)
-          # the specs that go with this code
-          file.write(@specs)
-          file.flush
-          RSpec::Core::Runner::run([file.path], errs, output)
-        rescue Exception => e
-          # if tmpfile name appears in err msg, replace with 'your_code.rb' to be friendly
-          output.string << e.message.gsub(file.path, 'your_code.rb')
-          @errors = true
-        end
+      begin
+        load_student_files(@submission_path)
+        # the specs that go with this code
+        RSpec::Core::Runner::run([@spec_file_path], errs, output)
+      rescue Exception => e
+        # if tmpfile name appears in err msg, replace with 'your_code.rb' to be friendly
+        @errors = true
       end
-      return [output.string, errs.string].join("\n")
+      [output.string, errs.string].join("\n")
     end
   end
 end

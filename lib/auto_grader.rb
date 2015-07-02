@@ -1,4 +1,14 @@
 module Graders
+
+  def load_student_files(file_path)
+    if not Dir.exist? file_path
+      raise "#{file_path} is not a directory. Student submission could not be loaded"
+    end
+    Dir["#{file_path}*.rb"].each do  |file_name|
+      require file_name.delete('.rb')
+    end
+  end
+
   class AutoGrader
     class AutoGrader::NoSuchGraderError < StandardError ; end
 
@@ -16,7 +26,9 @@ module Graders
     attr_reader :raw_max
     #  the maximum allowed duration that a test suite can run on a submission.
     attr_reader :timeout
-
+    #student submission code path
+    attr_reader :submission_path
+    attr_reader :spec_file_path
     protected :raw_score, :raw_max
 
     # Create a new autograder object, which will grade a student's submission
@@ -33,11 +45,11 @@ module Graders
     #   expected or required by that strategy.
     # * +normalize+ - if given, normalize score to this maximum; default 100
 
-    #TODO: FIGURE OUT HOW TO LOAD OTHER AUTOGRADERS IN SMART WAY. PROBABLY SHOULD BE DONE THROUGH EXTERNAL GEMS
+    #TO DO: FIGURE OUT HOW TO LOAD OTHER AUTOGRADERS IN SMART WAY. PROBABLY SHOULD BE DONE THROUGH EXTERNAL GEMS
 
     def self.create(submission_path, assignment)
       begin
-        autograder = AutoGrader.const_get(assignment.autograder_type).new(assignment, submission_path)
+        AutoGrader.const_get(assignment.autograder_type).new(assignment, submission_path)
       rescue NameError => e
         raise AutoGrader::NoSuchGraderError, "Can't find grading strategy for #{assignment.autograder_type}"
       end
@@ -55,7 +67,7 @@ module Graders
 
     protected
 
-    def run_in_thread_with_sandbox_timeout(grading_func)
+    def run_in_thread(grading_func)
       begin
         thr = Thread.new {$SAFE = 3; grading_func}
         thr.join(@timeout)
@@ -65,8 +77,9 @@ module Graders
     end
 
     # Superclass method to be called by
-    def initialize(assignment, submission_path)
-      raw_max = assignment.score
+    def initialize(submission_path, assignment)
+      @raw_max = assignment.score
+      @submission_path = submission_path
     end
   end
 end
