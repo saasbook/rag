@@ -1,5 +1,4 @@
 module Graders
-
   def load_student_files(file_path)
     if not Dir.exist? file_path
       raise "#{file_path} is not a directory. Student submission could not be loaded"
@@ -62,7 +61,7 @@ module Graders
 
     # Grade the given question using the specified grader, strategy, and
     # maximum score. Default method does nothing and leaves a score of 0
-    def grade!
+    def grade
     end
 
     protected

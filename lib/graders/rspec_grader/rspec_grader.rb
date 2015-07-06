@@ -22,8 +22,7 @@ module Graders
     end
 
     def grade(weighted=false)
-      @comments = run_in_thread(runner_block)
-      parse_stats!(@comments)
+      json_report, text_report = run_in_thread(runner_block)
       if weighted
         @raw_score = runner.passed
         @raw_max = runner.total
@@ -39,12 +38,13 @@ module Graders
           end
         end
       end
+      raw_score, text_report
     end
 
     def parse_stats!(output)
       regex = /(\d+)\s+examples?,\s+(\d+)\s+failures?(,\s+(\d+)\s+pending)?$/
       if output.force_encoding('us-ascii').encode('utf-8', :invalid => :replace, :undef => :replace, :replace => '?') =~ regex
-        @raw_max, @failed, @pending = $1.to_i, $2.to_i, $4.to_i
+        @raw_max, @failed, @pending = $1.to_i, $2.to_i.to_i
         @raw_score = @raw_max - @failed - @pending
       else
         raise 'Output could not be parsed'
@@ -56,7 +56,6 @@ module Graders
       output = StringIO.new('', 'w')
       begin
         load_student_files(@submission_path)
-        # the specs that go with this code
         RSpec::Core::Runner::run([@spec_file_path], errs, output)
       rescue Exception => e
         # if tmpfile name appears in err msg, replace with 'your_code.rb' to be friendly

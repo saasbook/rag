@@ -7,7 +7,7 @@ module Graders
       @heroku_uri = uri
     end
 
-    def grade!
+    def grade
       ENV['HEROKU_URI'] = @heroku_uri
       super
     end

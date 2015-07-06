@@ -7,7 +7,7 @@ module Graders
       @admin_pass = grading_rules[:admin_pass]
     end
 
-    def grade!
+    def grade
       ENV['ADMIN_USER'] = @admin_user
       ENV['ADMIN_PASS'] = @admin_pass
       super
