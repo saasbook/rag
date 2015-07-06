@@ -3,6 +3,7 @@ class RspecRunner               # :nodoc:
   require 'rspec'
   require 'tempfile'
   require 'stringio'
+  require 'json'
 
   class ExampleTimeoutError < StandardError ; end
 
@@ -21,15 +22,25 @@ class RspecRunner               # :nodoc:
   end
 
   def run
-    @output = run_rspec
-    parse_stats unless @errors
+    temp = run_rspec
+    @output = temp[0]
+    object_json = JSON.parse(temp[1])["summary"]
+    return if object_json.nil? && object_json["example_count"].nil?
+    @total = object_json["example_count"]
+    @failed = object_json["failure_count"]
+    @pending = object_json["pending_count"]
+    @passed = @total - @failed - @pending
   end
 
   private
 
   def run_rspec
+    ## TODO: USE THE JSON FORMATTER TO COMPUTE SECORES AND STUFF; LESS FRAGILE
     errs = StringIO.new('', 'w')
     output = StringIO.new('', 'w')
+    errsJSON = StringIO.new('', 'w')
+    outputJSON = StringIO.new('', 'w')
+    tempfilepath = ''
     Tempfile.open(['rspec', '.rb']) do |file|
       begin
         # don't put anything before student code, so line numbers are preserved
@@ -39,23 +50,20 @@ class RspecRunner               # :nodoc:
         # the specs that go with this code
         file.write(@specs)
         file.flush
-        RSpec::Core::Runner::run([file.path], errs, output)
+        tempfilepath = file.path
+        ### just in case config changes at some point but it doesn't change
+        # orig_config = RSpec.configuration.clone
+        RSpec::Core::Runner.run([tempfilepath, "-fdocumentation"], errs, output)
+        RSpec.reset
+        # RSpec.configuration = orig_config
+        RSpec::Core::Runner.run([tempfilepath, "-fjson"], errsJSON, outputJSON)
       rescue Exception => e
         # if tmpfile name appears in err msg, replace with 'your_code.rb' to be friendly
         output.string << e.message.gsub(file.path, 'your_code.rb')
         @errors = true
       end
     end
-    return [output.string, errs.string].join("\n")
+    return [output.string, errs.string].join("\n"),outputJSON.string
   end
-  
-  def parse_stats
-    regex = /(\d+)\s+examples?,\s+(\d+)\s+failures?(,\s+(\d+)\s+pending)?$/
-    if @output.force_encoding('us-ascii').encode('utf-8', :invalid => :replace, :undef => :replace, :replace => '?') =~ regex
-      @total, @failed, @pending = $1.to_i, $2.to_i, $4.to_i
-      @passed = @total - @failed - @pending
-    else
-      @output << "\nCan't parse output: #{@output_stream}"
-    end
-  end
+
 end

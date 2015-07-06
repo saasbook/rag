@@ -33,7 +33,6 @@ Given(/^an XQueue that has submission "(.*?)" in queue$/) do |submission|
   XQueue.any_instance.stub(:queue_length).and_return(1)
   allow_any_instance_of(XQueue).to receive(:put_result) do |instance, header, score, correct, message| 
     @results = {header: header, score: score, correct: correct, message: message}
-    #puts @results
     raise PutResultException
   end
 end

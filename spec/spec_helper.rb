@@ -3,21 +3,14 @@ SimpleCov.start do
   add_filter "/spec/"
 end
 
-module DoubleAliases
-  def mock(*args, &block)
-    double(*args, &block)
-  end
-  alias stub mock
-end
-
-RSpec.configure do |config|
-  config.include DoubleAliases
-end
-
 RSpec.configure do |c|
   c.filter_run_excluding :sandbox => true
   # c.raise_errors_for_deprecations!
+  c.filter_run_including :focus => true
+  c.filter_run_excluding :slow => true
+  c.run_all_when_everything_filtered = true
 end
+
 
 require 'grader'
 require 'auto_grader'
