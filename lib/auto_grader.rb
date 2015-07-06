@@ -71,6 +71,7 @@ module Graders
         thr = Thread.new {$SAFE = 3; grading_func}
         thr.join(@timeout)
       rescue SecurityError => err
+        puts 'got security exception'
       end
       thr.status
     end
