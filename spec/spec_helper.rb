@@ -6,8 +6,12 @@ end
 RSpec.configure do |c|
   c.filter_run_excluding :sandbox => true
   # c.raise_errors_for_deprecations!
+  c.filter_run_including :focus => true
+  c.filter_run_excluding :slow => true
+  c.run_all_when_everything_filtered = true
 end
 
+require 'grader'
 require 'auto_grader'
 require 'graders/rspec_grader/rspec_grader'
 require 'graders/rspec_grader/weighted_rspec_grader'
