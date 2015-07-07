@@ -1,11 +1,12 @@
 GIT
   remote: https://github.com/zhangaaron/xqueue-ruby
-  revision: d698778e454bb0f9340a6d620f1d84fe37e16877
+  revision: af31564608be417760de29c7dc65f4bf0b926b6d
   specs:
     xqueue_ruby (0.0.1)
       activemodel
       builder
       getopt
+      rubyzip
 
 GEM
   remote: https://rubygems.org/
@@ -177,6 +178,7 @@ GEM
     ruby-progressbar (1.7.5)
     ruby_parser (3.7.0)
       sexp_processor (~> 4.1)
+    rubyzip (1.1.7)
     sawyer (0.6.0)
       addressable (~> 2.3.5)
       faraday (~> 0.8, < 0.10)

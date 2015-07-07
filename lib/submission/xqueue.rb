@@ -24,7 +24,7 @@ module Submission
     end
 
     def submit_response(graded_submission)
-      graded_submission.correct = graded_submission.score != 0
+      graded_submission.correct = graded_submission.score != 0  # as defined in edx_controller.rb in rag.
       graded_submission.post_back
     end
 

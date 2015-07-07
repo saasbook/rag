@@ -38,7 +38,7 @@ module Graders
           end
         end
       end
-      raw_score, text_report
+      return raw_score, text_report
     end
 
     def parse_stats!(output)

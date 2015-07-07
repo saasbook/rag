@@ -6,7 +6,7 @@ describe "AutoGrader" do
       @submission_path = 'grader_files/submission_abc/'
       @assignment = double('XQueueSubmission')
     end
-    it 'can create the right subclass of AutoGrader' do 
+    it 'can create the right subclass of AutoGrader' do
       pending 'write this' 
       expect(true).to be_false
     end
