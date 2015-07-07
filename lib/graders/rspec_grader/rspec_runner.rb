@@ -23,7 +23,7 @@ class RspecRunner               # :nodoc:
 
   def run
     temp = run_rspec
-    @output = temp[0]
+    @output = temp[0] # or #{JSON.parse(temp[1])["examples"]} to avoid parsing with
     object_json = JSON.parse(temp[1])["summary"]
     return if object_json.nil? && object_json["example_count"].nil?
     @total = object_json["example_count"]

@@ -11,8 +11,17 @@ class WeightedRspecGrader < RspecGrader
     @raw_score = 0
     @raw_max = 0
     @comments = runner.output
-
+    
+    # instead use this?
+    # @comments.each do |test|
+    #   if test["description"] =~ /\[(\d+) points?\]/
+    #     points = $1.to_i
+    #     @raw_max += points
+    #     @raw_score += points unless test["status"] == "failed"
+    #   end
+    # end
     runner.output.each_line do |line|
+      #
       if line =~ /\[(\d+) points?\]/
         points = $1.to_i
         @raw_max += points
