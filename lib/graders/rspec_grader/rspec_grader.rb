@@ -59,7 +59,6 @@ module Graders
         RSpec::Core::Runner::run([@spec_file_path], errs, output)
       rescue Exception => e
         # if tmpfile name appears in err msg, replace with 'your_code.rb' to be friendly
-        @errors = true
       end
       [output.string, errs.string].join("\n")
     end

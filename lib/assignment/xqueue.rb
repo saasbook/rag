@@ -14,7 +14,7 @@ module Assignment
     def initialize(submission)
       grader_payload = submission.grader_payload
       @assignment_name = grader_payload['assignment_name']
-      @assignment_spec_file = fetch_spec_file(grader_payload['assignment_spec_uri'], submission.student_id)
+      @assignment_spec_file = fetch_spec_file(grader_payload['assignment_spec_uri'])
       @autograder_type = grader_payload['autograder_type']
       @due_date = Time.parse(grader_payload['due_date'])
       @max_score = grader_payload['max_score'] || 100.0
@@ -57,14 +57,15 @@ module Assignment
       raise ScriptError
     end
 
-    def fetch_spec_file(spec_uri, file_path)
-      session = Mechanize.new
-      file = File.open("#{file_path}-#{submission_id}", 'w') do |f|
-        f.write(session.get(spec_uri).body)
-        f.rewind
-        f
+
+    # Get the spec file from grader payload download URI unless it already exists. Returns a file handle.
+    def fetch_spec_file(spec_uri)
+      if File.exist? "#{@assignment_name}-spec"
+         File.open spec_uri
+      else
+        session = Mechanize.new
+        File.open("#{@assignment_name}-spec", 'w') { |f| f.write(session.get(spec_uri).body); f }
       end
-      file.path
     end
   end
 end

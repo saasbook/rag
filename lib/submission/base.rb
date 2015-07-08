@@ -6,7 +6,6 @@ module Submission
     include RagLogger
 
     def initialize(_config_hash)
-      # raise NotImplementedError.new "abstract method"
     end
 
     def run
