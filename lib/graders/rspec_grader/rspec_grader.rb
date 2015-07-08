@@ -1,5 +1,6 @@
 require 'rspec'
 module Graders
+
   class RspecGrader < AutoGrader
     class RspecGrader::NoSuchSpecError < StandardError ; end
     class RspecGrader::NoSpecsGivenError < StandardError ; end
@@ -14,7 +15,7 @@ module Graders
 
     def initialize(submission_path, assignment)
       super(submission_path, grading_rules)
-      @spec_file_path = assignment.assignment_spec_file
+      @spec_file_path = assignment.assignment_spec_file.path
       @raw_score = 0
       @raw_max = 0
       raise NoSpecsGivenError if @specfile.nil? || @specfile.empty?
@@ -27,17 +28,18 @@ module Graders
         @raw_score = runner.passed
         @raw_max = runner.total
       else
-        runner.output.each_line do |line|  # TODO: this not the best code fix this when possible
-          if line =~ /\[(\d+) points?\]/
-            points = $1.to_i
-            @raw_max += points
-            @raw_score += points unless line =~ /\(FAILED([^)])*\)/
-          elsif line =~ /^Failures:/
-            mode = :log_failures
-            break
-          end
-        end
+        # runner.output.each_line do |line|  # TODO: this not the best code fix this when possible
+        #   if line =~ /\[(\d+) points?\]/
+        #     points = $1.to_i
+        #     @raw_max += points
+        #     @raw_score += points unless line =~ /\(FAILED([^)])*\)/
+        #   elsif line =~ /^Failures:/
+        #     mode = :log_failures
+        #     break
+        #   end
+        # end
       end
+      @raw_score = parse_JSON_report(json_report)
       return raw_score, text_report
     end
 
@@ -54,13 +56,18 @@ module Graders
     def runner_block
       errs = StringIO.new('', 'w')
       output = StringIO.new('', 'w')
+      _errs = StringIO.new('', 'w')
+      output_JSON = StringIO.new('', 'w')
       begin
         load_student_files(@submission_path)
-        RSpec::Core::Runner::run([@spec_file_path], errs, output)
+        RSpec::Core::Runner.run([@spec_file_path, '-fdocumentation'], errs, output)
+        RSpec.reset
+        RSpec::Core::Runner.run([@spec_file_path, '-fjson'], _errs, output_JSON)
       rescue Exception => e
-        # if tmpfile name appears in err msg, replace with 'your_code.rb' to be friendly
+        puts 'When does this happen?'
+        raise e
       end
-      [output.string, errs.string].join("\n")
+      return [output.string, errs.string].join("\n"), outputJSON.string
     end
   end
 end

@@ -1,4 +1,8 @@
 module Graders
+
+  def parse_JSON_report(json)
+
+  end
   def load_student_files(file_path)
     if not Dir.exist? file_path
       raise "#{file_path} is not a directory. Student submission could not be loaded"

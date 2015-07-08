@@ -51,11 +51,8 @@ class RspecRunner               # :nodoc:
         file.write(@specs)
         file.flush
         tempfilepath = file.path
-        ### just in case config changes at some point but it doesn't change
-        # orig_config = RSpec.configuration.clone
         RSpec::Core::Runner.run([tempfilepath, "-fdocumentation"], errs, output)
         RSpec.reset
-        # RSpec.configuration = orig_config
         RSpec::Core::Runner.run([tempfilepath, "-fjson"], errors_JSON, outputJSON)
       rescue Exception => e
         # if tmpfile name appears in err msg, replace with 'your_code.rb' to be friendly
