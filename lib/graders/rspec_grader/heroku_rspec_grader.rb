@@ -1,7 +1,7 @@
-require_relative 'weighted_rspec_grader'
+require_relative 'rspec_grader'
 
 module Graders
-  class HerokuRspecGrader < WeightedRspecGrader
+  class HerokuRspecGrader < RspecGrader
     def initialize(uri, grading_rules)
       super('', grading_rules)
       @heroku_uri = uri
