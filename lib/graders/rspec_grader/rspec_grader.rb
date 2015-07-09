@@ -1,4 +1,6 @@
 require 'rspec'
+require 'custom_json_formatter'
+require 'json'
 module Graders
 
   class RspecGrader < AutoGrader
@@ -23,11 +25,23 @@ module Graders
     end
 
     def grade(weighted=false)
-      json_report, text_report = run_in_thread(runner_block)
+      text_report, json_report = run_in_thread(runner_block)
+      raise "#{json_report.keys}"
+      @comments = text_report
+      object_json = json_report["summary"]
+      if object_json.nil? && object_json["example_count"].nil?
+        raise "json is nil"
+      end
+      total = object_json["example_count"]
+      failed = object_json["failure_count"]
+      pending = object_json["pending_count"]
+      passed = @total - @failed - @pending
       if weighted
-        @raw_score = runner.passed
-        @raw_max = runner.total
+        @raw_score = passed
+        @raw_max = total
+
       else
+
         # runner.output.each_line do |line|  # TODO: this not the best code fix this when possible
         #   if line =~ /\[(\d+) points?\]/
         #     points = $1.to_i
@@ -52,12 +66,12 @@ module Graders
         load_student_files(@submission_path)
         RSpec::Core::Runner.run([@spec_file_path, '-fdocumentation'], errs, output)
         RSpec.reset
-        RSpec::Core::Runner.run([@spec_file_path, '-fjson'], _errs, output_JSON)
+        RSpec::Core::Runner.run([@spec_file_path, '--format CustomJsonFormatter'], _errs, output_JSON)
       rescue Exception => e
         puts 'When does this happen?'
         raise e
       end
-      return [output.string, errs.string].join("\n"), outputJSON.string
+      return [output.string, errs.string].join("\n"), JSON.parse(outputJSON.string)
     end
   end
 end
