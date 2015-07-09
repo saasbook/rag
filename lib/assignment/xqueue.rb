@@ -60,6 +60,7 @@ module Assignment
 
     # Get the spec file from grader payload download URI unless it already exists. Returns a file handle.
     def fetch_spec_file(spec_uri)
+      file_path = "#{ENV['base_folder']}#{@assignment_name}-spec"
       if File.exist? "#{@assignment_name}-spec"
          File.open spec_uri
       else

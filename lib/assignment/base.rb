@@ -14,5 +14,8 @@ module Assignment
     # default behavior is not to adjust lateness policy. Can be overridden by subclass
     def apply_lateness!(_submission)
     end
+
+    def fetch_spec_file(spec_uri)
+    end
   end
 end

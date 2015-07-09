@@ -43,16 +43,6 @@ module Graders
       return raw_score, text_report
     end
 
-    def parse_stats!(output)
-      regex = /(\d+)\s+examples?,\s+(\d+)\s+failures?(,\s+(\d+)\s+pending)?$/
-      if output.force_encoding('us-ascii').encode('utf-8', :invalid => :replace, :undef => :replace, :replace => '?') =~ regex
-        @raw_max, @failed, @pending = $1.to_i, $2.to_i.to_i
-        @raw_score = @raw_max - @failed - @pending
-      else
-        raise 'Output could not be parsed'
-      end
-    end
-
     def runner_block
       errs = StringIO.new('', 'w')
       output = StringIO.new('', 'w')
