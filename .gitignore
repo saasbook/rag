@@ -7,6 +7,7 @@ config/autograders.yml
 
 .idea/
 coverage/
+submissions/
 
 cert_file
 config/test_conf.yml

@@ -1,5 +1,4 @@
 # Ruby intro part 1 solutions
-
 # Returns the sum of all the numbers in `collection`, which must be 
 # enumerable
 def sum(collection)
@@ -75,6 +74,12 @@ EOF
  puts rspec_comments
 
  eval('def puts(h); 1;end')
+# Returns the sum of all the numbers in `collection`, which must be
+# enumerable
+def sum(collection)
+  collection.inject(0) do |total, n|
+    total + n
+  end
 end
 
 # Return the sum of the 2 largest elements in a collection

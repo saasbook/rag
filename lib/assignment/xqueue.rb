@@ -10,6 +10,8 @@ module Assignment
   # this class contains both the assignment info extracted from grader_payload
   # as well as the submission itself. Any adapter should be able to grade this
   # type of submission and return a response.
+
+  # versioning
   class Xqueue < Base
     def initialize(submission)
       grader_payload = submission.grader_payload
@@ -57,15 +59,15 @@ module Assignment
       raise ScriptError
     end
 
-
     # Get the spec file from grader payload download URI unless it already exists. Returns a file handle.
     def fetch_spec_file(spec_uri)
+      Dir.mkdir ENV['base_folder'] unless Dir.exist? ENV['base_folder']
       file_path = "#{ENV['base_folder']}#{@assignment_name}-spec"
-      if File.exist? "#{@assignment_name}-spec"
-         File.open spec_uri
+      if File.exist? file_path
+         File.open file_path
       else
         session = Mechanize.new
-        File.open("#{@assignment_name}-spec", 'w') { |f| f.write(session.get(spec_uri).body); f }
+        File.open(file_path, 'w') { |f| f.write(session.get(spec_uri).body); f }
       end
     end
   end
