@@ -19,7 +19,7 @@ module Submission
       # TODO: update XQueue gem to allow returning subclasses of ::XQueue::Submission
       class << submission; attr_accessor :assignment; end
       submission.assignment = Assignment::Xqueue.new(submission)
-      submission.unzip! ENV['base_folder']
+      submission.write_to_location! ENV['base_folder']
       submission
     end
 

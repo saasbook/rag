@@ -1,11 +1,4 @@
 # Ruby intro part 1 solutions
-# Returns the sum of all the numbers in `collection`, which must be 
-# enumerable
-def sum(collection)
-  collection.inject(0) do |total, n|
-    total + n
-  end
-end
 # Returns the sum of all the numbers in `collection`, which must be
 # enumerable
 def sum(collection)

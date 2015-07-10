@@ -26,33 +26,14 @@ module Graders
 
     def grade(weighted=false)
       text_report, json_report = run_in_thread(runner_block)
-      raise "#{json_report.keys}"
       @comments = text_report
-      object_json = json_report["summary"]
-      if object_json.nil? && object_json["example_count"].nil?
-        raise "json is nil"
-      end
-      total = object_json["example_count"]
-      failed = object_json["failure_count"]
-      pending = object_json["pending_count"]
-      passed = @total - @failed - @pending
-      if weighted
-        @raw_score = passed
-        @raw_max = total
-
-      else
-
-        # runner.output.each_line do |line|  # TODO: this not the best code fix this when possible
-        #   if line =~ /\[(\d+) points?\]/
-        #     points = $1.to_i
-        #     @raw_max += points
-        #     @raw_score += points unless line =~ /\(FAILED([^)])*\)/
-        #   elsif line =~ /^Failures:/
-        #     mode = :log_failures
-        #     break
-        #   end
-        # end
-      end
+      # # object_json = json_report["summary"]
+      # # total = object_json["example_count"]
+      # # failed = object_json["failure_count"]
+      # # pending = object_json["pending_count"]
+      # passed = @total - @failed - @pending
+      # @raw_score = passed
+      # @raw_max = total
       @raw_score = parse_JSON_report(json_report)
       return raw_score, text_report
     end
