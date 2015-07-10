@@ -1,5 +1,5 @@
 require 'rspec'
-require 'custom_json_formatter'
+require_relative 'custom_json_formatter'
 require 'json'
 module Graders
 
