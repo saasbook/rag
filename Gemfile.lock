@@ -1,6 +1,6 @@
 GIT
   remote: https://github.com/zhangaaron/xqueue-ruby
-  revision: af31564608be417760de29c7dc65f4bf0b926b6d
+  revision: 499fe868e9339669fa476e907981a261c736a011
   specs:
     xqueue_ruby (0.0.1)
       activemodel
