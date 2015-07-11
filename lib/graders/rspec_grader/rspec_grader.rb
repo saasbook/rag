@@ -42,7 +42,7 @@ module Graders
 
     #kreddit for a lot of this code comes from here: https://gist.github.com/activars/4467752
     #TODO: internal hack below seems brittle, try to refactor that.
-    def compute_points file_path)
+    def compute_points (file_path)
       config = RSpec.configuration
       formatter = RSpec::Core::Formatters::JsonPointsFormatter.new(config.output_stream)
       # create reporter with json formatter
