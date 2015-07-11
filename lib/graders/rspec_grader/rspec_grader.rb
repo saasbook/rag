@@ -1,5 +1,5 @@
 require 'rspec'
-require_relative 'custom_json_formatter'
+require_relative 'json_points_formatter'
 require 'json'
 module Graders
 
@@ -38,21 +38,45 @@ module Graders
       return raw_score, text_report
     end
 
+
+
+    #kreddit for a lot of this code comes from here: https://gist.github.com/activars/4467752
+    #TODO: internal hack below seems brittle, try to refactor that.
+    def compute_points file_path
+      reporter.register_listener(formatter, *notifications)
+      RSpec::Core::Runner.run(['spec/assignment/xqueue_spec.rb'])
+      p formatter.output_hash
+
+      config = RSpec.configuration
+
+      formatter = RSpec::Core::Formatters::JsonFormatter.new(config.output_stream)
+
+      # create reporter with json formatter
+      reporter =  RSpec::Core::Reporter.new(config)
+      config.instance_variable_set(:@reporter, reporter)
+
+      # internal hack
+      # api may not be stable, make sure lock down Rspec version
+      loader = config.send(:formatter_loader)
+      notifications = loader.send(:notifications_for, RSpec::Core::Formatters::JsonFormatter)
+      reporter.register_listener(formatter, *notifications)
+      RSpec::Core::Runner.run([file_path])
+      formatter.output_hash
+    end
+
     def runner_block
       errs = StringIO.new('', 'w')
       output = StringIO.new('', 'w')
-      _errs = StringIO.new('', 'w')
-      output_JSON = StringIO.new('', 'w')
       begin
         load_student_files(@submission_path)
         RSpec::Core::Runner.run([@spec_file_path, '-fdocumentation'], errs, output)
-        RSpec.reset
-        RSpec::Core::Runner.run([@spec_file_path, '--format CustomJsonFormatter'], _errs, output_JSON)
+        RSpec.clear_examples
+        total_points, received_points = compute_points(file_path)
       rescue Exception => e
         puts 'When does this happen?'
         raise e
       end
-      return [output.string, errs.string].join("\n"), JSON.parse(outputJSON.string)
+      return [output.string, errs.string].join("\n"), total_points / received_points
     end
   end
 end

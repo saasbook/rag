@@ -1,7 +1,7 @@
 require 'rspec/core/formatters/base_formatter'
 require 'json'
 
-class CustomJsonFormatter < RSpec::Core::Formatters::BaseFormatter
+class JsonPointsFormatter < RSpec::Core::Formatters::BaseFormatter
   RSpec::Core::Formatters.register self, :message, :dump_summary, :dump_profile, :stop, :close
 
   attr_reader :output_hash

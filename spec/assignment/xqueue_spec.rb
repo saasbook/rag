@@ -9,7 +9,7 @@ describe Assignment::Xqueue do
       double = double('XQueue')
       @submission = ::XQueueSubmission.create_from_JSON(double, IO.read('spec/fixtures/x_queue_submission.json'))
     end
-    it 'properly validates fields that need to exist when created' do
+    it 'properly validates fields that need to exist when created', points: 10 do
       expect(Assignment::Xqueue.new(@submission)).to be
     end
   end
