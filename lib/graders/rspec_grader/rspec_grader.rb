@@ -42,23 +42,16 @@ module Graders
 
     #kreddit for a lot of this code comes from here: https://gist.github.com/activars/4467752
     #TODO: internal hack below seems brittle, try to refactor that.
-    def compute_points file_path
-      reporter.register_listener(formatter, *notifications)
-      RSpec::Core::Runner.run(['spec/assignment/xqueue_spec.rb'])
-      p formatter.output_hash
-
+    def compute_points file_path)
       config = RSpec.configuration
-
-      formatter = RSpec::Core::Formatters::JsonFormatter.new(config.output_stream)
-
+      formatter = RSpec::Core::Formatters::JsonPointsFormatter.new(config.output_stream)
       # create reporter with json formatter
       reporter =  RSpec::Core::Reporter.new(config)
       config.instance_variable_set(:@reporter, reporter)
-
       # internal hack
       # api may not be stable, make sure lock down Rspec version
       loader = config.send(:formatter_loader)
-      notifications = loader.send(:notifications_for, RSpec::Core::Formatters::JsonFormatter)
+      notifications = loader.send(:notifications_for, RSpec::Core::Formatters::JsonPointsFormatter)
       reporter.register_listener(formatter, *notifications)
       RSpec::Core::Runner.run([file_path])
       formatter.output_hash
