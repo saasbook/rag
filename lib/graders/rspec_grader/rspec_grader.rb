@@ -1,8 +1,7 @@
 require 'rspec'
-require_relative 'json_points_formatter'
 require 'json'
+require_relative 'json_points_formatter'
 module Graders
-
   class RspecGrader < AutoGrader
     class RspecGrader::NoSuchSpecError < StandardError ; end
     class RspecGrader::NoSpecsGivenError < StandardError ; end

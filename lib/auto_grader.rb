@@ -1,12 +1,8 @@
 module Graders
 
-  def parse_JSON_report(json)
 
-  end
   def load_student_files(file_path)
-    if not Dir.exist? file_path
-      raise "#{file_path} is not a directory. Student submission could not be loaded"
-    end
+    raise "#{file_path} is not a directory. Student submission could not be loaded" unless Dir.exist? file_path
     Dir["#{file_path}*.rb"].each do  |file_name|
       require file_name.delete('.rb')
     end
@@ -47,14 +43,16 @@ module Graders
     #   chosen grading strategy.  See each strategy's class for what options are
     #   expected or required by that strategy.
     # * +normalize+ - if given, normalize score to this maximum; default 100
+    require_relative 'graders/rspec_grader/rspec_grader'
+    #TODO: FIGURE OUT HOW TO LOAD OTHER AUTOGRADERS IN SMART WAY. PROBABLY SHOULD BE DONE THROUGH EXTERNAL GEMS
 
-    #TO DO: FIGURE OUT HOW TO LOAD OTHER AUTOGRADERS IN SMART WAY. PROBABLY SHOULD BE DONE THROUGH EXTERNAL GEMS
 
     def self.create(submission_path, assignment)
       begin
-        AutoGrader.const_get(assignment.autograder_type).new(assignment, submission_path)
+        Graders.const_get(assignment.autograder_type.strip).new(assignment, submission_path)
       rescue NameError => e
-        raise AutoGrader::NoSuchGraderError, "Can't find grading strategy for #{assignment.autograder_type}"
+        raise e
+        # raise AutoGrader::NoSuchGraderError, "Can't find grading strategy for #{assignment.autograder_type}" for some reason this will always run
       end
     end
 

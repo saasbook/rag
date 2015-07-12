@@ -16,8 +16,6 @@ module Submission
     def next_submission_with_assignment
       submission = @x_queue.get_submission
       return if submission.nil?
-      # TODO: update XQueue gem to allow returning subclasses of ::XQueue::Submission
-      class << submission; attr_accessor :assignment; end
       submission.assignment = Assignment::Xqueue.new(submission)
       submission.write_to_location! ENV['base_folder']
       submission

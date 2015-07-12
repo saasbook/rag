@@ -1,7 +1,6 @@
 require 'spec_helper'
 include Graders
-
-
+FakeFS.activate!
 describe AutoGrader do
   before(:all) do
     FakeWeb.register_uri(:get, 'http://fixture.net/assignment1_spec.txt', :body => IO.read('spec/fixtures/ruby_intro_part1.rb'))
@@ -11,7 +10,7 @@ describe AutoGrader do
       submission = ::XQueueSubmission.create_from_JSON(double, IO.read('spec/fixtures/x_queue_submission.json'))
       submission.write_to_location! 'submissions/'
       @submission_path = submission.files.values.first
-      @assignment = submission.assignment
+      @assignment = Assignment::Xqueue.new(submission)
     end
     it 'can create an RSpecGrader with proper values' do
       grader = AutoGrader.create @submission_path, @assignment
@@ -108,3 +107,4 @@ describe AutoGrader do
     end
   end
 end
+FakeFS.deactivate!

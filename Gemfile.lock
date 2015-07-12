@@ -1,6 +1,6 @@
 GIT
   remote: https://github.com/zhangaaron/xqueue-ruby
-  revision: 5c455875df86b6f35261743b3a51c5c57fecdb2f
+  revision: cbc783310052da81b31c030ccb4c37450b774084
   specs:
     xqueue_ruby (0.0.1)
       activemodel
@@ -30,7 +30,7 @@ GEM
       ice_nine (~> 0.11.0)
       memoizable (~> 0.4.0)
     addressable (2.3.8)
-    arel (6.0.0)
+    arel (6.0.2)
     arrayfields (4.9.2)
     ast (2.0.0)
     builder (3.2.2)

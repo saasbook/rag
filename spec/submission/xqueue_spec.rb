@@ -33,7 +33,7 @@ describe Submission::Xqueue do
     end
 
     it 'should pass assignment and submission to the autograder' do
-      pending 'run in a seperate thread to avoid infinite loop'
+      pending 'run in a separate thread to avoid infinite loop'
       expect(true).to be_false
     end
   end
