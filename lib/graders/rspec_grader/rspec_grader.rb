@@ -16,11 +16,11 @@ module Graders
 
     def initialize(submission_path, assignment)
       super(submission_path, assignment)
-      @spec_file_path = assignment.assignment_spec_file.path
+      @timeout = 50
+      @spec_file_path = assignment.assignment_spec_file
       @raw_score = 0
       @raw_max = 0
-      raise NoSpecsGivenError if @specfile.nil? || @specfile.empty?
-      raise NoSuchSpecError, "Specfile #{@specfile} not found" unless File.readable?(@specfile)
+      raise NoSuchSpecError, 'Specs could not be found' unless File.readable? @spec_file_path
     end
 
     def grade(weighted=false)

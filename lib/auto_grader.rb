@@ -51,7 +51,7 @@ module Graders
 
     def self.create(submission_path, assignment)
       begin
-        Graders.const_get(assignment.autograder_type.strip).new(assignment, submission_path)
+        Graders.const_get(assignment.autograder_type.strip).new(submission_path, assignment)
       rescue NameError => e
         raise e
         # raise AutoGrader::NoSuchGraderError, "Can't find grading strategy for #{assignment.autograder_type}" for some reason this will always run
@@ -82,8 +82,8 @@ module Graders
 
     # Superclass method to be called by
     def initialize(submission_path, assignment)
-      @raw_max = assignment
       @submission_path = submission_path
+      @timeout = 20
     end
   end
 end

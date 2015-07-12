@@ -59,16 +59,18 @@ module Assignment
       raise ScriptError
     end
 
-    # Get the spec file from grader payload download URI unless it already exists. Returns a file handle.
+    # Get the spec file from grader payload download URI unless it already exists. Returns a file path.
     def fetch_spec_file(spec_uri)
       Dir.mkdir ENV['base_folder'] unless Dir.exist? ENV['base_folder']
       file_path = "#{ENV['base_folder']}#{@assignment_name}-spec"
       if File.exist? file_path
-         File.open file_path
+        File.open file_path
       else
         session = Mechanize.new
         File.open(file_path, 'w') { |f| f.write(session.get(spec_uri).body); f }
       end
+      file_path
     end
+
   end
 end

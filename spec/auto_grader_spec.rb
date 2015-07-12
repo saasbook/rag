@@ -12,7 +12,8 @@ describe AutoGrader do
       @submission_path = submission.files.values.first
       @assignment = Assignment::Xqueue.new(submission)
     end
-    it 'can create an RSpecGrader with proper values' do
+    it 'can create an RspecGrader with proper values' do
+      puts @assignment.inspect
       grader = AutoGrader.create @submission_path, @assignment
       expect(grader).to be_a_kind_of(RspecGrader)
     end
