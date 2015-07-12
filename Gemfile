@@ -14,9 +14,9 @@ gem 'activerecord'
 
 group :development, :testing do
   gem 'ZenTest'
-  gem 'fakefs'
   gem 'simplecov'
   gem 'fakeweb'
+  gem "fakefs", :require => 'fakefs/safe'
   gem 'simplecov-rcov'
   gem 'addressable'
 
