@@ -15,7 +15,7 @@ module Graders
     #   or +include+ any other Ruby libraries needed for the specs to run.
 
     def initialize(submission_path, assignment)
-      super(submission_path, grading_rules)
+      super(submission_path, assignment)
       @spec_file_path = assignment.assignment_spec_file.path
       @raw_score = 0
       @raw_max = 0
@@ -24,17 +24,7 @@ module Graders
     end
 
     def grade(weighted=false)
-      text_report, json_report = run_in_thread(runner_block)
-      @comments = text_report
-      # # object_json = json_report["summary"]
-      # # total = object_json["example_count"]
-      # # failed = object_json["failure_count"]
-      # # pending = object_json["pending_count"]
-      # passed = @total - @failed - @pending
-      # @raw_score = passed
-      # @raw_max = total
-      @raw_score = parse_JSON_report(json_report)
-      return raw_score, text_report
+      run_in_thread(runner_block)
     end
 
 

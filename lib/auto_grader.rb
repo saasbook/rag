@@ -27,7 +27,9 @@ module Graders
     attr_reader :timeout
     #student submission code path
     attr_reader :submission_path
+
     attr_reader :spec_file_path
+
     protected :raw_score, :raw_max
 
     # Create a new autograder object, which will grade a student's submission
@@ -80,7 +82,7 @@ module Graders
 
     # Superclass method to be called by
     def initialize(submission_path, assignment)
-      @raw_max = assignment.score
+      @raw_max = assignment
       @submission_path = submission_path
     end
   end
