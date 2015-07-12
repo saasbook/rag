@@ -5,7 +5,9 @@ describe RspecGrader do
   def fake_rspec_output(str)
     ::RspecRunner.any_instance.stub(:run_rspec).and_return(str)
   end
-  it 'should give error when initializing with no specs' do
+
+
+  it 'can be created from ' do
     lambda { RspecGrader.new('foo', {}) }.should raise_error RspecGrader::NoSpecsGivenError
   end
   describe 'running valid specfile should be able to correctly parse rspec text output' do

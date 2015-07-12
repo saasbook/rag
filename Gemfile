@@ -14,8 +14,7 @@ gem 'activerecord'
 
 group :development, :testing do
   gem 'ZenTest'
-  # remove debugger
-  #gem 'debugger'
+  gem 'fakefs'
   gem 'simplecov'
   gem 'fakeweb'
   gem 'simplecov-rcov'

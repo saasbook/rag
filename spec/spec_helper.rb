@@ -21,6 +21,7 @@ require 'json'
 require 'adapter'
 require 'submission/xqueue.rb'
 
-require 'fakeweb'
+require 'fakeweb'  # stub out network responses.
+require 'fakefs'  # stub out filesystem IO calls.
 
 FakeWeb.allow_net_connect = false 

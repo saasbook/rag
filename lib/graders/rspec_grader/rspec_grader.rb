@@ -43,6 +43,8 @@ module Graders
     #kreddit for a lot of this code comes from here: https://gist.github.com/activars/4467752
     #TODO: internal hack below seems brittle, try to refactor that.
     def compute_points (file_path)
+      points_max = 0
+      points = 0
       config = RSpec.configuration
       formatter = RSpec::Core::Formatters::JsonPointsFormatter.new(config.output_stream)
       # create reporter with json formatter
@@ -54,7 +56,11 @@ module Graders
       notifications = loader.send(:notifications_for, RSpec::Core::Formatters::JsonPointsFormatter)
       reporter.register_listener(formatter, *notifications)
       RSpec::Core::Runner.run([file_path])
-      formatter.output_hash
+      formatter.output_hash[:examples].each do |example|
+        points_max += example[:points]
+        points += example[:points] if status == 'passed'
+      end
+      return points_max, points
     end
 
     def runner_block
@@ -64,12 +70,12 @@ module Graders
         load_student_files(@submission_path)
         RSpec::Core::Runner.run([@spec_file_path, '-fdocumentation'], errs, output)
         RSpec.clear_examples
-        total_points, received_points = compute_points(file_path)
+        @raw_max, @raw_score = compute_points(file_path)
       rescue Exception => e
         puts 'When does this happen?'
         raise e
       end
-      return [output.string, errs.string].join("\n"), total_points / received_points
+      {points_received: @raw_score, points_maximum: @raw_max, comments: output}
     end
   end
 end
