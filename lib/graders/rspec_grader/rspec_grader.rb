@@ -24,11 +24,7 @@ module Graders
     def grade(weighted=false)
       run_in_thread(runner_block)
     end
-
-
-
-    #kreddit for a lot of this code comes from here: https://gist.github.com/activars/4467752
-    #TODO: internal hack below seems brittle, try to refactor that.
+    
     def compute_points (file_path)
       points_max = 0
       points = 0
