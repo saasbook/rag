@@ -3,8 +3,10 @@ module Graders
 
   def load_student_files(file_path)
     raise "#{file_path} is not a directory. Student submission could not be loaded" unless Dir.exist? file_path
-    Dir["#{file_path}*.rb"].each do  |file_name|
-      require file_name.delete('.rb')
+    puts "#{file_path}*.rb #{'-'*30}"
+    Dir[File.join(file_path, '*.rb')].each do  |file_name|
+      puts "FILE_NAME #{file_name}"
+      require file_name.sub('.rb', '')
     end
   end
 

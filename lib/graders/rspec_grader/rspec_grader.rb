@@ -18,8 +18,6 @@ module Graders
       super(submission_path, assignment)
       @timeout = 50
       @spec_file_path = assignment.assignment_spec_file
-      @raw_score = 0
-      @raw_max = 0
       raise NoSuchSpecError, 'Specs could not be found' unless File.readable? @spec_file_path
     end
 
@@ -56,6 +54,7 @@ module Graders
       errs = StringIO.new('', 'w')
       output = StringIO.new('', 'w')
       begin
+        puts "SUBMISSION PATH: #{@submission_path} #{'-'* 20}"
         load_student_files(@submission_path)
         RSpec::Core::Runner.run([@spec_file_path, '-fdocumentation'], errs, output)
         RSpec.clear_examples

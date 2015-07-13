@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe Submission::Xqueue do
   before(:all) do
-    FakeWeb.register_uri(:get, 'http://fixture.net/assignment1_spec.txt', :body => IO.read('spec/fixtures/ruby_intro_part1.rb'))
+    FakeWeb.register_uri(:get, 'http://fixture.net/assignment1_spec.txt', :body => IO.read('spec/fixtures/ruby_intro_part1_spec.rb'))
   end
   context 'initialization from adapter factory with config file' do
     before(:each) do
