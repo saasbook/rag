@@ -39,13 +39,12 @@ module Graders
       puts RSpec.configuration.formatters.inspect
       file = File.open(file_path, "rb")
       contents = file.read
-      puts "#{'-'*80}\n #{contents}#{'-'*80}"
       RSpec::Core::Runner.run([file_path])
       formatter = RSpec.configuration.formatters.select {|formatter| formatter.is_a? RSpec::Core::Formatters::JsonPointsFormatter}.first
       output_hash = formatter.output_hash
       output_hash[:examples].each do |example|
         points_max += example[:points]
-        points += example[:points] if status == 'passed'
+        points += example[:points] if example[:status] == 'passed'
       end
     end
 
