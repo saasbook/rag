@@ -54,7 +54,6 @@ module Graders
       errs = StringIO.new('', 'w')
       output = StringIO.new('', 'w')
       begin
-        puts "SUBMISSION PATH: #{@submission_path} #{'-'* 20}"
         load_student_files(@submission_path)
         RSpec::Core::Runner.run([@spec_file_path, '-fdocumentation'], errs, output)
         RSpec.clear_examples
