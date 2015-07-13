@@ -4,7 +4,7 @@ describe 'Ruby intro part 1', :sandbox => true do
       expect { sum([1,3,4]) }.not_to raise_error
     end
 
-    it "returns correct sum [20 points]" do
+    it "returns correct sum [20 points]", focus: false do
       sum([1,2,3,4,5]).should be_a_kind_of Fixnum
       sum([1,2,3,4,5]).should == 15
       sum([1,2,3,4,-5]).should == 5

@@ -18,7 +18,6 @@ module Graders
       super(submission_path, assignment)
       @timeout = 50
       @spec_file_path = assignment.assignment_spec_file
-      puts "#{@spec_file_path} #{'-'*80}"
       raise NoSuchSpecError, 'Specs could not be found' unless File.readable? @spec_file_path
     end
 
@@ -33,22 +32,19 @@ module Graders
     def compute_points (file_path)
       points_max = 0
       points = 0
-      config = RSpec.configuration
-      formatter = RSpec::Core::Formatters::JsonPointsFormatter.new(config.output_stream)
-      # create reporter with json formatter
-      reporter =  RSpec::Core::Reporter.new(config)
-      config.instance_variable_set(:@reporter, reporter)
-      # internal hack
-      # api may not be stable, make sure lock down Rspec version
-      loader = config.send(:formatter_loader)
-      notifications = loader.send(:notifications_for, RSpec::Core::Formatters::JsonPointsFormatter)
-      reporter.register_listener(formatter, *notifications)
+      c = RSpec.configure do |config|
+        config.formatter = 'documentation'
+        # config.formatter = 'RSpec::Core::Formatters::JsonFormatter'
+        config.formatter = 'RSpec::Core::Formatters::JsonPointsFormatter'
+      end
+      puts RSpec.configuration.formatters.inspect
       RSpec::Core::Runner.run([file_path])
-      formatter.output_hash[:examples].each do |example|
+      formatter = RSpec.configuration.formatters.select {|formatter| formatter.is_a? RSpec::Core::Formatters::JsonPointsFormatter}.first
+      output_hash = formatter.output_hash
+      output_hash[:examples].each do |example|
         points_max += example[:points]
         points += example[:points] if status == 'passed'
       end
-      return points_max, points
     end
 
     def runner_block
@@ -57,9 +53,8 @@ module Graders
       begin
         # below function does not work for now
         load_student_files(@submission_path)
-        RSpec.clear_examples
-        RSpec::Core::Runner.run([@spec_file_path, '-fdocumentation'], errs, output)
-        RSpec.clear_examples
+        # RSpec.clear_examples
+        # RSpec::Core::Runner.run([@spec_file_path, '-fdocumentation'], errs, output)
         @raw_max, @raw_score = compute_points(@spec_file_path)
       rescue Exception => e
         puts 'When does this happen?'
