@@ -1,6 +1,0 @@
-#!/usr/bin/env ruby
-# -*- mode: ruby -*-
-
-require './lib/grader.rb'
-
-puts Grader.cli(ARGV)

@@ -3,7 +3,7 @@ include Graders
 FakeFS.activate!
 describe AutoGrader do
   before(:all) do
-    FakeWeb.register_uri(:get, 'http://fixture.net/assignment1_spec.txt', :body => IO.read('spec/fixtures/ruby_intro_part1.rb'))
+    FakeWeb.register_uri(:get, 'http://fixture.net/assignment1_spec.txt', :body => IO.read('spec/fixtures/ruby_intro_part1_spec.rb'))
   end
   context 'initialization' do
     before(:each) do

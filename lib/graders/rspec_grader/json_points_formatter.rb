@@ -4,7 +4,7 @@ module RSpec
   module Core
     module Formatters
       class JsonPointsFormatter < JsonFormatter
-        RSpec::Core::Formatters.register self, :example_started
+        RSpec::Core::Formatters.register self, :message, :dump_summary, :dump_profile, :stop, :close
         private
         def format_example(example)
           {

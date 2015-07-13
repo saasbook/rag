@@ -34,10 +34,12 @@ module Graders
       points = 0
       c = RSpec.configure do |config|
         config.formatter = 'documentation'
-        # config.formatter = 'RSpec::Core::Formatters::JsonFormatter'
         config.formatter = 'RSpec::Core::Formatters::JsonPointsFormatter'
       end
       puts RSpec.configuration.formatters.inspect
+      file = File.open(file_path, "rb")
+      contents = file.read
+      puts "#{'-'*80}\n #{contents}#{'-'*80}"
       RSpec::Core::Runner.run([file_path])
       formatter = RSpec.configuration.formatters.select {|formatter| formatter.is_a? RSpec::Core::Formatters::JsonPointsFormatter}.first
       output_hash = formatter.output_hash
@@ -53,7 +55,7 @@ module Graders
       begin
         # below function does not work for now
         load_student_files(@submission_path)
-        # RSpec.clear_examples
+        RSpec.reset
         # RSpec::Core::Runner.run([@spec_file_path, '-fdocumentation'], errs, output)
         @raw_max, @raw_score = compute_points(@spec_file_path)
       rescue Exception => e
