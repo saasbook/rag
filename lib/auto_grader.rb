@@ -1,13 +1,5 @@
 module Graders
 
-
-  def load_student_files(file_path)
-    raise "#{file_path} is not a directory. Student submission could not be loaded" unless Dir.exist? file_path
-    Dir["#{file_path}*.rb"].each do  |file_name|
-      require file_name.delete('.rb')
-    end
-  end
-
   class AutoGrader
     class AutoGrader::NoSuchGraderError < StandardError ; end
 
@@ -84,6 +76,16 @@ module Graders
     def initialize(submission_path, assignment)
       @submission_path = submission_path
       @timeout = 20
+    end
+
+
+
+    def load_student_files(file_path)
+
+      raise "#{file_path} is not a directory. Student submission could not be loaded" unless Dir.exist? file_path
+      Dir["#{file_path}*.rb"].each do  |file_name|
+        require file_name.delete('.rb')
+      end
     end
   end
 end
