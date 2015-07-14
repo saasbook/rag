@@ -22,7 +22,7 @@ module Graders
     end
 
     def grade(weighted=false)
-      run_in_thread(runner_block)
+       run_in_subprocess(runner_block)
     end
     
     def compute_points (file_path)
@@ -48,7 +48,6 @@ module Graders
       errs = StringIO.new('', 'w')
       output = StringIO.new('', 'w')
       begin
-        # below function does not work for now
         load_student_files(@submission_path)
         RSpec.reset
         # RSpec::Core::Runner.run([@spec_file_path, '-fdocumentation'], errs, output)
@@ -57,7 +56,7 @@ module Graders
         puts 'When does this happen?'
         raise e
       end
-      {points_received: @raw_score, points_maximum: @raw_max, comments: output}
+      {points_received: @raw_score, points_maximum: @raw_max, comments: output.string}
     end
   end
 end
