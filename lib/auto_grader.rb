@@ -86,21 +86,30 @@ module Graders
       begin
         read, write = IO.pipe
         subprocess = fork do
-          $SAFE = 3
-          read.close
-          output_hash = grading_func
-          write.write JSON.generate output_hash
-          write.close
+          # begin
+          #   $SAFE = 3
+            read.close
+            output_hash = grading_func
+            write.write JSON.generate output_hash
+            File.open('subprocess.txt', 'w') { |file| file.puts "#{Time.now}"}
+            exit!(0)
+          # rescue StandardError => e
+          #   File.open('subprocess.txt', 'w') { |file| file.puts "#{Time.now} #{'-' * 80}\n #{e.backtrace.join "\n"}"}
+          # end
         end
-        Timeout.timeout(30) do
+        Timeout.timeout(@timeout) do
+          puts "WAITING FOR THREAD REGULAR #{'-' * 80}"
           Process.wait subprocess
+          puts "DONE WAITING FOR THREAD REGULAR #{'-' * 80}"
+
         end
-        read.close
         output_hash = JSON.parse(read.read)
         write.close
       rescue Timeout::Error
+        puts "WAITING FOR THREAD TIMEOUT #{'-' * 80}"
         Process.kill 9, subprocess # dunno what signal to put for this
         Process.wait subprocess  # avoid zombie
+        puts "DONE WAITING FOR THREAD TIMEOUT #{'-' * 80}"
         output_hash = nil
       ensure
         puts 'ensure statement'
