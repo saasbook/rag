@@ -9,6 +9,9 @@ RSpec.configure do |c|
   c.filter_run_including :focus => true
   c.filter_run_excluding :slow => true
   c.run_all_when_everything_filtered = true
+  c.expect_with :rspec do |con|
+      con.syntax = [:should, :expect]
+    end
 end
 
 require 'auto_grader'

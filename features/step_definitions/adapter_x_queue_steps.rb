@@ -39,21 +39,21 @@ Given(/^an XQueue that has submission "(.*?)" in queue$/) do |submission|
 end
 
 Given(/^has been setup with the config file "(.*?)"$/) do |file_name|
-  @adapter = Submission::load("features/support/#{file_name}")
+  @adapter = Submission.load("features/support/#{file_name}")
 end
 
-#Starts a thread with stubbed out put_result to make a exception
+# Starts a thread with stubbed out put_result to make a exception
 Then(/^I should receive a grade for my assignment$/) do
   expect do 
     Thread.abort_on_exception = true
     thread = Thread.new do 
       @adapter.run
     end
-     # sleep(10.0) #5 seconds longest reasonable time for submission before test fails 
+     # sleep(10.0) #5 seconds longest reasonable time for submission before test fails
      # thread.kill
      thread.join
   end.to raise_error(PutResultException)
-  expect(@results[:score]).to be == 0
+  expect(@results[:score]).to be == 42
   puts @results[:comments]
   puts @results[:score]
 end
