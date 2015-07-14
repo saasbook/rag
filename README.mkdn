@@ -52,10 +52,15 @@ There is one config file hosted locally on the autograder required for setup wit
     The grader payload is specified as XML and is passed to the autograder as JSON. It contains the following:
     
     ```
-    assignment_name: assign1  # the name of the assignment
-    autograder_type: HerokuRspecGrader  # type of grader to use on the submission. Will be deprecated and moved into hw repo.
-    assignment_spec_uri: git@github.com:zhangaaron/example_hw1_sol.git  #  a homework directory containing spec files for the autograder to run against HW
-    deploy_key: key  # a deploy key configured for use with private repo for homework solutions. Only necessary if the deploy key has not been set in ENV
+    assignment_name: 'assign1'  # the name of the assignment
+    autograder_type: 'HerokuRspecGrader'  # type of grader to use on the submission. Will be deprecated and moved into hw repo.
+    assignment_spec_uri: 'git@github.com:zhangaaron/example_hw1_sol.git'  #  a homework directory containing spec files for the autograder to run against HW
+    deploy_key: 'ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEAklOUpkDHrfHY17SbrmTIpNLTGK9Tjom/BWDSU
+GPl+nafzlHDTYW7hdI4yZ5ew18JH4JW9jbhUFrviQzM7xlELEVf4h9lFX5QVkbPppSwg0cda3
+Pbv7kOdJ/MTyBlWXFCR+HAo3FXRitBqxiX1nKhXpHAZsMciLq8V6RjsNAQwdsdMFvSlVK/7XA
+t3FaoJoAsncM1Q9x5+3V0Ww68/eIFmb1zuUFljQJKprrX88XypNDvjYNby6vw/Pb0rwert/En
+mZ+AW4OZPnTPI89ZPmVMLuayrD2cE86Z/il8b+gw3r3+1nKatmIkjn2so1d01QraTlMqVSsbx
+NrRFi9wrf+M7Q=='  # a read-only deploy key configured for use with private repo for homework solutions. Only necessary if the deploy key has not been set in ENV
     late_periods: {'20150619000000': 0.80, '20150620000000': 0.30, '20150624000000': 0.0}  # a hash that defines time brackets and grade scaling based on submission time. 
     version: 1.0.0  # the version of RAG configured to use with this homework
     ```
