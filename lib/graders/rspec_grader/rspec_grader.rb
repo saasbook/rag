@@ -34,6 +34,8 @@ module Graders
       c = RSpec.configure do |config|
         config.formatter = 'documentation'
         config.formatter = 'RSpec::Core::Formatters::JsonPointsFormatter'
+        config.color = true
+        config.output_stream = File.open('rspec_output.txt', 'wb')
         # getting rid of deprecation warnings
         config.expect_with :rspec do |cc|
           cc.syntax = [:should, :expect]
@@ -56,7 +58,6 @@ module Graders
       begin
         Graders.load_student_files(@submission_path)
         RSpec.reset
-        # RSpec::Core::Runner.run([@spec_file_path, '-fdocumentation'], errs, output)
         @raw_max, @raw_score = compute_points(@spec_file_path)
       rescue Exception => e
         puts 'When does this happen?'
