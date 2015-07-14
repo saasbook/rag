@@ -1,8 +1,5 @@
 require 'timeout'
-<<<<<<< HEAD
 
-=======
->>>>>>> 06d6dd75b27c941e42fb81f0ea83caa963a2ff39
 module Graders
   def self.load_student_files(file_path)
     raise "#{file_path} is not a directory. Student submission could not be loaded" unless Dir.exist? file_path
@@ -73,14 +70,9 @@ module Graders
     end
 
     protected
-<<<<<<< HEAD
-     
+
     # This is broken. Global RSpec singleton means that grading func will mess up the rspec object.
-=======
 
-
-    #This is broken. Global RSpec singleton means that grading func will mess up the rspec object.
->>>>>>> 06d6dd75b27c941e42fb81f0ea83caa963a2ff39
     def run_in_thread(grading_func)
       begin
         thr = Thread.new {$SAFE = 3; grading_func}
@@ -91,10 +83,6 @@ module Graders
       thr.status
     end
 
-<<<<<<< HEAD
-=======
-    #
->>>>>>> 06d6dd75b27c941e42fb81f0ea83caa963a2ff39
     def run_in_subprocess(grading_func)
       begin
         read, write = IO.pipe
