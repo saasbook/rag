@@ -22,33 +22,39 @@ module Graders
     end
 
     def grade(weighted=false)
-       run_in_subprocess(runner_block)
+      run_in_thread(runner_block)
+      #run_in_subprocess(runner_block)
     end
     
     def compute_points (file_path)
+      @errs = StringIO.new('', 'w')
+      @output = StringIO.new('', 'w')
       points_max = 0
       points = 0
       c = RSpec.configure do |config|
         config.formatter = 'documentation'
         config.formatter = 'RSpec::Core::Formatters::JsonPointsFormatter'
+        # getting rid of deprecation warnings
+        config.expect_with :rspec do |cc|
+          cc.syntax = [:should, :expect]
+        end
       end
-      puts RSpec.configuration.formatters.inspect
-      file = File.open(file_path, "rb")
-      contents = file.read
-      RSpec::Core::Runner.run([file_path])
+      # puts RSpec.configuration.formatters.inspect
+      # file = File.open(file_path, "rb")
+      # contents = file.read
+      RSpec::Core::Runner.run([file_path], @errs, @output)
       formatter = RSpec.configuration.formatters.select {|formatter| formatter.is_a? RSpec::Core::Formatters::JsonPointsFormatter}.first
       output_hash = formatter.output_hash
       output_hash[:examples].each do |example|
         points_max += example[:points]
         points += example[:points] if example[:status] == 'passed'
       end
+      return points_max, points
     end
 
     def runner_block
-      errs = StringIO.new('', 'w')
-      output = StringIO.new('', 'w')
       begin
-        load_student_files(@submission_path)
+        Graders.load_student_files(@submission_path)
         RSpec.reset
         # RSpec::Core::Runner.run([@spec_file_path, '-fdocumentation'], errs, output)
         @raw_max, @raw_score = compute_points(@spec_file_path)
@@ -56,7 +62,9 @@ module Graders
         puts 'When does this happen?'
         raise e
       end
-      {points_received: @raw_score, points_maximum: @raw_max, comments: output.string}
+      @normalized = normalized_score
+      @comments = @output.string
+      # {points_received: @raw_score, points_maximum: @raw_max, comments: output, normalized: normalized_score}
     end
   end
 end

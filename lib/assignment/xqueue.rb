@@ -44,6 +44,7 @@ module Assignment
 
     def apply_lateness!(submission)
       lateness = lateness_by_time(submission.submission_time)
+      
       submission.score *= lateness[:grade_scaling]
       submission.message = lateness[:submission_message] + "\n" + submission.message
     end

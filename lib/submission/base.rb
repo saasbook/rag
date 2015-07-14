@@ -15,10 +15,10 @@ module Submission
     def handle_submission(submission)
       raise 'No submission received' if submission.nil?
       assignment = submission.assignment
-      #
-      graded = Graders::AutoGrader.create(submission.files, assignment).grade
-      #
-      submission.score, submission.message = graded[:points_received], graded[:comments]
+      graded = Graders::AutoGrader.create(submission.files.values.first, assignment)
+      graded.grade
+      submission.score = graded.normalized
+      submission.message = graded.comments
       assignment.apply_lateness! submission  # optionally scales submission by lateness and provides comments.
       submit_response(submission)
     end

@@ -1,10 +1,11 @@
 require 'timeout'
+
 module Graders
-  def load_student_files(file_path)
+  def self.load_student_files(file_path)
     raise "#{file_path} is not a directory. Student submission could not be loaded" unless Dir.exist? file_path
     Dir[File.join(file_path, '*.rb')].each do  |file_name|
       puts "FILE_NAME #{file_name}"
-      require file_name.sub('.rb', '')
+      #require file_name.sub('.rb', '')
     end
   end
   class AutoGrader
@@ -22,6 +23,7 @@ module Graders
     attr_reader :raw_score
     #  the maximum possible raw score as reported by the underlying grader
     attr_reader :raw_max
+    attr_reader :normalized
     #  the maximum allowed duration that a test suite can run on a submission.
     attr_reader :timeout
     #student submission code path
@@ -69,8 +71,8 @@ module Graders
 
     protected
 
+    # This is broken. Global RSpec singleton means that grading func will mess up the rspec object.
 
-    #This is broken. Global RSpec singleton means that grading func will mess up the rspec object.
     def run_in_thread(grading_func)
       begin
         thr = Thread.new {$SAFE = 3; grading_func}
@@ -81,7 +83,6 @@ module Graders
       thr.status
     end
 
-    #
     def run_in_subprocess(grading_func)
       begin
         read, write = IO.pipe

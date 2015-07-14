@@ -1,18 +1,18 @@
 require 'rspec'
 RSpec.describe 'Ruby intro part 1' do
   describe "#sum" do
-    it "should be defined" do
+    it "should be defined", points: 0 do
       expect { sum([1,3,4]) }.not_to raise_error
     end
 
-    it "returns correct sum [20 points]" do
+    it "returns correct sum [20 points]", points: 20  do
       sum([1,2,3,4,5]).should be_a_kind_of Fixnum
       sum([1,2,3,4,5]).should == 15
       sum([1,2,3,4,-5]).should == 5
       sum([1,2,3,4,-5,5,-100]).should == -90
     end
 
-    it "works on the empty array [10 points]" do
+    it "works on the empty array [10 points]", points: 10 do
       expect { sum([]) }.not_to raise_error
       sum([]).should be_zero
     end
@@ -20,39 +20,39 @@ RSpec.describe 'Ruby intro part 1' do
   end
 
   describe "#max_2_sum" do
-    it "should be defined" do
+    it "should be defined", points: 0 do
       expect { max_2_sum([1,2,3]) }.not_to raise_error
     end
-    it "returns the correct sum [7 points]" do
+    it "returns the correct sum [7 points]", points:7 do
       max_2_sum([1,2,3,4,5]).should be_a_kind_of Fixnum
       max_2_sum([1,-2,-3,-4,-5]).should == -1
     end
-    it 'works even if 2 largest values are the same [3 points]' do
+    it 'works even if 2 largest values are the same [3 points]', points:3 do
       max_2_sum([1,2,3,3]).should == 6
     end
-    it "returns zero if array is empty [10 points]" do
+    it "returns zero if array is empty [10 points]", points:10 do
       max_2_sum([]).should be_zero
     end
-    it "returns value of the element if just one element [10 points]" do
+    it "returns value of the element if just one element [10 points]", points:10 do
       max_2_sum([3]).should == 3
     end
   end
 
   describe "#sum_to_n" do
-    it "should be defined" do
+    it "should be defined", points:0 do
       expect { sum_to_n?([1,2,3],4) }.not_to raise_error
     end
-    it "returns true when any two elements sum to the second argument [30 points]" do
+    it "returns true when any two elements sum to the second argument [30 points]", points:30 do
       sum_to_n?([1,2,3,4,5], 5).should be_true
       sum_to_n?([3,0,5], 5).should be_true
       sum_to_n?([-1,-2,3,4,5,-8], 12).should be_false
       sum_to_n?([-1,-2,3,4,6,-8], 12).should be_false
     end
-    it "returns false for the single element array [5 points]" do
+    it "returns false for the single element array [5 points]", points:5 do
       sum_to_n?([1], 1).should be_false
       sum_to_n?([3], 0).should be_false
     end
-    it "returns false for the empty array [5 points]" do
+    it "returns false for the empty array [5 points]", points:5 do
       sum_to_n?([], 0).should be_false
       sum_to_n?([], 7).should be_false
     end
