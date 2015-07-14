@@ -23,7 +23,7 @@ module Graders
 
     def grade(weighted=false)
       run_in_thread(runner_block)
-      #run_in_subprocess(runner_block)
+      # run_in_subprocess(runner_block)
     end
     
     def compute_points (file_path)
@@ -54,6 +54,7 @@ module Graders
 
     def runner_block
       begin
+        # raise "#{@submission_path}"
         Graders.load_student_files(@submission_path)
         RSpec.reset
         # RSpec::Core::Runner.run([@spec_file_path, '-fdocumentation'], errs, output)

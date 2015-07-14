@@ -12,6 +12,7 @@ RSpec.configure do |c|
   c.expect_with :rspec do |con|
       con.syntax = [:should, :expect]
     end
+
 end
 
 require 'auto_grader'
