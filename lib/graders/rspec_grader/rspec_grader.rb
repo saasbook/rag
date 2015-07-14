@@ -25,11 +25,7 @@ module Graders
       run_in_thread(runner_block)
       #run_in_subprocess(runner_block)
     end
-
-
-
-    #kreddit for a lot of this code comes from here: https://gist.github.com/activars/4467752
-    #TODO: internal hack below seems brittle, try to refactor that.
+    
     def compute_points (file_path)
       @errs = StringIO.new('', 'w')
       @output = StringIO.new('', 'w')
