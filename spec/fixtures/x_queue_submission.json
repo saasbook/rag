@@ -1,7 +1,7 @@
 {
   "xqueue_header": "some_secret_001",
   "xqueue_files": {
-    "my_file.rb": "http://fixture.net/correct_submission.zip"
+    "my_file.rb": "http://fixture.net/correct_submission.rb"
   },
   "xqueue_body": {
     "grader_payload": {
