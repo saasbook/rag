@@ -25,80 +25,59 @@ Usage
 Configuration
 ------------------------
 
-There are two files which control the autograder: ```config/autograders.yml``` and  ```config/conf.yml```.
+There is one config file hosted locally on the autograder required for setup with edX: ```config/conf.yml```.
 
 * ```conf.yml``` includes the following:
+	
+	```
+	default:
+	  adapter: XQueue  #Name of the submission interface being used.
+	  queue_uri: 'https://xqueue.edx.org/'
+	  queue_name: 'cs169x-development'
+	  django_auth:
+	    username: 'username'
+	    password: 'password'
+	  user_auth:
+	    user_name: 'username'
+	    user_pass: 'password' 
+	```
 
-          live:
-            queue_uri: 'uri'
-            autograders_yml: ./config/autograders.yml
-            django_auth:
-              username: 'username'
-              password: 'password'
-            user_auth: #may be unnecessary
-              user_name: 'username'
-              user_pass: 'password'
-            halt: false # default: true, exit when all submission queues are empty
-            sleep_duration: 30
+ * ```default``` defines the current strategy being used by the autograder.
+ * The rest of the information should be filled in appropriately. Currently only supports XQueue as a submission interface
 
-     * ```live``` : the name that will be given on the command line when calling the autograder command
-     * The rest of the information should be filled in appropriately.
+ ### Remote edX configuration
 
-  NOTE: ```autograders_yml``` _gives the path from the_ ```rag/``` _directory._
+   
+    If using edX, you must configure the homework to point to where the autograder can retrieve the spec files for the homework.
+    The grader payload is specified as XML and is passed to the autograder as JSON. It contains the following:
+    
+    ```
+    assignment_name: 'assign1'  # the name of the assignment
+    autograder_type: 'HerokuRspecGrader'  # type of grader to use on the submission. Will be deprecated and moved into hw repo.
+    assignment_spec_uri: 'git@github.com:zhangaaron/example_hw1_sol.git'  #  a homework directory containing spec files for the autograder to run against HW
+    deploy_key: 'ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEAklOUpkDHrfHY17SbrmTIpNLTGK9Tjom/BWDSU
+GPl+nafzlHDTYW7hdI4yZ5ew18JH4JW9jbhUFrviQzM7xlELEVf4h9lFX5QVkbPppSwg0cda3
+Pbv7kOdJ/MTyBlWXFCR+HAo3FXRitBqxiX1nKhXpHAZsMciLq8V6RjsNAQwdsdMFvSlVK/7XA
+t3FaoJoAsncM1Q9x5+3V0Ww68/eIFmb1zuUFljQJKprrX88XypNDvjYNby6vw/Pb0rwert/En
+mZ+AW4OZPnTPI89ZPmVMLuayrD2cE86Z/il8b+gw3r3+1nKatmIkjn2so1d01QraTlMqVSsbx
+NrRFi9wrf+M7Q=='  # a read-only deploy key configured for use with private repo for homework solutions. Only necessary if the deploy key has not been set in ENV
+    late_periods: {'20150619000000': 0.80, '20150620000000': 0.30, '20150624000000': 0.0}  # a hash that defines time brackets and grade scaling based on submission time. 
+    version: 1.0.0  # the version of RAG configured to use with this homework
+    ```
 
 
-* ```autograders.yml``` describes the actual autograder that will be running. An example is:
-
-          assign-6-queue:
-            name: "BerkeleyX-cs169x-p3"
-            type: HW5Grader
-            due:  20121217120100
-            grace_period: 0
-            parts:
-              assign-2-part-1:
-                uri: ./hw6.yml
-                type: MigrationGrader
-
-    * ```name``` : the name of the queue that will be pulled from, this must match what edX is submitting assignments to
-    * ```due``` : in YYYYMMDDHHMMSS format
-    * ```parts``` : used to describe the parts of each assignment
-    * ```uri``` : a path to the solutions from the rag base directory
-    * ```type``` : the type of autograder that will be used to grade the assignment
-    * ```grace``` : period is used to give late credit, this should be refactored further to allow specification for late penalties in this config file
 
 Execution and tests
 --------------------------------
 
 ####To run the autograder connection program:
 
-        while true ; do ./run_edx_client.rb live ; done
-
-   The grader *can* crash, this starts it up again.
-
-
-####Example Commands to do all the grading for HW1:
-
-######Sanity specs
-
-        ./grade ../hw/ruby-calisthenics/skeletons/part1.rb ../hw/ruby-calisthenics/sanity_specs/part1_spec.rb
-        ./grade ../hw/ruby-calisthenics/skeletons/part2.rb ../hw/ruby-calisthenics/sanity_specs/part2_spec.rb
-        ./grade ../hw/ruby-calisthenics/skeletons/part3.rb ../hw/ruby-calisthenics/sanity_specs/part3_spec.rb
-        ./grade ../hw/ruby-calisthenics/skeletons/part4.rb ../hw/ruby-calisthenics/sanity_specs/part4_spec.rb
-        ./grade ../hw/ruby-calisthenics/skeletons/part5.rb ../hw/ruby-calisthenics/sanity_specs/part5_spec.rb
-        ./grade ../hw/ruby-calisthenics/skeletons/part6.rb ../hw/ruby-calisthenics/sanity_specs/part6_spec.rb
-        ./grade ../hw/ruby-calisthenics/skeletons/part7.rb ../hw/ruby-calisthenics/sanity_specs/part7_spec.rb
-
-######Full Specs
-
-         ./grade ../hw-solutions/ruby-calisthenics/lib/part1.rb ../hw-solutions/ruby-calisthenics/spec/part1_spec.rb
-         ./grade ../hw-solutions/ruby-calisthenics/lib/part2.rb ../hw-solutions/ruby-calisthenics/spec/part2_spec.rb
-         ./grade ../hw-solutions/ruby-calisthenics/lib/part3.rb ../hw-solutions/ruby-calisthenics/spec/part3_spec.rb
-         ./grade ../hw-solutions/ruby-calisthenics/lib/part4.rb ../hw-solutions/ruby-calisthenics/spec/part4_spec.rb
-         ./grade ../hw-solutions/ruby-calisthenics/lib/part5.rb ../hw-solutions/ruby-calisthenics/spec/part5_spec.rb
-         ./grade ../hw-solutions/ruby-calisthenics/lib/part6.rb ../hw-solutions/ruby-calisthenics/spec/part6_spec.rb
-         ./grade ../hw-solutions/ruby-calisthenics/lib/part7.rb ../hw-solutions/ruby-calisthenics/spec/part7_spec.rb
-
-There is also checking the skeletons against the full specs and the sanity specs against the full solutions.
+Currently you can do it from irb with the following commands:
+	```
+	>@adapter = Submission.load('config_path')
+	>@adapter.run
+	```
+There will be a script coming soon so that this can be run from CLI. The grader should not crash due to student input.
 
 
 ## The mutation testing/feature grader (HW 3)
