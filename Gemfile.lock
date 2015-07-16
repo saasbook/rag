@@ -1,6 +1,6 @@
 GIT
   remote: https://github.com/zhangaaron/xqueue-ruby
-  revision: 8ecced9b6b30ee2c0bec3f98a89d2a1b5651f091
+  revision: a400d506260af6e924746f94965300f80e5472e6
   specs:
     xqueue_ruby (0.0.1)
       activemodel
@@ -34,6 +34,8 @@ GEM
     arrayfields (4.9.2)
     ast (2.0.0)
     builder (3.2.2)
+    byebug (5.0.0)
+      columnize (= 0.9.0)
     cane (2.6.2)
       parallel
     chronic (0.10.2)
@@ -50,6 +52,7 @@ GEM
     code_metrics (0.1.3)
     coderay (1.1.0)
     colored (1.2)
+    columnize (0.9.0)
     concord (0.1.5)
       adamantium (~> 0.2.0)
       equalizer (~> 0.0.9)
@@ -217,6 +220,7 @@ DEPENDENCIES
   ZenTest
   activerecord
   addressable
+  byebug
   cucumber
   fakefs
   fakeweb

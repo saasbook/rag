@@ -4,7 +4,6 @@ module Graders
   def self.load_student_files(file_path)
     raise "#{file_path} is not a directory. Student submission could not be loaded" unless Dir.exist? file_path
     Dir[File.join(file_path, '*.rb')].each do  |file_name|
-      puts "FILE_NAME #{file_name}"
       load file_name
     end
   end
@@ -77,7 +76,7 @@ module Graders
       rescue SecurityError => err
         puts 'got security exception'
       end
-      thr.status
+      @output_hash
     end
 
     def run_in_subprocess(grading_func)

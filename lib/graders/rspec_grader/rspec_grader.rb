@@ -35,9 +35,9 @@ module Graders
         config.formatter = 'documentation'
         config.formatter = 'RSpec::Core::Formatters::JsonPointsFormatter'
         config.color = true
-        config.output_stream = File.open('rspec_output.txt', 'wb')
+        #config.output_stream = File.open('rspec_output.txt', 'wb')
         # getting rid of deprecation warnings
-        config.expect_with(:rspec) { |cc| cc.syntax = [:should, :expect] }
+        #config.expect_with(:rspec) { |cc| cc.syntax = [:should, :expect] }
       end
       RSpec::Core::Runner.run([file_path], errs, output)
       formatter = RSpec.configuration.formatters.select {|formatter| formatter.is_a? RSpec::Core::Formatters::JsonPointsFormatter}.first
@@ -46,7 +46,7 @@ module Graders
         points_max += example[:points]
         points += example[:points] if example[:status] == 'passed'
       end
-      return raw_score, raw_max, [output.string, errs.string].join("\n")
+      return points, points_max, [output.string, errs.string].join("\n")
     end
 
     def runner_block
@@ -58,7 +58,7 @@ module Graders
         puts 'When does this happen?'
         raise e
       end
-      {raw_score: raw_score, raw_max: raw_max, comments: comments}
+      @output_hash = {raw_score: raw_score, raw_max: raw_max, comments: comments}
     end
   end
 end

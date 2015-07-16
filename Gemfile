@@ -18,6 +18,7 @@ group :development, :testing do
   gem 'fakeweb'
   gem "fakefs", :require => 'fakefs/safe'
   gem 'simplecov-rcov'
+  gem 'byebug'
   gem 'addressable'
 
 end

@@ -9,7 +9,6 @@ BASE_FOLDER = 'features/support/'
 class PutResultException < StandardError ; end
 
 def fake_files(file_uris)
-  puts 'hello world!'
   if file_uris.is_a? Enumerable 
     file_uris.each do |file_uri| 
       local_file = (file_uri.split'/')[-1]
@@ -43,7 +42,7 @@ Given(/^has been setup with the config file "(.*?)"$/) do |file_name|
 end
 
 # Starts a thread with stubbed out put_result to make a exception
-Then(/^I should receive a grade for my assignment$/) do
+Then(/^I should receive a grade of "(.*?)" for my assignment$/) do |grade|
   expect do 
     Thread.abort_on_exception = true
     thread = Thread.new do 
@@ -53,7 +52,6 @@ Then(/^I should receive a grade for my assignment$/) do
      # thread.kill
      thread.join
   end.to raise_error(PutResultException)
-  expect(@results[:score]).to be == 42
-  puts @results[:comments]
-  puts @results[:score]
+  expect(@results[:score]).to be == grade.to_f
+  expect(@results[:comments]).not_to be_empty
 end
