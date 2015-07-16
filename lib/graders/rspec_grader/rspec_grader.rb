@@ -21,9 +21,8 @@ module Graders
       raise NoSuchSpecError, 'Specs could not be found' unless File.readable? @spec_file_path
     end
 
-    def grade(weighted=false)
-      run_in_thread(runner_block)
-      # run_in_subprocess(runner_block)
+    def grade
+      run_in_subprocess(runner_block)
     end
     
     def compute_points (file_path)
@@ -31,6 +30,7 @@ module Graders
       output = StringIO.new('', 'w')
       points_max = 0
       points = 0
+      RSpec.reset
       RSpec.configure do |config|
         config.color = true
         config.tty = true
@@ -54,9 +54,7 @@ module Graders
 
     def runner_block
       begin
-        # raise "#{@submission_path}"
         Graders.load_student_files(@submission_path)
-        RSpec.reset
         raw_score, raw_max, comments = compute_points(@spec_file_path)
       rescue Exception => e
         puts "\n\n\n\n\nWhen does this happen?\n\n\n\n\n"

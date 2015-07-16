@@ -48,10 +48,8 @@ Then(/^I should receive a grade of "(.*?)" for my assignment$/) do |grade|
     thread = Thread.new do 
       @adapter.run
     end
-     # sleep(10.0) #5 seconds longest reasonable time for submission before test fails
-     # thread.kill
      thread.join
   end.to raise_error(PutResultException)
   expect(@results[:score]).to be == grade.to_f
-  expect(@results[:comments]).not_to be_empty
+  expect(@results[:message]).not_to be_empty
 end

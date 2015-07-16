@@ -43,6 +43,7 @@ module Graders
     #   expected or required by that strategy.
     # * +normalize+ - if given, normalize score to this maximum; default 100
     require_relative 'graders/rspec_grader/rspec_grader'
+    require_relative 'graders/rspec_grader/heroku_rspec_grader'
     #TODO: FIGURE OUT HOW TO LOAD OTHER AUTOGRADERS IN SMART WAY. PROBABLY SHOULD BE DONE THROUGH EXTERNAL GEMS
 
 
@@ -85,11 +86,11 @@ module Graders
         subprocess = fork do
           # begin
           #   $SAFE = 3
-            read.close
             output_hash = grading_func
-            write.write JSON.generate output_hash
+            write.puts JSON.generate output_hash
             File.open('subprocess.txt', 'w') { |file| file.puts "#{Time.now}"}
-            exit!(0)
+            write.close
+            exit(0)
           # rescue StandardError => e
           #   File.open('subprocess.txt', 'w') { |file| file.puts "#{Time.now} #{'-' * 80}\n #{e.backtrace.join "\n"}"}
           # end
@@ -98,9 +99,8 @@ module Graders
           puts "WAITING FOR THREAD REGULAR #{'-' * 80}"
           Process.wait subprocess
           puts "DONE WAITING FOR THREAD REGULAR #{'-' * 80}"
-
         end
-        output_hash = JSON.parse(read.read)
+        @output_hash = HashWithIndifferentAccess.new(JSON.parse(read.gets))
         write.close
       rescue Timeout::Error
         puts "WAITING FOR THREAD TIMEOUT #{'-' * 80}"
@@ -111,7 +111,7 @@ module Graders
       ensure
         puts 'ensure statement'
       end
-      output_hash
+      @output_hash
     end
 
     # Superclass method to be called by

@@ -8,6 +8,7 @@ config/autograders.yml
 .idea/
 coverage/
 submissions/
+rspec_output.txt
 
 cert_file
 config/test_conf.yml
