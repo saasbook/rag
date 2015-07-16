@@ -111,7 +111,7 @@ Failures:
      [36m# ./lib/submission/polling.rb:13:in `run'[0m
      [36m# ./features/step_definitions/adapter_x_queue_steps.rb:49:in `block (3 levels) in <top (required)>'[0m
 
-Finished in 0.01548 seconds (files took 0.66486 seconds to load)
+Finished in 0.01752 seconds (files took 0.70426 seconds to load)
 [31m12 examples, 7 failures[0m
 
 Failed examples:

@@ -56,7 +56,7 @@ module Graders
         # raise "#{@submission_path}"
         Graders.load_student_files(@submission_path)
         RSpec.reset
-        @raw_score, @raw_max, @comments = compute_points(@spec_file_path)
+        raw_score, raw_max, comments = compute_points(@spec_file_path)
       rescue Exception => e
         puts 'When does this happen?'
         raise e

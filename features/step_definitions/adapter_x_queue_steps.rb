@@ -53,5 +53,5 @@ Then(/^I should receive a grade of "(.*?)" for my assignment$/) do |grade|
      thread.join
   end.to raise_error(PutResultException)
   expect(@results[:score]).to be == grade.to_f
-  expect(@results[:comments]).not_to be_empty
+  expect(@results[:message]).not_to be_empty
 end
