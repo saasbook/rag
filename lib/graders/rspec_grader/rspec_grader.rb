@@ -32,7 +32,7 @@ module Graders
       points = 0
       RSpec.reset
       RSpec.configure do |config|
-        config.color = true
+        config.color = false
         config.tty = true
         config.formatter = 'documentation'
         config.formatter = 'RSpec::Core::Formatters::JsonPointsFormatter'

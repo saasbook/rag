@@ -86,17 +86,23 @@ module Graders
         subprocess = fork do
           # begin
           #   $SAFE = 3
+            $stdout.reopen("out.txt", "w")
+            $stderr.reopen("err.txt", "w")
             output_hash = grading_func
+            # puts "CAN YOU WRITE FROM HERE? #{'-' * 80}"
             write.puts JSON.generate output_hash
             File.open('subprocess.txt', 'w') { |file| file.puts "#{Time.now}"}
             write.close
+            @yolo = 1000
             exit(0)
           # rescue StandardError => e
           #   File.open('subprocess.txt', 'w') { |file| file.puts "#{Time.now} #{'-' * 80}\n #{e.backtrace.join "\n"}"}
           # end
         end
         Timeout.timeout(@timeout) do
-          puts "WAITING FOR THREAD REGULAR #{'-' * 80}"
+          byebug
+          puts "WAITING FOR THREAD REGULAR  #{subprocess}#{'-' * 80}"
+
           Process.wait subprocess
           puts "DONE WAITING FOR THREAD REGULAR #{'-' * 80}"
         end
