@@ -46,7 +46,7 @@ module Graders
         points_max += example[:points]
         points += example[:points] if example[:status] == 'passed'
       end
-      return raw_score, raw_max, [output.string, errs.string].join "\n"
+      return raw_score, raw_max, [output.string, errs.string].join("\n")
     end
 
     def runner_block
