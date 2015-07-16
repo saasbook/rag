@@ -30,9 +30,6 @@ module Graders
     attr_reader :submission_path
 
     attr_reader :spec_file_path
-
-    protected :raw_score, :raw_max
-
     # Create a new autograder object, which will grade a student's submission
     # given the submission text, a grading strategy, and grading rules to be
     # used by that strategy.
