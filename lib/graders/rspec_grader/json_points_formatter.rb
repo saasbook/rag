@@ -12,7 +12,7 @@ module RSpec
           {
             description: example.description,
             full_description: example.full_description,
-            points: example.metadata[:points] || 1,
+            points: example.metadata[:points],
             status: example.execution_result.status.to_s,
             file_path: example.metadata[:file_path],
             line_number: example.metadata[:line_number],
