@@ -21,9 +21,8 @@ module Graders
       raise NoSuchSpecError, 'Specs could not be found' unless File.readable? @spec_file_path
     end
 
-    def grade(weighted=false)
-      run_in_thread(runner_block)
-      # run_in_subprocess(runner_block)
+    def grade
+      run_in_subprocess(runner_block)
     end
     
     def compute_points (file_path)
