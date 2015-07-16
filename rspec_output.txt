@@ -22,9 +22,10 @@ Failures:
      [31mFailure/Error: max_2_sum([1,2,3,4,5]).should be_a_kind_of Fixnum[0m
      [31m  expected nil to be a kind of Fixnum[0m
      [36m# ./submissions/assignment1-spec:27:in `block (3 levels) in <top (required)>'[0m
-     [36m# ./lib/graders/rspec_grader/rspec_grader.rb:44:in `compute_points'[0m
-     [36m# ./lib/graders/rspec_grader/rspec_grader.rb:59:in `runner_block'[0m
+     [36m# ./lib/graders/rspec_grader/rspec_grader.rb:45:in `compute_points'[0m
+     [36m# ./lib/graders/rspec_grader/heroku_rspec_grader.rb:17:in `runner_block'[0m
      [36m# ./lib/graders/rspec_grader/rspec_grader.rb:25:in `grade'[0m
+     [36m# ./lib/graders/rspec_grader/heroku_rspec_grader.rb:12:in `grade'[0m
      [36m# ./lib/submission/base.rb:19:in `handle_submission'[0m
      [36m# ./lib/submission/polling.rb:15:in `block in run'[0m
      [36m# ./lib/submission/polling.rb:13:in `loop'[0m
@@ -36,9 +37,10 @@ Failures:
      [31m  expected: 6[0m
      [31m       got: nil (using ==)[0m
      [36m# ./submissions/assignment1-spec:31:in `block (3 levels) in <top (required)>'[0m
-     [36m# ./lib/graders/rspec_grader/rspec_grader.rb:44:in `compute_points'[0m
-     [36m# ./lib/graders/rspec_grader/rspec_grader.rb:59:in `runner_block'[0m
+     [36m# ./lib/graders/rspec_grader/rspec_grader.rb:45:in `compute_points'[0m
+     [36m# ./lib/graders/rspec_grader/heroku_rspec_grader.rb:17:in `runner_block'[0m
      [36m# ./lib/graders/rspec_grader/rspec_grader.rb:25:in `grade'[0m
+     [36m# ./lib/graders/rspec_grader/heroku_rspec_grader.rb:12:in `grade'[0m
      [36m# ./lib/submission/base.rb:19:in `handle_submission'[0m
      [36m# ./lib/submission/polling.rb:15:in `block in run'[0m
      [36m# ./lib/submission/polling.rb:13:in `loop'[0m
@@ -49,9 +51,10 @@ Failures:
      [31mFailure/Error: max_2_sum([]).should be_zero[0m
      [31m  expected  to respond to `zero?`[0m
      [36m# ./submissions/assignment1-spec:34:in `block (3 levels) in <top (required)>'[0m
-     [36m# ./lib/graders/rspec_grader/rspec_grader.rb:44:in `compute_points'[0m
-     [36m# ./lib/graders/rspec_grader/rspec_grader.rb:59:in `runner_block'[0m
+     [36m# ./lib/graders/rspec_grader/rspec_grader.rb:45:in `compute_points'[0m
+     [36m# ./lib/graders/rspec_grader/heroku_rspec_grader.rb:17:in `runner_block'[0m
      [36m# ./lib/graders/rspec_grader/rspec_grader.rb:25:in `grade'[0m
+     [36m# ./lib/graders/rspec_grader/heroku_rspec_grader.rb:12:in `grade'[0m
      [36m# ./lib/submission/base.rb:19:in `handle_submission'[0m
      [36m# ./lib/submission/polling.rb:15:in `block in run'[0m
      [36m# ./lib/submission/polling.rb:13:in `loop'[0m
@@ -63,9 +66,10 @@ Failures:
      [31m  expected: 3[0m
      [31m       got: nil (using ==)[0m
      [36m# ./submissions/assignment1-spec:37:in `block (3 levels) in <top (required)>'[0m
-     [36m# ./lib/graders/rspec_grader/rspec_grader.rb:44:in `compute_points'[0m
-     [36m# ./lib/graders/rspec_grader/rspec_grader.rb:59:in `runner_block'[0m
+     [36m# ./lib/graders/rspec_grader/rspec_grader.rb:45:in `compute_points'[0m
+     [36m# ./lib/graders/rspec_grader/heroku_rspec_grader.rb:17:in `runner_block'[0m
      [36m# ./lib/graders/rspec_grader/rspec_grader.rb:25:in `grade'[0m
+     [36m# ./lib/graders/rspec_grader/heroku_rspec_grader.rb:12:in `grade'[0m
      [36m# ./lib/submission/base.rb:19:in `handle_submission'[0m
      [36m# ./lib/submission/polling.rb:15:in `block in run'[0m
      [36m# ./lib/submission/polling.rb:13:in `loop'[0m
@@ -76,9 +80,10 @@ Failures:
      [31mFailure/Error: sum_to_n?([1,2,3,4,5], 5).should be_true[0m
      [31m  expected  to respond to `true?` or perhaps you meant `be true` or `be_truthy`[0m
      [36m# ./submissions/assignment1-spec:46:in `block (3 levels) in <top (required)>'[0m
-     [36m# ./lib/graders/rspec_grader/rspec_grader.rb:44:in `compute_points'[0m
-     [36m# ./lib/graders/rspec_grader/rspec_grader.rb:59:in `runner_block'[0m
+     [36m# ./lib/graders/rspec_grader/rspec_grader.rb:45:in `compute_points'[0m
+     [36m# ./lib/graders/rspec_grader/heroku_rspec_grader.rb:17:in `runner_block'[0m
      [36m# ./lib/graders/rspec_grader/rspec_grader.rb:25:in `grade'[0m
+     [36m# ./lib/graders/rspec_grader/heroku_rspec_grader.rb:12:in `grade'[0m
      [36m# ./lib/submission/base.rb:19:in `handle_submission'[0m
      [36m# ./lib/submission/polling.rb:15:in `block in run'[0m
      [36m# ./lib/submission/polling.rb:13:in `loop'[0m
@@ -89,9 +94,10 @@ Failures:
      [31mFailure/Error: sum_to_n?([1], 1).should be_false[0m
      [31m  expected  to respond to `false?` or perhaps you meant `be false` or `be_falsey`[0m
      [36m# ./submissions/assignment1-spec:52:in `block (3 levels) in <top (required)>'[0m
-     [36m# ./lib/graders/rspec_grader/rspec_grader.rb:44:in `compute_points'[0m
-     [36m# ./lib/graders/rspec_grader/rspec_grader.rb:59:in `runner_block'[0m
+     [36m# ./lib/graders/rspec_grader/rspec_grader.rb:45:in `compute_points'[0m
+     [36m# ./lib/graders/rspec_grader/heroku_rspec_grader.rb:17:in `runner_block'[0m
      [36m# ./lib/graders/rspec_grader/rspec_grader.rb:25:in `grade'[0m
+     [36m# ./lib/graders/rspec_grader/heroku_rspec_grader.rb:12:in `grade'[0m
      [36m# ./lib/submission/base.rb:19:in `handle_submission'[0m
      [36m# ./lib/submission/polling.rb:15:in `block in run'[0m
      [36m# ./lib/submission/polling.rb:13:in `loop'[0m
@@ -102,16 +108,17 @@ Failures:
      [31mFailure/Error: sum_to_n?([], 0).should be_false[0m
      [31m  expected  to respond to `false?` or perhaps you meant `be false` or `be_falsey`[0m
      [36m# ./submissions/assignment1-spec:56:in `block (3 levels) in <top (required)>'[0m
-     [36m# ./lib/graders/rspec_grader/rspec_grader.rb:44:in `compute_points'[0m
-     [36m# ./lib/graders/rspec_grader/rspec_grader.rb:59:in `runner_block'[0m
+     [36m# ./lib/graders/rspec_grader/rspec_grader.rb:45:in `compute_points'[0m
+     [36m# ./lib/graders/rspec_grader/heroku_rspec_grader.rb:17:in `runner_block'[0m
      [36m# ./lib/graders/rspec_grader/rspec_grader.rb:25:in `grade'[0m
+     [36m# ./lib/graders/rspec_grader/heroku_rspec_grader.rb:12:in `grade'[0m
      [36m# ./lib/submission/base.rb:19:in `handle_submission'[0m
      [36m# ./lib/submission/polling.rb:15:in `block in run'[0m
      [36m# ./lib/submission/polling.rb:13:in `loop'[0m
      [36m# ./lib/submission/polling.rb:13:in `run'[0m
      [36m# ./features/step_definitions/adapter_x_queue_steps.rb:49:in `block (3 levels) in <top (required)>'[0m
 
-Finished in 0.01752 seconds (files took 0.70426 seconds to load)
+Finished in 0.0043 seconds (files took 0.70843 seconds to load)
 [31m12 examples, 7 failures[0m
 
 Failed examples:

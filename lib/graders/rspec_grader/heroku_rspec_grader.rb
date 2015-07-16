@@ -11,5 +11,15 @@ module Graders
       ENV['HEROKU_URI'] = @heroku_uri
       super
     end
+
+    def runner_block
+      begin
+        raw_score, raw_max, comments = compute_points(@spec_file_path)
+      rescue Exception => e
+        puts 'When does this happen?'
+        raise e
+      end
+      @output_hash = {raw_score: raw_score, raw_max: raw_max, comments: comments}
+    end
   end
 end
