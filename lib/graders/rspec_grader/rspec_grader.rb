@@ -27,31 +27,26 @@ module Graders
     end
     
     def compute_points (file_path)
-      @errs = StringIO.new('', 'w')
-      @output = StringIO.new('', 'w')
+      errs = StringIO.new('', 'w')
+      output = StringIO.new('', 'w')
       points_max = 0
       points = 0
-      c = RSpec.configure do |config|
+      RSpec.configure do |config|
         config.formatter = 'documentation'
         config.formatter = 'RSpec::Core::Formatters::JsonPointsFormatter'
         config.color = true
         config.output_stream = File.open('rspec_output.txt', 'wb')
         # getting rid of deprecation warnings
-        config.expect_with :rspec do |cc|
-          cc.syntax = [:should, :expect]
-        end
+        config.expect_with(:rspec) { |cc| cc.syntax = [:should, :expect] }
       end
-      # puts RSpec.configuration.formatters.inspect
-      # file = File.open(file_path, "rb")
-      # contents = file.read
-      RSpec::Core::Runner.run([file_path], @errs, @output)
+      RSpec::Core::Runner.run([file_path], errs, output)
       formatter = RSpec.configuration.formatters.select {|formatter| formatter.is_a? RSpec::Core::Formatters::JsonPointsFormatter}.first
       output_hash = formatter.output_hash
       output_hash[:examples].each do |example|
         points_max += example[:points]
         points += example[:points] if example[:status] == 'passed'
       end
-      return points_max, points
+      return raw_score, raw_max, [output.string, errs.string].join("\n")
     end
 
     def runner_block
@@ -59,14 +54,12 @@ module Graders
         # raise "#{@submission_path}"
         Graders.load_student_files(@submission_path)
         RSpec.reset
-        @raw_max, @raw_score = compute_points(@spec_file_path)
+        raw_score, raw_max, comments = compute_points(@spec_file_path)
       rescue Exception => e
         puts 'When does this happen?'
         raise e
       end
-      @normalized = normalized_score
-      @comments = @output.string
-      # {points_received: @raw_score, points_maximum: @raw_max, comments: output, normalized: normalized_score}
+      {raw_score: raw_score, raw_max: raw_max, comments: comments}
     end
   end
 end
