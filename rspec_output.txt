@@ -1,0 +1,126 @@
+
+Ruby intro part 1
+  #sum
+[32m    should be defined[0m
+[32m    returns correct sum [20 points][0m
+[32m    works on the empty array [10 points][0m
+  #max_2_sum
+[32m    should be defined[0m
+[31m    returns the correct sum [7 points] (FAILED - 1)[0m
+[31m    works even if 2 largest values are the same [3 points] (FAILED - 2)[0m
+[31m    returns zero if array is empty [10 points] (FAILED - 3)[0m
+[31m    returns value of the element if just one element [10 points] (FAILED - 4)[0m
+  #sum_to_n
+[32m    should be defined[0m
+[31m    returns true when any two elements sum to the second argument [30 points] (FAILED - 5)[0m
+[31m    returns false for the single element array [5 points] (FAILED - 6)[0m
+[31m    returns false for the empty array [5 points] (FAILED - 7)[0m
+
+Failures:
+
+  1) Ruby intro part 1 #max_2_sum returns the correct sum [7 points]
+     [31mFailure/Error: max_2_sum([1,2,3,4,5]).should be_a_kind_of Fixnum[0m
+     [31m  expected nil to be a kind of Fixnum[0m
+     [36m# ./submissions/assignment1-spec:27:in `block (3 levels) in <top (required)>'[0m
+     [36m# ./lib/graders/rspec_grader/rspec_grader.rb:44:in `compute_points'[0m
+     [36m# ./lib/graders/rspec_grader/rspec_grader.rb:59:in `runner_block'[0m
+     [36m# ./lib/graders/rspec_grader/rspec_grader.rb:25:in `grade'[0m
+     [36m# ./lib/submission/base.rb:19:in `handle_submission'[0m
+     [36m# ./lib/submission/polling.rb:15:in `block in run'[0m
+     [36m# ./lib/submission/polling.rb:13:in `loop'[0m
+     [36m# ./lib/submission/polling.rb:13:in `run'[0m
+     [36m# ./features/step_definitions/adapter_x_queue_steps.rb:49:in `block (3 levels) in <top (required)>'[0m
+
+  2) Ruby intro part 1 #max_2_sum works even if 2 largest values are the same [3 points]
+     [31mFailure/Error: max_2_sum([1,2,3,3]).should == 6[0m
+     [31m  expected: 6[0m
+     [31m       got: nil (using ==)[0m
+     [36m# ./submissions/assignment1-spec:31:in `block (3 levels) in <top (required)>'[0m
+     [36m# ./lib/graders/rspec_grader/rspec_grader.rb:44:in `compute_points'[0m
+     [36m# ./lib/graders/rspec_grader/rspec_grader.rb:59:in `runner_block'[0m
+     [36m# ./lib/graders/rspec_grader/rspec_grader.rb:25:in `grade'[0m
+     [36m# ./lib/submission/base.rb:19:in `handle_submission'[0m
+     [36m# ./lib/submission/polling.rb:15:in `block in run'[0m
+     [36m# ./lib/submission/polling.rb:13:in `loop'[0m
+     [36m# ./lib/submission/polling.rb:13:in `run'[0m
+     [36m# ./features/step_definitions/adapter_x_queue_steps.rb:49:in `block (3 levels) in <top (required)>'[0m
+
+  3) Ruby intro part 1 #max_2_sum returns zero if array is empty [10 points]
+     [31mFailure/Error: max_2_sum([]).should be_zero[0m
+     [31m  expected  to respond to `zero?`[0m
+     [36m# ./submissions/assignment1-spec:34:in `block (3 levels) in <top (required)>'[0m
+     [36m# ./lib/graders/rspec_grader/rspec_grader.rb:44:in `compute_points'[0m
+     [36m# ./lib/graders/rspec_grader/rspec_grader.rb:59:in `runner_block'[0m
+     [36m# ./lib/graders/rspec_grader/rspec_grader.rb:25:in `grade'[0m
+     [36m# ./lib/submission/base.rb:19:in `handle_submission'[0m
+     [36m# ./lib/submission/polling.rb:15:in `block in run'[0m
+     [36m# ./lib/submission/polling.rb:13:in `loop'[0m
+     [36m# ./lib/submission/polling.rb:13:in `run'[0m
+     [36m# ./features/step_definitions/adapter_x_queue_steps.rb:49:in `block (3 levels) in <top (required)>'[0m
+
+  4) Ruby intro part 1 #max_2_sum returns value of the element if just one element [10 points]
+     [31mFailure/Error: max_2_sum([3]).should == 3[0m
+     [31m  expected: 3[0m
+     [31m       got: nil (using ==)[0m
+     [36m# ./submissions/assignment1-spec:37:in `block (3 levels) in <top (required)>'[0m
+     [36m# ./lib/graders/rspec_grader/rspec_grader.rb:44:in `compute_points'[0m
+     [36m# ./lib/graders/rspec_grader/rspec_grader.rb:59:in `runner_block'[0m
+     [36m# ./lib/graders/rspec_grader/rspec_grader.rb:25:in `grade'[0m
+     [36m# ./lib/submission/base.rb:19:in `handle_submission'[0m
+     [36m# ./lib/submission/polling.rb:15:in `block in run'[0m
+     [36m# ./lib/submission/polling.rb:13:in `loop'[0m
+     [36m# ./lib/submission/polling.rb:13:in `run'[0m
+     [36m# ./features/step_definitions/adapter_x_queue_steps.rb:49:in `block (3 levels) in <top (required)>'[0m
+
+  5) Ruby intro part 1 #sum_to_n returns true when any two elements sum to the second argument [30 points]
+     [31mFailure/Error: sum_to_n?([1,2,3,4,5], 5).should be_true[0m
+     [31m  expected  to respond to `true?` or perhaps you meant `be true` or `be_truthy`[0m
+     [36m# ./submissions/assignment1-spec:46:in `block (3 levels) in <top (required)>'[0m
+     [36m# ./lib/graders/rspec_grader/rspec_grader.rb:44:in `compute_points'[0m
+     [36m# ./lib/graders/rspec_grader/rspec_grader.rb:59:in `runner_block'[0m
+     [36m# ./lib/graders/rspec_grader/rspec_grader.rb:25:in `grade'[0m
+     [36m# ./lib/submission/base.rb:19:in `handle_submission'[0m
+     [36m# ./lib/submission/polling.rb:15:in `block in run'[0m
+     [36m# ./lib/submission/polling.rb:13:in `loop'[0m
+     [36m# ./lib/submission/polling.rb:13:in `run'[0m
+     [36m# ./features/step_definitions/adapter_x_queue_steps.rb:49:in `block (3 levels) in <top (required)>'[0m
+
+  6) Ruby intro part 1 #sum_to_n returns false for the single element array [5 points]
+     [31mFailure/Error: sum_to_n?([1], 1).should be_false[0m
+     [31m  expected  to respond to `false?` or perhaps you meant `be false` or `be_falsey`[0m
+     [36m# ./submissions/assignment1-spec:52:in `block (3 levels) in <top (required)>'[0m
+     [36m# ./lib/graders/rspec_grader/rspec_grader.rb:44:in `compute_points'[0m
+     [36m# ./lib/graders/rspec_grader/rspec_grader.rb:59:in `runner_block'[0m
+     [36m# ./lib/graders/rspec_grader/rspec_grader.rb:25:in `grade'[0m
+     [36m# ./lib/submission/base.rb:19:in `handle_submission'[0m
+     [36m# ./lib/submission/polling.rb:15:in `block in run'[0m
+     [36m# ./lib/submission/polling.rb:13:in `loop'[0m
+     [36m# ./lib/submission/polling.rb:13:in `run'[0m
+     [36m# ./features/step_definitions/adapter_x_queue_steps.rb:49:in `block (3 levels) in <top (required)>'[0m
+
+  7) Ruby intro part 1 #sum_to_n returns false for the empty array [5 points]
+     [31mFailure/Error: sum_to_n?([], 0).should be_false[0m
+     [31m  expected  to respond to `false?` or perhaps you meant `be false` or `be_falsey`[0m
+     [36m# ./submissions/assignment1-spec:56:in `block (3 levels) in <top (required)>'[0m
+     [36m# ./lib/graders/rspec_grader/rspec_grader.rb:44:in `compute_points'[0m
+     [36m# ./lib/graders/rspec_grader/rspec_grader.rb:59:in `runner_block'[0m
+     [36m# ./lib/graders/rspec_grader/rspec_grader.rb:25:in `grade'[0m
+     [36m# ./lib/submission/base.rb:19:in `handle_submission'[0m
+     [36m# ./lib/submission/polling.rb:15:in `block in run'[0m
+     [36m# ./lib/submission/polling.rb:13:in `loop'[0m
+     [36m# ./lib/submission/polling.rb:13:in `run'[0m
+     [36m# ./features/step_definitions/adapter_x_queue_steps.rb:49:in `block (3 levels) in <top (required)>'[0m
+
+Finished in 0.01548 seconds (files took 0.66486 seconds to load)
+[31m12 examples, 7 failures[0m
+
+Failed examples:
+
+[31mrspec ./submissions/assignment1-spec:26[0m [36m# Ruby intro part 1 #max_2_sum returns the correct sum [7 points][0m
+[31mrspec ./submissions/assignment1-spec:30[0m [36m# Ruby intro part 1 #max_2_sum works even if 2 largest values are the same [3 points][0m
+[31mrspec ./submissions/assignment1-spec:33[0m [36m# Ruby intro part 1 #max_2_sum returns zero if array is empty [10 points][0m
+[31mrspec ./submissions/assignment1-spec:36[0m [36m# Ruby intro part 1 #max_2_sum returns value of the element if just one element [10 points][0m
+[31mrspec ./submissions/assignment1-spec:45[0m [36m# Ruby intro part 1 #sum_to_n returns true when any two elements sum to the second argument [30 points][0m
+[31mrspec ./submissions/assignment1-spec:51[0m [36m# Ruby intro part 1 #sum_to_n returns false for the single element array [5 points][0m
+[31mrspec ./submissions/assignment1-spec:55[0m [36m# Ruby intro part 1 #sum_to_n returns false for the empty array [5 points][0m
+

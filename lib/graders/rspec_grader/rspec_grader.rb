@@ -23,7 +23,7 @@ module Graders
 
     def grade(weighted=false)
       run_in_thread(runner_block)
-      #run_in_subprocess(runner_block)
+      # run_in_subprocess(runner_block)
     end
     
     def compute_points (file_path)
@@ -32,12 +32,14 @@ module Graders
       points_max = 0
       points = 0
       RSpec.configure do |config|
+        config.color = true
+        config.tty = true
         config.formatter = 'documentation'
         config.formatter = 'RSpec::Core::Formatters::JsonPointsFormatter'
-        config.color = true
-        #config.output_stream = File.open('rspec_output.txt', 'wb')
+        config.output_stream = File.open('rspec_output.txt', 'wb')
         # getting rid of deprecation warnings
-        #config.expect_with(:rspec) { |cc| cc.syntax = [:should, :expect] }
+        config.expect_with(:rspec) { |cc| cc.syntax = [:should, :expect] }
+        config.deprecation_stream = File.open('deprecations.txt', 'w')
       end
       RSpec::Core::Runner.run([file_path], errs, output)
       formatter = RSpec.configuration.formatters.select {|formatter| formatter.is_a? RSpec::Core::Formatters::JsonPointsFormatter}.first
@@ -51,9 +53,10 @@ module Graders
 
     def runner_block
       begin
+        # raise "#{@submission_path}"
         Graders.load_student_files(@submission_path)
         RSpec.reset
-        raw_score, raw_max, comments = compute_points(@spec_file_path)
+        @raw_score, @raw_max, @comments = compute_points(@spec_file_path)
       rescue Exception => e
         puts 'When does this happen?'
         raise e

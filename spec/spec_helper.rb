@@ -12,7 +12,8 @@ RSpec.configure do |c|
   #c.output_stream = File.open('rspec_output.txt', 'wb')
   c.expect_with :rspec do |con|
       con.syntax = [:should, :expect]
-    end
+  end
+  c.deprecation_stream = File.open('deprecations.txt', 'w')
 end
 
 require 'auto_grader'
