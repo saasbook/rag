@@ -13,7 +13,6 @@ RSpec.configure do |c|
   c.expect_with :rspec do |con|
       con.syntax = [:should, :expect]
   end
-  c.deprecation_stream = File.open('deprecations.txt', 'w')
 end
 
 require 'auto_grader'
