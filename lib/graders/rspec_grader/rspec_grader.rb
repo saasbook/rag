@@ -22,10 +22,11 @@ module Graders
     end
 
     def grade
-      run_in_subprocess(runner_block)
+      run_in_subprocess(method(:runner_block))
     end
     
     def compute_points (file_path)
+      #Process.exit
       errs = StringIO.new('', 'w')
       output = StringIO.new('', 'w')
       points_max = 0
@@ -53,6 +54,9 @@ module Graders
 
     def runner_block
       begin
+
+        Process.exit
+        #raise 'shouldnt be called by parent func.' unless @pid.nil?
         Graders.load_student_files(@submission_path)
         raw_score, raw_max, comments = compute_points(@spec_file_path)
       rescue Exception => e

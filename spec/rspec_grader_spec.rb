@@ -16,6 +16,7 @@ describe RspecGrader do
       @grader = AutoGrader.create(@submission_path, @assignment)
     end
     it 'gives full points to a working hw1 solution' do
+      expect(RSpec.configuration.formatters.select {|formatter| formatter.is_a? RSpec::Core::Formatters::JsonPointsFormatter}.first).to be_nil
       points, comments = @grader.grade
       expect(RSpec.configuration.formatters.select {|formatter| formatter.is_a? RSpec::Core::Formatters::JsonPointsFormatter}.first).to be_nil
     end

@@ -83,12 +83,13 @@ module Graders
     def run_in_subprocess(grading_func)
       begin
         read, write = IO.pipe
-        subprocess = fork do
+        @pid = fork do
+          #Process.exit
           # begin
           #   $SAFE = 3
             $stdout.reopen("out.txt", "w")
             $stderr.reopen("err.txt", "w")
-            output_hash = grading_func
+            output_hash = grading_func.call
             # puts "CAN YOU WRITE FROM HERE? #{'-' * 80}"
             write.puts JSON.generate output_hash
             File.open('subprocess.txt', 'w') { |file| file.puts "#{Time.now}"}
@@ -100,10 +101,10 @@ module Graders
           # end
         end
         Timeout.timeout(@timeout) do
-          byebug
-          puts "WAITING FOR THREAD REGULAR  #{subprocess}#{'-' * 80}"
+          #byebug
+          puts "WAITING FOR THREAD REGULAR  #{@pid}#{'-' * 80}"
 
-          Process.wait subprocess
+          Process.wait @pid
           puts "DONE WAITING FOR THREAD REGULAR #{'-' * 80}"
         end
         @output_hash = HashWithIndifferentAccess.new(JSON.parse(read.gets))
