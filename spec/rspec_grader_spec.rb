@@ -15,9 +15,11 @@ describe RspecGrader do
       @assignment = Assignment::Xqueue.new(submission)
       @grader = AutoGrader.create(@submission_path, @assignment)
     end
-    it 'gives full points to a working hw1 solution' do
+    it 'gives points to a hw1 solution' do
       expect(RSpec.configuration.formatters.select {|formatter| formatter.is_a? RSpec::Core::Formatters::JsonPointsFormatter}.first).to be_nil
-      points, comments = @grader.grade
+      b = @grader.grade
+      b.should be_kind_of(Hash)
+      expect(b[:raw_score]).to be == 30
       expect(RSpec.configuration.formatters.select {|formatter| formatter.is_a? RSpec::Core::Formatters::JsonPointsFormatter}.first).to be_nil
     end
   end

@@ -35,8 +35,6 @@ module Graders
       RSpec.configure do |config|
         config.formatter = 'documentation'
         config.formatter = 'RSpec::Core::Formatters::JsonPointsFormatter'
-        # getting rid of deprecation warnings
-        # config.deprecation_stream = File.open('deprecations', 'wb')
       end
       RSpec::Core::Runner.run([file_path], errs, output)
       formatter = RSpec.configuration.formatters.select {|formatter| formatter.is_a? RSpec::Core::Formatters::JsonPointsFormatter}.first
