@@ -72,10 +72,10 @@ module Graders
 
     def run_in_thread(grading_func)
       begin
-        thr = Thread.new {$SAFE = 3; grading_func}
+        thr = Thread.new { grading_func.call}
         thr.join(@timeout)
       rescue SecurityError => err
-        puts 'got security exception'
+        raise err
       end
       @output_hash
     end
@@ -84,37 +84,30 @@ module Graders
       begin
         read, write = IO.pipe
         @pid = fork do
-          #Process.exit
-          # begin
-          #   $SAFE = 3
+            read.close
             $stdout.reopen("out.txt", "w")
             $stderr.reopen("err.txt", "w")
             output_hash = grading_func.call
-            # puts "CAN YOU WRITE FROM HERE? #{'-' * 80}"
             write.puts JSON.generate output_hash
             File.open('subprocess.txt', 'w') { |file| file.puts "#{Time.now}"}
             write.close
             @yolo = 1000
-            exit(0)
-          # rescue StandardError => e
-          #   File.open('subprocess.txt', 'w') { |file| file.puts "#{Time.now} #{'-' * 80}\n #{e.backtrace.join "\n"}"}
-          # end
         end
         Timeout.timeout(@timeout) do
           #byebug
           puts "WAITING FOR THREAD REGULAR  #{@pid}#{'-' * 80}"
-
           Process.wait @pid
           puts "DONE WAITING FOR THREAD REGULAR #{'-' * 80}"
         end
-        @output_hash = HashWithIndifferentAccess.new(JSON.parse(read.gets))
         write.close
+        @output_ha
+        sh = HashWithIndifferentAccess.new(JSON.parse(read.gets))
+        read.close
       rescue Timeout::Error
         puts "WAITING FOR THREAD TIMEOUT #{'-' * 80}"
         Process.kill 9, subprocess # dunno what signal to put for this
         Process.wait subprocess  # avoid zombie
         puts "DONE WAITING FOR THREAD TIMEOUT #{'-' * 80}"
-        output_hash = nil
       ensure
         puts 'ensure statement'
       end
