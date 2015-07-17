@@ -33,30 +33,24 @@ module Graders
       points = 0
       RSpec.reset
       RSpec.configure do |config|
-        config.color = false
-        config.tty = true
         config.formatter = 'documentation'
         config.formatter = 'RSpec::Core::Formatters::JsonPointsFormatter'
-        config.output_stream = File.open('rspec_output', 'wb')
         # getting rid of deprecation warnings
-        config.expect_with(:rspec) { |cc| cc.syntax = [:should, :expect] }
-        config.deprecation_stream = File.open('deprecations', 'wb')
+        # config.deprecation_stream = File.open('deprecations', 'wb')
       end
       RSpec::Core::Runner.run([file_path], errs, output)
-      #output = File.open('rspec_output', 'rb'){|f| f.read}
       formatter = RSpec.configuration.formatters.select {|formatter| formatter.is_a? RSpec::Core::Formatters::JsonPointsFormatter}.first
       output_hash = formatter.output_hash
       output_hash[:examples].each do |example|
         points_max += example[:points]
         points += example[:points] if example[:status] == 'passed'
       end
-      return points, points_max, [output, errs.string].join("\n")
+
+      return points, points_max, [output.string, errs.string].join("\n")
     end
 
     def runner_block
       begin
-        #Process.exit
-        #raise 'shouldnt be called by parent func.' unless @pid.nil?
         Graders.load_student_files(@submission_path)
         raw_score, raw_max, comments = compute_points(@spec_file_path)
       rescue Exception => e

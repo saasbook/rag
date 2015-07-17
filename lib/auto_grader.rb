@@ -18,16 +18,12 @@ module Graders
     attr_accessor :errors
     # identifier of question being graded
     attr_accessor :assignment_id
-    #  achieved raw score as reported by the underlying grader
-    attr_reader :raw_score
-    #  the maximum possible raw score as reported by the underlying grader
-    attr_reader :raw_max
     attr_reader :normalized
     #  the maximum allowed duration that a test suite can run on a submission.
     attr_reader :timeout
     #student submission code path
     attr_reader :submission_path
-
+    #assignment spec file path
     attr_reader :spec_file_path
     # Create a new autograder object, which will grade a student's submission
     # given the submission text, a grading strategy, and grading rules to be
@@ -69,7 +65,6 @@ module Graders
     protected
 
     # This is broken. Global RSpec singleton means that grading func will mess up the rspec object.
-
     def run_in_thread(grading_func)
       begin
         thr = Thread.new { grading_func.call}
@@ -89,27 +84,19 @@ module Graders
             $stderr.reopen("err.txt", "w")
             output_hash = grading_func.call
             write.puts JSON.generate output_hash
-            File.open('subprocess.txt', 'w') { |file| file.puts "#{Time.now}"}
             write.close
-            @yolo = 1000
         end
         Timeout.timeout(@timeout) do
           #byebug
-          puts "WAITING FOR THREAD REGULAR  #{@pid}#{'-' * 80}"
           Process.wait @pid
-          puts "DONE WAITING FOR THREAD REGULAR #{'-' * 80}"
         end
         write.close
-        @output_ha
-        sh = HashWithIndifferentAccess.new(JSON.parse(read.gets))
+        @output_hash = HashWithIndifferentAccess.new(JSON.parse(read.gets))
         read.close
       rescue Timeout::Error
-        puts "WAITING FOR THREAD TIMEOUT #{'-' * 80}"
         Process.kill 9, subprocess # dunno what signal to put for this
-        Process.wait subprocess  # avoid zombie
-        puts "DONE WAITING FOR THREAD TIMEOUT #{'-' * 80}"
+        Process.wait subprocess  # avoid zombie. use detach instead?
       ensure
-        puts 'ensure statement'
       end
       @output_hash
     end
