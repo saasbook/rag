@@ -1,6 +1,6 @@
 require 'spec_helper'
 include Graders
-FakeFS.activate!
+#FakeFS.activate!
 describe AutoGrader do
   before(:all) do
     FakeWeb.register_uri(:get, 'http://fixture.net/assignment1_spec.txt', :body => IO.read('spec/fixtures/ruby_intro_part1_spec.rb'))
@@ -22,12 +22,15 @@ describe AutoGrader do
 
   context 'restricts running time of test suites' do
     before(:each) do
-      @submission_path = 'grader_files/submission_abc/'
-      @assignment = double('XQueueSubmission')
+      submission = ::XQueueSubmission.create_from_JSON(double, IO.read('spec/fixtures/x_queue_submission.json'))
+      submission.write_to_location! 'submissions/'
+      @submission_path = submission.files.values.first
+      @assignment = Assignment::Xqueue.new(submission)
+      @grader = AutoGrader.create @submission_path, @assignment
     end
     it 'should kill the thread and return score of 0 if tests timeout' do
-      pending 'write this'
-      expect(true).to be_false
+      allow(@grader).to receive(:compute_points) {nil while true}  # make the grading function called in the subprocess be an infinite loop
+      expect(@output_hash).to be_nil
     end
     it 'should not kill threads before they timeout' do
       pending 'write this'
@@ -37,8 +40,11 @@ describe AutoGrader do
 
  context 'is reliable' do
     before(:each) do
-      @submission_path = 'grader_files/submission_abc/'
-      @assignment = double('XQueueSubmission')
+      submission = ::XQueueSubmission.create_from_JSON(double, IO.read('spec/fixtures/x_queue_submission.json'))
+      submission.write_to_location! 'submissions/'
+      @submission_path = submission.files.values.first
+      @assignment = Assignment::Xqueue.new(submission)
+      @grader = AutoGrader.create @submission_path, @assignment
     end
     it 'should not crash on faulty student submitted code' do
       pending 'write this'
@@ -109,4 +115,4 @@ describe AutoGrader do
     end
   end
 end
-FakeFS.deactivate!
+#FakeFS.deactivate!

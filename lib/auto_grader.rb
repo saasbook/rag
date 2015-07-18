@@ -18,7 +18,6 @@ module Graders
     attr_accessor :errors
     # identifier of question being graded
     attr_accessor :assignment_id
-    attr_reader :normalized
     #  the maximum allowed duration that a test suite can run on a submission.
     attr_reader :timeout
     #student submission code path
@@ -75,8 +74,8 @@ module Graders
         read, write = IO.pipe
         @pid = fork do
             read.close
-            # $stdout.reopen("out.txt", "w")
-            # $stderr.reopen("err.txt", "w")
+            $stdout.reopen("out.txt", "w")
+            $stderr.reopen("err.txt", "w")
             output_hash = grading_func.call
             write.puts JSON.generate output_hash
             write.close
@@ -89,8 +88,10 @@ module Graders
         @output_hash = HashWithIndifferentAccess.new(JSON.parse(read.gets))
         read.close
       rescue Timeout::Error
-        Process.kill 9, subprocess # dunno what signal to put for this
-        Process.wait subprocess  # avoid zombie. use detach instead?
+
+        Process.kill 9, @pid # dunno what signal to put for this
+        Process.detach @pid  # express disinterest in process so that OS hopefully takes care of zombie
+        puts "Process killed. PID #{@pid} #{'-' * 80}"
       ensure
       end
       @output_hash
