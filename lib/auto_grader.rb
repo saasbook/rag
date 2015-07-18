@@ -52,11 +52,6 @@ module Graders
       end
     end
 
-    def normalized_score(max=100)
-      raw_max.zero? ? 0 : (max.to_f * raw_score/raw_max).ceil
-    end
-
-
     # Grade the given question using the specified grader, strategy, and
     # maximum score. Default method does nothing and leaves a score of 0
     def grade
@@ -80,8 +75,8 @@ module Graders
         read, write = IO.pipe
         @pid = fork do
             read.close
-            $stdout.reopen("out.txt", "w")
-            $stderr.reopen("err.txt", "w")
+            # $stdout.reopen("out.txt", "w")
+            # $stderr.reopen("err.txt", "w")
             output_hash = grading_func.call
             write.puts JSON.generate output_hash
             write.close
