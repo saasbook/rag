@@ -12,12 +12,12 @@ describe AutoGrader do
       @submission_path = submission.files.values.first
       @assignment = Assignment::Xqueue.new(submission)
     end
-    # it 'can create an RspecGrader with proper values' do
-    #   puts @assignment.inspect
-    #   grader = AutoGrader.create @submission_path, @assignment
-    #   expect(grader).to be_a_kind_of(RspecGrader)
-    #   expect(grader.spec_file_path).to be == "#{ENV['base_folder']}assignment1-spec"
-    # end
+    it 'can create an RspecGrader with proper values' do
+      puts @assignment.inspect
+      grader = AutoGrader.create @submission_path, @assignment
+      expect(grader).to be_a_kind_of(RspecGrader)
+      expect(grader.spec_file_path).to be == "#{ENV['base_folder']}assignment1-spec"
+    end
   end
 
   context 'restricts running time of test suites' do

@@ -2,9 +2,11 @@ require_relative 'rspec_grader'
 
 module Graders
   class HerokuRspecGrader < RspecGrader
-    def initialize(uri, grading_rules)
-      super('', grading_rules)
-      @heroku_uri = uri
+    def initialize(submission_path, assignment)
+      super(submission_path, assignment)
+      @timeout = 60
+      heroku_file = Dir[File.join(@submission_path, '*.rb')].first  # there should only be on file submitted if its a heroku submission.
+      @heroku_uri = IO.read(heroku_file).strip
     end
 
     def grade

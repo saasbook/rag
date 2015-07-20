@@ -95,7 +95,6 @@ module Graders
       rescue Timeout::Error
         Process.kill 9, @pid # dunno what signal to put for this
         Process.detach @pid  # express disinterest in process so that OS hopefully takes care of zombie
-        puts "Process killed. PID #{@pid} #{'-' * 80}"
       end
       @output_hash
     end
