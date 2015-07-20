@@ -1,9 +1,9 @@
 # Returns the sum of all the numbers in `collection`, which must be
 # enumerable
 def sum(collection)
-  collection.inject(0) do |total, n|
-    total + n
-  end
+  # collection.inject(0) do |total, n|
+  #   total + n
+  # end
 end
 
 # Return the sum of the 2 largest elements in a collection

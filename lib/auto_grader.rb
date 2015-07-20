@@ -4,6 +4,7 @@ module Graders
   def self.load_student_files(file_path)
     raise "#{file_path} is not a directory. Student submission could not be loaded" unless Dir.exist? file_path
     Dir[File.join(file_path, '*.rb')].each do  |file_name|
+      puts "File loaded: #{file_name}, file contents: \n #{IO.read(file_name)}"
       load file_name
     end
   end
@@ -95,7 +96,6 @@ module Graders
         Process.kill 9, @pid # dunno what signal to put for this
         Process.detach @pid  # express disinterest in process so that OS hopefully takes care of zombie
         puts "Process killed. PID #{@pid} #{'-' * 80}"
-      ensure
       end
       @output_hash
     end
