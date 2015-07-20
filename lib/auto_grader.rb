@@ -69,6 +69,10 @@ module Graders
       @output_hash
     end
 
+
+    # Takes a Proc object representing the grading behavior of the auto grader and runs it in a separate process.
+    # If the subprocess takes longer than @timeout seconds, the function will kill the subprocess and return a score
+    # of 0.
     def run_in_subprocess(grading_func)
       begin
         read, write = IO.pipe
@@ -88,7 +92,6 @@ module Graders
         @output_hash = HashWithIndifferentAccess.new(JSON.parse(read.gets))
         read.close
       rescue Timeout::Error
-
         Process.kill 9, @pid # dunno what signal to put for this
         Process.detach @pid  # express disinterest in process so that OS hopefully takes care of zombie
         puts "Process killed. PID #{@pid} #{'-' * 80}"
@@ -97,7 +100,7 @@ module Graders
       @output_hash
     end
 
-    # Superclass method to be called by
+    # Superclass method to be called by inherited autograders
     def initialize(submission_path, assignment)
       @submission_path = submission_path
       @timeout = 20

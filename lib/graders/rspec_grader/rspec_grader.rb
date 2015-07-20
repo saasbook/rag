@@ -26,7 +26,6 @@ module Graders
     end
     
     def compute_points (file_path)
-      #Process.exit
       errs = StringIO.new('', 'w')
       output = StringIO.new('', 'w')
       points_max = 0
@@ -43,17 +42,16 @@ module Graders
         points_max += example[:points]
         points += example[:points] if example[:status] == 'passed'
       end
-
       return points, points_max, [output.string, errs.string].join("\n")
     end
 
     def runner_block
-      begin
+      # begin
         Graders.load_student_files(@submission_path)
         raw_score, raw_max, comments = compute_points(@spec_file_path)
-      rescue Exception => e
-        raise e
-      end
+      # rescue Exception => e
+      #   raise e
+      # end
       @output_hash = {raw_score: raw_score, raw_max: raw_max, comments: comments}
     end
   end
