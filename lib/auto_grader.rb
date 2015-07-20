@@ -78,8 +78,8 @@ module Graders
         read, write = IO.pipe
         @pid = fork do
             read.close
-            $stdout.reopen("out.txt", "w")
-            $stderr.reopen("err.txt", "w")
+            $stdout.reopen('stdout_subprocess', 'w')  # Don't clutter the main terminal with subprocess information.
+            $stderr.reopen('err_subprocess', 'w')
             output_hash = grading_func.call
             write.puts JSON.generate output_hash
             write.close
@@ -88,7 +88,8 @@ module Graders
           Process.wait @pid
         end
         write.close
-        @output_hash = HashWithIndifferentAccess.new(JSON.parse(read.gets))
+        subprocess_response = read.gets
+        @output_hash = HashWithIndifferentAccess.new(JSON.parse(subprocess_response)) unless subprocess_response.nil?
         read.close
       rescue Timeout::Error
         Process.kill 9, @pid # dunno what signal to put for this
