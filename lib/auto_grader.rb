@@ -85,7 +85,6 @@ module Graders
             write.close
         end
         Timeout.timeout(@timeout) do
-          #byebug
           Process.wait @pid
         end
         write.close
