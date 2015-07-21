@@ -46,9 +46,8 @@ module Graders
     def self.create(submission_path, assignment)
       begin
         Graders.const_get(assignment.autograder_type.strip).new(submission_path, assignment)
-      rescue NameError => e
-        raise e
-        # raise AutoGrader::NoSuchGraderError, "Can't find grading strategy for #{assignment.autograder_type}" for some reason this will always run
+      rescue NameError
+        raise AutoGrader::NoSuchGraderError, "Can't find grading strategy for #{assignment.autograder_type}"
       end
     end
 
