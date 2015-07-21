@@ -19,6 +19,7 @@ module Graders
       @timeout = 50
       @spec_file_path = assignment.assignment_spec_file
       raise NoSuchSpecError, 'Specs could not be found' unless File.readable? @spec_file_path
+      @load_student_files = true  # some graders don't load student files.
     end
 
     def grade
@@ -51,7 +52,7 @@ module Graders
     end
 
     def runner_block
-      Graders.load_student_files(@submission_path)
+      Graders.load_student_files(@submission_path) if @load_student_files
       compute_points(@spec_file_path)
     end
   end

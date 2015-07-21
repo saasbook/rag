@@ -8,6 +8,7 @@ module Submission
   class Xqueue < Polling
     attr_reader :x_queue
 
+    STRFMT = "%Y-%m-%d-%H-%M-%S"
     def initialize(config_hash)
       super(config_hash)
       @x_queue = ::XQueue.new(*create_xqueue_hash(config_hash))
@@ -17,8 +18,8 @@ module Submission
       submission = @x_queue.get_submission
       return if submission.nil?
       submission.assignment = Assignment::Xqueue.new(submission)
-      submission.write_to_location! File.join( [ENV['base_folder'],submission.student_id].join(''),
-                                    submission.submission_time.strftime("%Y-%m-%d-%H-%M-%S"))
+      submission.write_to_location! File.join( [ENV['base_folder'], submission.student_id].join(''),
+                        submission.assignment.assignment_name, Time.new.strftime(STRFMT))
       submission
     end
 
