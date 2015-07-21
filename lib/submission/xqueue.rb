@@ -18,7 +18,7 @@ module Submission
       return if submission.nil?
       submission.assignment = Assignment::Xqueue.new(submission)
       submission.write_to_location! File.join( [ENV['base_folder'],submission.student_id].join(''),
-                                    Time.now.strftime("%Y-%m-%d-%H-%M-%S"))
+                                    submission.submission_time.strftime("%Y-%m-%d-%H-%M-%S"))
       submission
     end
 

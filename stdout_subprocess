@@ -1,0 +1,50 @@
+
+App
+  should respond to simple request [0 points]
+
+Table header
+  should have link to sort by title [10 points]
+  should have link to sort by release date [10 points]
+
+Table
+  should be sortable by title [20 points]
+  should be sortable by release date [20 points]
+  should highlight title header when sorted [20 points]
+  should highlight release date header when sorted [20 points]
+
+GET /movies
+  should be successful
+  should have #ratings_form form [5 points]
+  should have #ratings_submit button [5 points]
+  should have checkboxes [5 points]
+  When I first visit the page
+    should have all checkboxes checked  [8 points]
+    should have movies visible [7 points]
+  when selecting a movie rating
+    should only display movies of that rating [20 points]
+    should automatically check the selected rating in the response [25 points]
+  when selecting a sort column
+    should preserve the ratings filter [25 points]
+
+GET /movies
+  basic tests
+    should be successful
+    should have a form with id ratings_form
+    should have #ratings_submit button
+    should have checkboxes
+    should have #movies
+    should have #title_header
+    should have #release_date_header
+  when selecting a movie rating
+    should remember the rating selected [20 points]
+    should allow new ratings to be selected [15 points]
+    should redirect to a RESTful route [15 points]
+  when selecting a sort field
+    should remember the sort order [20 points]
+    should allow a new sort order to be selected [15 points]
+    should redirect to a RESTful route [15 points]
+
+Finished in 37.39 seconds (files took 4.71 seconds to load)
+29 examples, 0 failures
+
+{"version":"3.3.2","examples":[{"description":"should respond to simple request [0 points]","points":0,"status":"passed","pending_message":null},{"description":"should have link to sort by title [10 points]","points":10,"status":"passed","pending_message":null},{"description":"should have link to sort by release date [10 points]","points":10,"status":"passed","pending_message":null},{"description":"should be sortable by title [20 points]","points":20,"status":"passed","pending_message":null},{"description":"should be sortable by release date [20 points]","points":20,"status":"passed","pending_message":null},{"description":"should highlight title header when sorted [20 points]","points":20,"status":"passed","pending_message":null},{"description":"should highlight release date header when sorted [20 points]","points":20,"status":"passed","pending_message":null},{"description":"should be successful","points":1,"status":"passed","pending_message":null},{"description":"should have #ratings_form form [5 points]","points":5,"status":"passed","pending_message":null},{"description":"should have #ratings_submit button [5 points]","points":5,"status":"passed","pending_message":null},{"description":"should have checkboxes [5 points]","points":5,"status":"passed","pending_message":null},{"description":"should have all checkboxes checked  [8 points]","points":8,"status":"passed","pending_message":null},{"description":"should have movies visible [7 points]","points":7,"status":"passed","pending_message":null},{"description":"should only display movies of that rating [20 points]","points":20,"status":"passed","pending_message":null},{"description":"should automatically check the selected rating in the response [25 points]","points":25,"status":"passed","pending_message":null},{"description":"should preserve the ratings filter [25 points]","points":25,"status":"passed","pending_message":null},{"description":"should be successful","points":1,"status":"passed","pending_message":null},{"description":"should have a form with id ratings_form","points":1,"status":"passed","pending_message":null},{"description":"should have #ratings_submit button","points":1,"status":"passed","pending_message":null},{"description":"should have checkboxes","points":1,"status":"passed","pending_message":null},{"description":"should have #movies","points":1,"status":"passed","pending_message":null},{"description":"should have #title_header","points":1,"status":"passed","pending_message":null},{"description":"should have #release_date_header","points":1,"status":"passed","pending_message":null},{"description":"should remember the rating selected [20 points]","points":20,"status":"passed","pending_message":null},{"description":"should allow new ratings to be selected [15 points]","points":15,"status":"passed","pending_message":null},{"description":"should redirect to a RESTful route [15 points]","points":15,"status":"passed","pending_message":null},{"description":"should remember the sort order [20 points]","points":20,"status":"passed","pending_message":null},{"description":"should allow a new sort order to be selected [15 points]","points":15,"status":"passed","pending_message":null},{"description":"should redirect to a RESTful route [15 points]","points":15,"status":"passed","pending_message":null}],"summary":{"duration":37.392589,"example_count":29,"failure_count":0,"pending_count":0},"summary_line":"29 examples, 0 failures"}

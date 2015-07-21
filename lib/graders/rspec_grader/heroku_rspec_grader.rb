@@ -15,12 +15,7 @@ module Graders
     end
 
     def runner_block
-      begin
-        raw_score, raw_max, comments = compute_points(@spec_file_path)
-      rescue Exception => e
-        raise e
-      end
-      @output_hash = {raw_score: raw_score, raw_max: raw_max, comments: comments}
+      compute_points(@spec_file_path)
     end
   end
 end

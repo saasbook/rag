@@ -3,6 +3,7 @@ require 'xqueue_ruby'
 require 'json'
 require 'adapter'
 require 'submission/xqueue'
+require 'fakeweb'
 
 BASE_FOLDER = 'features/support/'
 
@@ -20,7 +21,9 @@ def fake_files(file_uris)
     FakeWeb.register_uri(:get, file_uris, :body => IO.read("#{BASE_FOLDER}#{local_file}"))
   end
 end
-
+Given(/^a submission of "(.*?)"$/) do |hw2|
+  FakeWeb.allow_net_connect = true
+end
 Given(/^an XQueue that has submission "(.*?)" in queue$/) do |submission|
   response_file = "#{BASE_FOLDER}#{submission}"
   FakeWeb.register_uri(:get, %r|https://xqueue.edx.org/xqueue/get_submission/|, body: response_file)

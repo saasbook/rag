@@ -100,14 +100,14 @@ describe "Table" do
     sorted_page = get_sort_link(@startpage, 'title').click
     table = sorted_page.parser.css("#movies").first
     column = TableExtractor.extract_column table, :title
-    sorted?(column).should be_true
+    sorted?(column).should be true
 
   end
   it "should be sortable by release date [20 points]", points:20 do
     sorted_page = get_sort_link(@startpage, 'release_date').click
     table = sorted_page.parser.css("#movies").first
     column = TableExtractor.extract_column table, :release_date
-    sorted?(column).should be_true
+    sorted?(column).should be true
   end
   # This is not actually part of the spec
   #it "should highlight neither header by default" do
@@ -269,7 +269,7 @@ describe "GET /movies" do
      
      checkboxes= @page.form_with(:id => 'ratings_form').checkboxes.each do |checkbox|
        checkbox[:id].should =~ /ratings_\w+/
-       checked_boxes.include?(checkbox).should be_true, "unchecked checkbox found with id #{checkbox[:id]}"
+       expect(checked_boxes).to include(checkbox), "unchecked checkbox found with id #{checkbox[:id]}"
      end
     end
     it "should have movies visible [7 points]",points:7 do
@@ -352,7 +352,7 @@ describe "GET /movies" do
         columns << row.columns[:title]
         row.columns[:rating].should eq(rating)
       end
-      sorted?(columns).should be_true
+      sorted?(columns).should be true
     end
   end
 end
@@ -562,7 +562,6 @@ describe "GET /movies" do
     it "should allow new ratings to be selected [15 points]", points:15 do
       ratings = find_ratings(@page)
       ratings.length.should be >= 2
-      ratings.should have_at_least(2).items
       first_rating = ratings[0]
       second_rating = ratings[1]
       response, _ = select_ratings_and_submit(@page, first_rating)

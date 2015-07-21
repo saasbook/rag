@@ -29,7 +29,7 @@ describe Submission::Xqueue do
       submission = @x_queue_adapter.next_submission_with_assignment
       assignment = submission.assignment
       expect(submission).to be
-      expect(submission.files.values[0]).to be == 'submissions/abc123'
+      expect(submission.files.values[0]).to include("submissions/abc123")
     end
 
     it 'should pass assignment and submission to the autograder' do
