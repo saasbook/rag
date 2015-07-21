@@ -2,7 +2,6 @@ Feature: Pulls code submissions from XQueue and grades them using information su
   As an instructor
   So that I can give feedback to my students on their code responses
   I want to be able to create a code submission page in edX and grade it using rag
-
   Scenario: student submits a hw1 submission on edXs
     Given an XQueue that has submission "hw1_submission.json" in queue
     And has been setup with the config file "conf.yml"
@@ -12,5 +11,11 @@ Feature: Pulls code submissions from XQueue and grades them using information su
   Scenario: student submits a heroku deployment on edX
     Given a submission of "hw2"
     Given an XQueue that has submission "hw2_submission.json" in queue
+    And has been setup with the config file "conf.yml"
+    Then I should receive a grade of "1.0" for my assignment
+
+  Scenario: student submits a hw5 submission (heroku) on edX
+    Given a submission of "hw5"
+    Given an XQueue that has submission "hw5_submission.json" in queue
     And has been setup with the config file "conf.yml"
     Then I should receive a grade of "1.0" for my assignment

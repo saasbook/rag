@@ -21,7 +21,7 @@ def fake_files(file_uris)
     FakeWeb.register_uri(:get, file_uris, :body => IO.read("#{BASE_FOLDER}#{local_file}"))
   end
 end
-Given(/^a submission of "(.*?)"$/) do |hw2|
+Given(/^a submission of "(.*?)"$/) do |hw|
   FakeWeb.allow_net_connect = true
 end
 Given(/^an XQueue that has submission "(.*?)" in queue$/) do |submission|
