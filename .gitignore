@@ -9,6 +9,8 @@ config/autograders.yml
 coverage/
 submissions/
 rspec_output.txt
+stdout_subprocess
+err_subprocess
 
 cert_file
 config/test_conf.yml
