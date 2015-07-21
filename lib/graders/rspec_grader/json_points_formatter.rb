@@ -11,7 +11,7 @@ module RSpec
         def format_example(example)
           {
             description: example.description,
-            points: example.metadata[:points] || 0,
+            points: example.metadata[:points] || 1,
             status: example.execution_result.status.to_s,
             pending_message: example.execution_result.pending_message
           }
