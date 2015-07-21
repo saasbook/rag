@@ -26,10 +26,13 @@ describe Submission::Xqueue do
     end
 
     it 'should create an assignment (correctly) from the grader_payload' do
-      submission = @x_queue_adapter.next_submission_with_assignment
-      assignment = submission.assignment
-      expect(submission).to be
-      expect(submission.files.values[0]).to be == 'submissions/abc123'
+      Timecop.freeze(Time.local(2300)) do
+        submission = @x_queue_adapter.next_submission_with_assignment
+        assignment = submission.assignment
+        expect(submission).to be
+        expect(submission.files.values[0]).to be == File.join('submissions/abc123/assignment1/', Time.now.strftime(Submission::Xqueue::STRFMT))
+      end
+
     end
 
     it 'should pass assignment and submission to the autograder' do

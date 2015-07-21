@@ -20,5 +20,6 @@ group :development, :testing do
   gem 'simplecov-rcov'
   gem 'byebug'
   gem 'addressable'
+  gem 'timecop'
 
 end
