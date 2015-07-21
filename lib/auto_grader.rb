@@ -12,11 +12,6 @@ module Graders
     class AutoGrader::NoSuchGraderError < StandardError ; end
 
     # ==== Attributes
-
-    # textual feedback from the autograder on the student's answer
-    attr_accessor :comments
-    #  errors running the autograder, if any; else nil
-    attr_accessor :errors
     # identifier of question being graded
     attr_accessor :assignment_id
     #  the maximum allowed duration that a test suite can run on a submission.

@@ -5,9 +5,7 @@
   },
   "xqueue_body": {
     "grader_payload": {
-      "due_date": "2015-01-01 00:00:00 -0700",
-      "grace_period": 3,
-      "late_period"  : 2
+      "due_dates": {"2000-01-02": 1.0, "2000-01-03": 0.75, "2000-01-04": 0.50, "2000-01-05": 0.25}
     },
     "student_info": {
       "anonymous_student_id":  "abc123",
