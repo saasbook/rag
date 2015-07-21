@@ -13,7 +13,7 @@ module Graders
     #   against the student's code.  The spec should <b>not</b> try to
     #   +require+ or +include+ the subject code file, but it can +require+
     #   or +include+ any other Ruby libraries needed for the specs to run.
-
+    ERROR_HASH = {raw_score: 0, raw_max: 100, comments: 'There was a fatal error with your submission. It either timed out or caused an exception.'}
     def initialize(submission_path, assignment)
       super(submission_path, assignment)
       @timeout = 50
@@ -22,7 +22,12 @@ module Graders
     end
 
     def grade
-      run_in_subprocess(method(:runner_block))
+      response = run_in_subprocess(method(:runner_block))
+      if response
+        response
+      else
+        ERROR_HASH
+      end
     end
     
     def compute_points (file_path)
@@ -42,17 +47,12 @@ module Graders
         points_max += example[:points]
         points += example[:points] if example[:status] == 'passed'
       end
-      return points, points_max, [output.string, errs.string].join("\n")
+       {raw_score: points, raw_max: points_max, comments: [output.string, errs.string].join("\n")}
     end
 
     def runner_block
-      # begin
-        Graders.load_student_files(@submission_path)
-        raw_score, raw_max, comments = compute_points(@spec_file_path)
-      # rescue Exception => e
-      #   raise e
-      # end
-      @output_hash = {raw_score: raw_score, raw_max: raw_max, comments: comments}
+      Graders.load_student_files(@submission_path)
+      compute_points(@spec_file_path)
     end
   end
 end

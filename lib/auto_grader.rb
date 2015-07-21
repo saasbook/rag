@@ -90,13 +90,13 @@ module Graders
         end
         write.close
         subprocess_response = read.gets
-        @output_hash = HashWithIndifferentAccess.new(JSON.parse(subprocess_response)) unless subprocess_response.nil?
+        output_hash = HashWithIndifferentAccess.new(JSON.parse(subprocess_response)) unless subprocess_response.nil?
         read.close
       rescue Timeout::Error
         Process.kill 9, @pid # dunno what signal to put for this
         Process.detach @pid  # express disinterest in process so that OS hopefully takes care of zombie
       end
-      @output_hash
+      output_hash
     end
 
     # Superclass method to be called by inherited autograders
