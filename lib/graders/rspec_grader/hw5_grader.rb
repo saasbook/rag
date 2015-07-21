@@ -1,8 +1,8 @@
 require_relative 'heroku_rspec_grader.rb'
 module Graders
   class HW5Grader < HerokuRspecGrader
-    def initialize(uri, grading_rules)
-      super(uri, grading_rules)
+    def initialize(submission_path, assignment)
+      super(submission_path, assignment)
       @admin_user = grading_rules[:admin_user]
       @admin_pass = grading_rules[:admin_pass]
     end
