@@ -9,7 +9,7 @@ config/autograders.yml
 coverage/
 submissions/
 rspec_output.txt
-
+config/conf_passwords.yml
 cert_file
 config/test_conf.yml
 spec/log/

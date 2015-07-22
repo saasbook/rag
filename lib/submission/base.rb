@@ -1,9 +1,9 @@
 require 'yaml'
-require 'rag_logger'
+# require 'rag_logger'
 require 'byebug'
 module Submission
   class Base
-    include RagLogger
+    # include RagLogger
 
     def initialize(_config_hash)
     end

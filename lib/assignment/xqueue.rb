@@ -24,10 +24,8 @@ module Assignment
     def apply_lateness!(submission)
       submission_time = submission.submission_time
       submit_range = @due_dates.map {|due_date| submission_time < due_date}.find_index(true) #return index of which date range submission falls into. if nil,
-      puts "Due dates: #{@due_dates.inspect} \n Submission index = #{submit_range}"
       grade_scale = submit_range ? @due_dates[submit_range].point_scaling : 0
       submission.score = grade_scale * submission.score
-      submission.message = "Submission recorded at  #{submission_time} with #{grade_scale} penalty\n" + submission.message
       submission
     end
 
