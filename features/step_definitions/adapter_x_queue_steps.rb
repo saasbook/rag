@@ -21,9 +21,10 @@ def fake_files(file_uris)
     FakeWeb.register_uri(:get, file_uris, :body => IO.read("#{BASE_FOLDER}#{local_file}"))
   end
 end
-Given(/^a submission of "(.*?)"$/) do |hw|
+Given(/^(I )?set up a test that requires internet connection$/)
   FakeWeb.allow_net_connect = true
 end
+
 Given(/^an XQueue that has submission "(.*?)" in queue$/) do |submission|
   response_file = "#{BASE_FOLDER}#{submission}"
   FakeWeb.register_uri(:get, %r|https://xqueue.edx.org/xqueue/get_submission/|, body: response_file)

@@ -8,15 +8,17 @@ Feature: Pulls code submissions from XQueue and grades them using information su
     And has been setup with the config file "conf.yml"
     Then I should receive a grade of "0.3" for my assignment
 
-  # this doesn't work because FakeWeb disallows network connections. We should probably turn it on for some tests to test.
+  # These tests can be slow and unreliable because they rely on heroku deployments. They may be down or need to spin up.
+  @require_net_connect
   Scenario: student submits a heroku deployment on edX
-    Given a submission of "hw2"
+    Given I set up a test that requires internet connection
     Given an XQueue that has submission "hw2_submission.json" in queue
     And has been setup with the config file "conf.yml"
     Then I should receive a grade of "1.0" for my assignment
 
+  @require_net_connect
   Scenario: student submits a hw5 submission (heroku) on edX
-    Given a submission of "hw5"
+    Given I set up a test that requires internet connection
     Given an XQueue that has submission "hw5_submission.json" in queue
     And has been setup with the config file "conf.yml"
     Then I should receive a grade of "1.0" for my assignment
