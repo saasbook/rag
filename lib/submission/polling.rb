@@ -12,7 +12,7 @@ module Submission
     def run
       loop do
         submission = next_submission_with_assignment
-        submission.nil? ? sleep(sleep_duration) : handle_submission(submission)
+        submission.nil? ? sleep(@sleep_duration) : handle_submission(submission)
       end
     end
 

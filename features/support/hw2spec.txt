@@ -33,7 +33,7 @@ class TableExtractor
 end
 
 describe "App" do
-  it "should respond to simple request [0 points]" do
+  it "should respond to simple request [0 points]" , points: 0 do
     agent = Mechanize.new
     page = agent.get($url)
   end
@@ -82,11 +82,11 @@ describe "Table header" do
     @startpage = Mechanize.new.get($url)
     @startpage = select_all_ratings_and_submit(@startpage)
   end
-  it "should have link to sort by title [10 points]" do
+  it "should have link to sort by title [10 points]" , points: 10 do
     page = @startpage.link_with(:id => 'title_header')
     page.should_not be_nil
   end
-  it "should have link to sort by release date [10 points]" do
+  it "should have link to sort by release date [10 points]" , points: 10 do
     page = @startpage.link_with(:id => 'release_date_header')
     page.should_not be_nil
   end
@@ -97,14 +97,14 @@ describe "Table" do
     @startpage = Mechanize.new.get($url)
     @startpage = select_all_ratings_and_submit(@startpage)
   end
-  it "should be sortable by title [20 points]" do
+  it "should be sortable by title [20 points]" , points: 20 do
     sorted_page = get_sort_link(@startpage, 'title').click
     table = sorted_page.parser.css("#movies").first
     column = TableExtractor.extract_column table, :title
     sorted?(column).should be_truthy
 
   end
-  it "should be sortable by release date [20 points]" do
+  it "should be sortable by release date [20 points]" , points: 20 do
     sorted_page = get_sort_link(@startpage, 'release_date').click
     table = sorted_page.parser.css("#movies").first
     column = TableExtractor.extract_column table, :release_date
@@ -116,14 +116,14 @@ describe "Table" do
   #  release_date = @startpage.parser.css('#release_date_header')
   #  # TODO check css styling
   #end
-  it "should highlight title header when sorted [20 points]" do
+  it "should highlight title header when sorted [20 points]" , points: 20 do
     sorted_page = get_sort_link(@startpage, 'title').click
     title = sorted_page.parser.css('#title_header')
     release_date = sorted_page.parser.css('#release_date_header')
     # TODO check css styling
     sorted_page.search('table[@id=movies]/thead/tr/th[1]')[0].attributes['class'].value.should =~ /\bhilite\b/
   end
-  it "should highlight release date header when sorted [20 points]" do
+  it "should highlight release date header when sorted [20 points]" , points: 20 do
     sorted_page = get_sort_link(@startpage, 'release_date').click
     title = sorted_page.parser.css('#title_header')
     release_date = sorted_page.parser.css('#release_date_header')
@@ -167,18 +167,18 @@ describe "GET /movies" do
   it "should be successful" do
   end
 
-  it "should have #ratings_form form [5 points]" do
+  it "should have #ratings_form form [5 points]" , points: 5 do
     @page.should_not be_nil
     @page.form_with(:id =>'ratings_form').should_not be_nil
   end
   
-  it "should have #ratings_submit button [5 points]" do
+  it "should have #ratings_submit button [5 points]" , points: 5 do
     # FIXME: In future offerings, tell students to specify an id for the form itself.
 
     @page.form_with(:id => 'ratings_form').button_with(:id => 'ratings_submit').should_not == nil
   end
 
-  it "should have checkboxes [5 points]" do
+  it "should have checkboxes [5 points]" , points: 5 do
     # FIXME
     # Use the following test case in the future
     @page.form_with(:id => 'ratings_form').checkboxes.each do |checkbox|
@@ -265,7 +265,7 @@ describe "GET /movies" do
   end
  
   context "When I first visit the page" do
-    it "should have all checkboxes checked  [8 points]" do
+    it "should have all checkboxes checked  [8 points]" , points: 8 do
      checked_boxes=@page.form_with(:id => 'ratings_form').checkboxes_with(:checked=>true)
      
      checkboxes= @page.form_with(:id => 'ratings_form').checkboxes.each do |checkbox|
@@ -273,7 +273,7 @@ describe "GET /movies" do
        checked_boxes.include?(checkbox).should be_truthy, "unchecked checkbox found with id #{checkbox[:id]}"
      end
     end
-    it "should have movies visible [7 points]" do
+    it "should have movies visible [7 points]" , points: 7 do
       initial_rows=0
       total_rows=0
       MoviesTable.new(@page).each_body_row do |row|
@@ -295,7 +295,7 @@ describe "GET /movies" do
     before(:each) do 
       @page = select_all_ratings_and_submit(@page)
     end
-    it "should only display movies of that rating [20 points]" do
+    it "should only display movies of that rating [20 points]" , points: 20 do
       response, rating = select_rating_and_submit
 
       # In response, check all of the rows for rating
@@ -308,7 +308,7 @@ describe "GET /movies" do
       count.should be >= 1
     end
 
-    it "should automatically check the selected rating in the response [25 points]" do
+    it "should automatically check the selected rating in the response [25 points]" , points: 25 do
       response, rating = select_rating_and_submit
       new_ratings_form = get_form(response)
 
@@ -344,7 +344,7 @@ describe "GET /movies" do
      before(:each) do 
       @page = select_all_ratings_and_submit(@page)
     end
-    it "should preserve the ratings filter [25 points]" do
+    it "should preserve the ratings filter [25 points]" , points: 25 do
       filtered_page, rating = select_rating_and_submit
       sorted_page = get_sort_link(filtered_page, 'title').click
       table = MoviesTable.new(sorted_page)
@@ -554,13 +554,13 @@ describe "GET /movies" do
   end
 
   context "when selecting a movie rating" do
-    it "should remember the rating selected [20 points]" do
+    it "should remember the rating selected [20 points]" , points: 20 do
       response, ratings = select_ratings_and_submit
       response = @agent.get(@movies_url) # blank parameters
       verify_ratings_filter(response, ratings)
     end
 
-    it "should allow new ratings to be selected [15 points]" do
+    it "should allow new ratings to be selected [15 points]" , points: 15 do
       ratings = find_ratings(@page)
       ratings.length.should be >= 2
       #repeats above test with deprecated methods
@@ -572,7 +572,7 @@ describe "GET /movies" do
       verify_ratings_filter(response, second_rating)
     end
 
-    it "should redirect to a RESTful route [15 points]" do
+    it "should redirect to a RESTful route [15 points]" , points: 15 do
       response, ratings = select_ratings_and_submit
       @agent.redirect_ok = false
       response = @agent.get(@movies_url)
@@ -581,19 +581,19 @@ describe "GET /movies" do
   end
 
   context "when selecting a sort field" do
-    it "should remember the sort order [20 points]" do
+    it "should remember the sort order [20 points]" , points: 20 do
       sorted_page = get_sort_link(@page, 'title').click
       response = @agent.get(@movies_url) # blank parameters
       verify_sort_order(response, :title)
     end
 
-    it "should allow a new sort order to be selected [15 points]" do
+    it "should allow a new sort order to be selected [15 points]" , points: 15 do
       sorted_page = get_sort_link(@page, 'title').click
       response = get_sort_link(@page, 'release_date').click
       verify_sort_order(response, :release_date)
     end
 
-    it "should redirect to a RESTful route [15 points]" do
+    it "should redirect to a RESTful route [15 points]" , points: 15 do
       response = get_sort_link(@page, 'title').click
       @agent.redirect_ok = false
       response = @agent.get(@movies_url)

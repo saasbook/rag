@@ -33,8 +33,10 @@ module Graders
     #   chosen grading strategy.  See each strategy's class for what options are
     #   expected or required by that strategy.
     # * +normalize+ - if given, normalize score to this maximum; default 100
-    require_relative 'graders/rspec_grader/rspec_grader'
-    require_relative 'graders/rspec_grader/heroku_rspec_grader'
+    
+    require_relative 'graders/rspec_grader/rspec_grader.rb'
+    require_relative 'graders/rspec_grader/heroku_rspec_grader.rb'
+    require_relative 'graders/rspec_grader/hw5_grader.rb'
     #TODO: FIGURE OUT HOW TO LOAD OTHER AUTOGRADERS IN SMART WAY. PROBABLY SHOULD BE DONE THROUGH EXTERNAL GEMS
 
 
