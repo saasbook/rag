@@ -21,7 +21,7 @@ def fake_files(file_uris)
     FakeWeb.register_uri(:get, file_uris, :body => IO.read("#{BASE_FOLDER}#{local_file}"))
   end
 end
-Given(/^(I )?set up a test that requires internet connection$/)
+Given(/^(?:|I) set up a test that requires internet connection$/) do
   FakeWeb.allow_net_connect = true
 end
 
