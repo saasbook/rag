@@ -48,5 +48,6 @@ verbose source ~/.rvm/scripts/rvm
 verbose git-clone-ifmissing-cd https://github.com/saasbook/rag.git ~/rag
 # To get a nice footer for screen for .screenrc
 verbose cp -f ~/rag/.screenrc ~/.screenrc
-#Take ssh key out of ENV hash and move to ./ssh
-verbose printenv GITHUB_DEPLOY_SSH_KEY > ~/.ssh
+#Take ssh key out of ENV hash and move to ./ssh.
+verbose printenv GITHUB_DEPLOY_SSH_KEY > ~/.ssh/id_rsa
+
