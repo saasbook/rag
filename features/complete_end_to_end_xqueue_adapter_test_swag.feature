@@ -22,3 +22,9 @@ Feature: Pulls code submissions from XQueue and grades them using information su
     Given an XQueue that has submission "hw5_submission.json" in queue
     And has been setup with the config file "conf.yml"
     Then I should receive a grade of "0" for my assignment
+  @require_net_connect
+  Scenario: student submits a homework (3) graded by FeatureGrader on edX
+    # Given I set up a test that requires internet connection
+    Given an XQueue that has submission "hw3_submission.json" in queue
+    And has been setup with the config file "conf.yml"
+    Then I should receive a grade of "0.4" for my assignment

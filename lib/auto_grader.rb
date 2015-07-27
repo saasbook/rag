@@ -37,6 +37,7 @@ module Graders
     require_relative 'graders/rspec_grader/rspec_grader.rb'
     require_relative 'graders/rspec_grader/heroku_rspec_grader.rb'
     require_relative 'graders/rspec_grader/hw5_grader.rb'
+    require_relative 'graders/feature_grader/hw3_grader.rb'
     #TODO: FIGURE OUT HOW TO LOAD OTHER AUTOGRADERS IN SMART WAY. PROBABLY SHOULD BE DONE THROUGH EXTERNAL GEMS
 
 

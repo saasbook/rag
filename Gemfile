@@ -3,7 +3,7 @@ source 'https://rubygems.org'
 ruby "2.2.2"
 
 gem 'rspec'
-gem 'cucumber'
+
 
 gem 'metric_fu'
 gem 'mechanize'
@@ -13,6 +13,8 @@ gem 'xqueue_ruby', :git => 'https://github.com/zhangaaron/xqueue-ruby'
 gem 'activerecord'
 
 group :development, :testing do
+	gem 'cucumber'
+	gem 'cucumber-rails'
   gem 'ZenTest'
   gem 'simplecov'
   gem 'fakeweb'
