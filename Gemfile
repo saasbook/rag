@@ -11,6 +11,7 @@ gem 'octokit'
 gem 'term-ansicolor'
 gem 'xqueue_ruby', :git => 'https://github.com/zhangaaron/xqueue-ruby'
 gem 'activerecord'
+gem 'ruby-filemagic'
 
 group :development, :testing do
   gem 'ZenTest'

@@ -50,4 +50,9 @@ verbose git-clone-ifmissing-cd https://github.com/saasbook/rag.git ~/rag
 verbose cp -f ~/rag/.screenrc ~/.screenrc
 #Take ssh key out of ENV hash and move to ./ssh.
 verbose printenv GITHUB_DEPLOY_SSH_KEY > ~/.ssh/id_rsa
+#Add required native extensions for ruby-filemagic gem
+verbose sudo apt-get install libmagic-dev
+verbose cd ~/rag/
+#verbose rvm use 2.2.2 # for some reason, rvm doesn't automatically change ruby version from inside script
+#verbose bundle-install-ifmissing
 

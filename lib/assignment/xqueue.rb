@@ -11,7 +11,6 @@ module Assignment
   # as well as the submission itself. Any adapter should be able to grade this
   # type of submission and return a response.
 
-  # versioning
   class Xqueue < Base
     def initialize(submission)
       grader_payload = submission.grader_payload
@@ -32,14 +31,13 @@ module Assignment
     protected
     # Get the spec file from grader payload download URI unless it already exists. Returns a file path, which is either a file or a directory containing spec files to run.
     def fetch_spec_file(spec_uri)
-      Dir.mkdir ENV['base_folder'] unless Dir.exist? ENV['base_folder']
       file_path = "#{ENV['base_folder']}#{@assignment_name}-spec"
       if not File.exist? file_path
         if spec_uri.include? '.git'  # lazy way of getting a git URI
           if system("git clone #{spec_uri} temp_repo")
             spec_from_repo('temp_repo/autograder', file_path)
           else
-            raise IOError.new() #"Fatal error: Retrieving spec files from #{spec_uri} repository failed."
+            raise IOError.new("Fatal error: Retrieving spec files from #{spec_uri} repository failed.") #
           end
         end
         session = Mechanize.new
@@ -47,8 +45,6 @@ module Assignment
       end
       file_path
     end
-
-
 
     def spec_from_repo repo_path, dest_path
       FileUtils.cp_r(repo_path, dest_path)

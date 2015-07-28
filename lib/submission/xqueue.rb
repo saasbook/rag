@@ -3,8 +3,9 @@ require_relative '../assignment/xqueue'
 require_relative 'polling'
 
 module Submission
-  ENV['base_folder'] = 'submissions/'
-  puts "ENV['base_folder'] set in module #{self} to #{ENV['base_folder']}"
+  ENV['BASE_FOLDER'] ||= 'submissions/'
+  FileUtils.mkdir ENV['BASE_FOLDER'] unless File.exist? ENV['BASE_FOLDER']
+  puts "Autograder is downloading remote files to #{ENV['BASE_FOLDER']}"
   class Xqueue < Polling
     attr_reader :x_queue
 
@@ -18,7 +19,7 @@ module Submission
       submission = @x_queue.get_submission
       return if submission.nil?
       submission.assignment = Assignment::Xqueue.new(submission)
-      submission.write_to_location! File.join( [ENV['base_folder'], submission.student_id].join(''),
+      submission.write_to_location! File.join( [ENV['BASE_FOLDER'], submission.student_id].join(''),
                         submission.assignment.assignment_name, Time.new.strftime(STRFMT))
       submission
     end
