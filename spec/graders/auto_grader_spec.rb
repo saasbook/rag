@@ -15,7 +15,7 @@ describe AutoGrader do
     it 'can create an RspecGrader with proper values' do
       grader = AutoGrader.create @submission_path, @assignment
       expect(grader).to be_a_kind_of(RspecGrader)
-      expect(grader.spec_file_path).to be == "#{ENV['base_folder']}assignment1-spec"
+      expect(grader.spec_file_path).to be == "#{ENV['BASE_FOLDER']}assignment1-spec"
     end
   end
 

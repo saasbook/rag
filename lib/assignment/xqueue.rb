@@ -31,7 +31,7 @@ module Assignment
     protected
     # Get the spec file from grader payload download URI unless it already exists. Returns a file path, which is either a file or a directory containing spec files to run.
     def fetch_spec_file(spec_uri)
-      file_path = "#{ENV['base_folder']}#{@assignment_name}-spec"
+      file_path = "#{ENV['BASE_FOLDER']}#{@assignment_name}-spec"
       if not File.exist? file_path
         if spec_uri.include? '.git'  # lazy way of getting a git URI
           if system("git clone #{spec_uri} temp_repo")
