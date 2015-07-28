@@ -1,3 +1,6 @@
+before_install:
+  - sudo apt-get update -qq
+  - sudo apt-get install -y libmagic-dev
 language: ruby
 rvm:
   - "2.2.2"
