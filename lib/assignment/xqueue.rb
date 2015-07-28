@@ -29,20 +29,31 @@ module Assignment
       submission
     end
 
-    private
-    # Get the spec file from grader payload download URI unless it already exists. Returns a file path.
+    protected
+    # Get the spec file from grader payload download URI unless it already exists. Returns a file path, which is either a file or a directory containing spec files to run.
     def fetch_spec_file(spec_uri)
       Dir.mkdir ENV['base_folder'] unless Dir.exist? ENV['base_folder']
       file_path = "#{ENV['base_folder']}#{@assignment_name}-spec"
-      if File.exist? file_path
-        File.open file_path
-      else
+      if not File.exist? file_path
+        if spec_uri.include? '.git'  # lazy way of getting a git URI
+          if system("git clone #{spec_uri} temp_repo")
+            spec_from_repo('temp_repo/autograder', file_path)
+          else
+            raise IOError.new() #"Fatal error: Retrieving spec files from #{spec_uri} repository failed."
+          end
+        end
         session = Mechanize.new
         File.open(file_path, 'w') { |f| f.write(session.get(spec_uri).body); f }
       end
       file_path
     end
 
+
+
+    def spec_from_repo repo_path, dest_path
+      FileUtils.cp_r(repo_path, dest_path)
+      FileUtils.rm_rf(repo_path)
+    end
   end
 
   # convenience mixin for managing submission times and point scalings
