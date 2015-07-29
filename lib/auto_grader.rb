@@ -1,4 +1,6 @@
-require 'timeout'
+
+#TODO: FIGURE OUT HOW TO LOAD OTHER AUTOGRADERS IN SMART WAY. PROBABLY SHOULD BE DONE THROUGH EXTERNAL GEMS
+
 
 module Graders
   def self.load_student_files(file_path)
@@ -33,12 +35,11 @@ module Graders
     #   chosen grading strategy.  See each strategy's class for what options are
     #   expected or required by that strategy.
     # * +normalize+ - if given, normalize score to this maximum; default 100
-    
+    require 'timeout'
     require_relative 'graders/rspec_grader/rspec_grader.rb'
     require_relative 'graders/rspec_grader/heroku_rspec_grader.rb'
     require_relative 'graders/rspec_grader/hw5_grader.rb'
     require_relative 'graders/feature_grader/hw3_grader.rb'
-    #TODO: FIGURE OUT HOW TO LOAD OTHER AUTOGRADERS IN SMART WAY. PROBABLY SHOULD BE DONE THROUGH EXTERNAL GEMS
 
 
     def self.create(submission_path, assignment)
