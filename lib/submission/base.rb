@@ -1,13 +1,9 @@
 require 'yaml'
-# require 'rag_logger'
 require 'byebug'
 module Submission
   class Base
-    # include RagLogger
-
     def initialize(_config_hash)
     end
-
     def run
       raise NotImplementedError, 'abstract method'
     end
@@ -22,7 +18,6 @@ module Submission
       assignment.apply_lateness! submission  # optionally scales submission by lateness and provides comments.
       submit_response(submission)
     end
-
     def submit_response(_submission)
       raise NotImplementedError.new('abstract method')
     end

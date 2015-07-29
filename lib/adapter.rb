@@ -1,8 +1,9 @@
 require 'yaml'
+require_relative 'submission/xqueue'
+require_relative 'auto_grader'
 
 module Submission
   DEFAULT_NAME = :xqueue
-
   # Formats autograder ouput for display in browser
   def self.format_for_html(text)
     "<pre>#{CGI.escape_html(text)}</pre>" # sanitize html
@@ -27,15 +28,10 @@ module Submission
       require_relative 'submission/xqueue'
       Xqueue
     else
-      err_no_adapter(name.inspect)
+      raise "Adapter not found: #{name}"
     end
   end
 
-  private
-
-  def self.err_no_adapter(name)
-    raise "Adapter not found: #{name}"
-  end
 
   def self.err_no_confs(path)
     raise <<-EOS
