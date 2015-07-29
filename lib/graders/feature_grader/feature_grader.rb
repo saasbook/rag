@@ -16,33 +16,6 @@ $CUKE_RUNNER = File.join(File.expand_path('lib/graders/feature_grader'), 'cuke_r
 module Graders
   class FeatureGrader < AutoGrader
 
-    class ScenarioMatcher
-      attr_reader :regex, :desc
-
-      # [+"match"+] +String+ regular expression for matching +cucumber+ output
-      def initialize(grader, h, config={})
-        raise(ArgumentError, "no regex") unless @regex = h["match"]
-
-        @config = config
-        @desc = h["desc"] || h["match"]
-        @regex = /#{@regex}/
-      end
-
-      # [+str+] _String_ to match against
-      def match?(str)
-        !!(str =~ @regex)
-      end
-
-      # Checks whether the given str represents the presence of this feature
-      def present_on?(str)
-        !!(str =~ /^\s*Scenario: #{@regex}/)
-      end
-
-      def to_s
-        @desc
-      end
-    end
-
     attr_accessor :features_archive, :description
     attr_reader   :features
     attr_reader   :logpath
@@ -56,26 +29,36 @@ module Graders
     # :call-seq:
     #   new(features_archive, grading_rules, app) -> FeatureGrader
 
-    def initialize(features_archive, grading_rules={})
+    # submission_path is already unarchived before it gets here
+    # TODO: assignment might need to contain path to rottenpotatoes (the app) "assignment[:app]"
+    def initialize(submission_path, assignment)
       @output = []
       @m_output = Mutex.new
       @features = []
+      @description = assignment.assignment_spec_file
+      @temp = TempArchiveFile.new(submission_path)
 
-      unless @features_archive = features_archive and File.file? @features_archive and File.readable? @features_archive
-        raise ArgumentError, "Unable to find features archive #{@features_archive.inspect}"
-      end
-
-      unless @description = (grading_rules[:spec] || grading_rules[:description]) and File.file? @description and File.readable? @description
-        raise ArgumentError, "Unable to find description file #{@description.inspect}"
-      end
-
-      $config = {:mt => grading_rules.has_key?(:mt) ? grading_rules[:mt] : true} # TODO merge all the configs
-      $config[:mt] = (ENV["AG_MT"] =~ /1|true/i) if ENV.has_key?("AG_MT")
-      $config[:mt] = false
-
-      @temp = TempArchiveFile.new(@features_archive)
-      @logpath = File.expand_path(File.join('.', 'log', "hw3_#{File.basename @temp.path}.log"))
     end
+    # def initialize(features_archive, grading_rules={})
+    #   @output = []
+    #   @m_output = Mutex.new
+    #   @features = []
+
+    #   unless @features_archive = features_archive and File.file? @features_archive and File.readable? @features_archive
+    #     raise ArgumentError, "Unable to find features archive #{@features_archive.inspect}"
+    #   end
+
+    #   unless @description = (grading_rules[:spec] || grading_rules[:description]) and File.file? @description and File.readable? @description
+    #     raise ArgumentError, "Unable to find description file #{@description.inspect}"
+    #   end
+
+    #   $config = {:mt => grading_rules.has_key?(:mt) ? grading_rules[:mt] : true} # TODO merge all the configs
+    #   $config[:mt] = (ENV["AG_MT"] =~ /1|true/i) if ENV.has_key?("AG_MT")
+    #   $config[:mt] = false
+
+    #   @temp = TempArchiveFile.new(@features_archive)
+    #   @logpath = File.expand_path(File.join('.', 'log', "hw3_#{File.basename @temp.path}.log"))
+    # end
 
     def log(*args)
       @m_output.synchronize do
@@ -87,11 +70,11 @@ module Graders
       self.comments = @output.join("\n")
       @m_output.synchronize do
         STDOUT.puts *@output
-        File.open(@logpath, 'a') {|f| f.puts *@output}
+        #File.open(@logpath, 'a') {|f| f.puts *@output}
       end
     end
 
-    def grade!
+    def grade
       begin
         load_description
 
@@ -99,12 +82,12 @@ module Graders
 
         start_time = Time.now
 
-        score = Feature.total(@features)   # TODO integrate Score
+        score = Feature.total(@features)   # TODO: integrate Score
 
         @raw_score, @raw_max = score.points, score.max
 
         log "Total score: #{@raw_score} / #{@raw_max}"
-        log "Completed in #{Time.now-start_time} seconds."
+        log "Completed in #{Time.now - start_time} seconds."
         dump_output
       ensure
         @temp.destroy if @temp

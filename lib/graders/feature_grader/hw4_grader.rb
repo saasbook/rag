@@ -18,28 +18,6 @@ module Graders
   # +AutoGrader+ that scores using weird stuff
   class HW4Grader < AutoGrader
 
-    class ScenarioMatcher
-      attr_reader :regex, :desc
-
-      # [+"match"+] +String+ regular expression for matching +cucumber+ output
-      def initialize(grader, h, config={})
-        raise(ArgumentError, "no regex") unless @regex = h["match"]
-
-        @config = config
-        @desc = h["desc"] || h["match"]
-        @regex = /#{@regex}/
-      end
-
-      # [+str+] _String_ to match against
-      def match?(str)
-        !!(str =~ @regex)
-      end
-
-      def to_s
-        @desc
-      end
-    end
-
     attr_accessor :submission_archive, :description
     attr_reader   :logpath
     attr_reader   :cov_opts
