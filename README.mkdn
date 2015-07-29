@@ -15,15 +15,17 @@ Travis C. I. [![Build Status](https://travis-ci.org/saasbook/rag.png)](https://t
 Usage
 --------------------
 
-1. Launch an EC2 instance (micro is fine) with autograder AMI
+1. Launch an EC2 instance (micro is fine) with autograder AMI. If you are using solutions from a private repo, make sure you set up a deploy key and place it into the Amazon ENV as GITHUB_DEPLOY_KEY. 
 
 2. hw6Grader1 has the latest version of rag, so move the content from it to the new instance.
    * You might want to move the logs before you copy as they take up a lot of space.
 
     NOTE: <i>Somebody should make a new AMI with the updated connection code, and enabled to pull from the saasbook repos</i>
 
-Configuration
+Configuration and setup
 ------------------------
+The ubuntu_install.sh script is provided in the repo for easy set up on Amazon machines. You can also refer to it to set up it locally.
+
 
 There is one config file hosted locally on the autograder required for setup with edX: ```config/conf.yml```.
 
@@ -65,15 +67,8 @@ There is one config file hosted locally on the autograder required for setup wit
 Execution and tests
 --------------------------------
 
-####To run the autograder connection program:
-
-Currently you can do it from irb with the following commands:
-	```
-	>@adapter = Submission.load('config_path')
-	>@adapter.run
-	```
-There will be a script coming soon so that this can be run from CLI. The grader should not crash due to student input.
-
+####To run the autograder program:
+ ``` bundle exec ruby run_autograder.rb path/to/configfile ```
 
 ## The mutation testing/feature grader (HW 3)
 
