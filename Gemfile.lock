@@ -244,6 +244,7 @@ GEM
       diff-lcs (>= 1.2.0, < 2.0)
       rspec-support (~> 3.3.0)
     rspec-support (3.3.0)
+    ruby-filemagic (0.7.0)
     ruby-progressbar (1.7.5)
     ruby_parser (3.7.0)
       sexp_processor (~> 4.1)
@@ -304,6 +305,7 @@ DEPENDENCIES
   metric_fu
   octokit
   rspec
+  ruby-filemagic
   simplecov
   simplecov-rcov
   term-ansicolor

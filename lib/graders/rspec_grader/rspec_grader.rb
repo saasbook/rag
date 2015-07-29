@@ -53,7 +53,14 @@ module Graders
 
     def runner_block
       Graders.load_student_files(@submission_path) if @load_student_files
-      compute_points(@spec_file_path)
+      if File.directory? @spec_file_path
+        combined_grade_hash = {}
+        Dir[File.join(file_path, '*.rb')].each do  |file_name|
+          combined_grade_hash.merge!(compute_points(file_name)) {|key, accumulated_val, val| accumulated_val + val}
+        end
+      else
+        compute_points(@spec_file_path)
+      end
     end
   end
 end
