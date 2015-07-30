@@ -55,9 +55,10 @@ module Graders
       Graders.load_student_files(@submission_path) if @load_student_files
       if File.directory? @spec_file_path
         combined_grade_hash = {}
-        Dir[File.join(file_path, '*.rb')].each do  |file_name|
-          combined_grade_hash.merge!(compute_points(file_name)) {|key, accumulated_val, val| accumulated_val + val}
+        Dir[File.join(@spec_file_path, '*.rb')].each do  |file_name|
+          combined_grade_hash = combined_grade_hash.merge(compute_points(file_name)) {|key, accumulated_val, val| accumulated_val + val}
         end
+        combined_grade_hash
       else
         compute_points(@spec_file_path)
       end
