@@ -49,7 +49,7 @@ module Assignment
 
     def spec_from_repo repo_path, dest_path
       FileUtils.cp_r(repo_path, dest_path)
-      FileUtils.rm_rf(repo_path)
+      FileUtils.rm_rf('temp_repo')
     end
   end
 
