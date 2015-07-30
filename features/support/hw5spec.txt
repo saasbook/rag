@@ -123,12 +123,12 @@ end
 # the supplied admin username and password are correct, and that the target
 # is running as expected.
 describe 'Typo' do
-  it 'should respond to a simple request [0 points]' do
+  it 'should respond to a simple request [0 points]' , points: 0 do
     agent = Mechanize.new
     page = agent.get($host)
   end
 
-  it 'should authenticate the supplied user as an administrator [0 points]' do
+  it 'should authenticate the supplied user as an administrator [0 points]' , points: 0 do
     agent = Mechanize.new
     page = agent.get URI.join($host, 'accounts/login')
 
@@ -142,7 +142,7 @@ describe 'Typo' do
     end
   end
 
-  it 'should post new articles [0 points]' do
+  it 'should post new articles [0 points]' , points: 0 do
     agent = Mechanize.new
     login(agent, $admin_user, $admin_pass)
     clean_autograder_articles(agent)
@@ -169,7 +169,7 @@ describe 'Typo' do
     end
   end
 
-  it 'should post comments on articles [0 points]' do
+  it 'should post comments on articles [0 points]' , points: 0 do
     agent = Mechanize.new
     login(agent, $admin_user, $admin_pass)
     clean_autograder_articles(agent)
@@ -189,7 +189,7 @@ describe 'Typo' do
     end
   end
 
-  it 'create blog publisher users [0 points]' do
+  it 'create blog publisher users [0 points]' , points: 0 do
     agent = Mechanize.new
     login(agent, $admin_user, $admin_pass)
     clean_autograder_publisher(agent)
@@ -229,7 +229,7 @@ describe 'The article merge feature' do
     clean_autograder_articles(@agent)
   end
 
-  it 'should be shown on the article edit page [15 points]' do
+  it 'should be shown on the article edit page [15 points]' , points: 15 do
     article_id = create_article(@agent,
                                 'Blag Post 1234',
                                 'Lorem ipsum')
@@ -239,7 +239,7 @@ describe 'The article merge feature' do
     page.search('input[name="merge_with"]').size.should == 1
   end
 
-  it 'should create a single merged article [15 points]' do
+  it 'should create a single merged article [15 points]' , points: 15 do
     ids = [create_article(@agent,
                           'Blag Post A',
                           'Derp derp derp derp 12344321'),
@@ -260,7 +260,7 @@ describe 'The article merge feature' do
   end
 
   it 'should create an article with the text of both original articles ' +
-         '[20 points]' do
+         '[20 points]' , points: 20 do
     ids = [create_article(@agent,
                           'Blag Post A',
                           'Derp derp derp derp 12344321'),
@@ -274,7 +274,7 @@ describe 'The article merge feature' do
     page.body.should include 'Lorem ipsum dolor sit amet'
   end
 
-  it 'should carry over the comments from both merged articles [20 points]' do
+  it 'should carry over the comments from both merged articles [20 points]' , points: 20 do
     ids = [create_article(@agent,
                           'Blag Post A',
                           'Derp derp derp derp 12344321'),
@@ -291,7 +291,7 @@ describe 'The article merge feature' do
     page.body.should include 'And one more thing..'
   end
 
-  it 'should only show the merge button to administrators [15 points]' do
+  it 'should only show the merge button to administrators [15 points]' , points: 15 do
     begin
       create_publisher(@agent, 'cs169_ag_publisher', 'aaaaaaaa')
       pub_agent = Mechanize.new
@@ -311,7 +311,7 @@ describe 'The article merge feature' do
     end
   end
 
-  it 'should only allow administrators to merge articles [15 points]' do
+  it 'should only allow administrators to merge articles [15 points]' , points: 15 do
     begin
       create_publisher(@agent, 'cs169_ag_publisher', 'aaaaaaaa')
       pub_agent = Mechanize.new
