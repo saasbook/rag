@@ -10,5 +10,6 @@ require 'fakeweb'
 
 After do
   [@codefile, @specfile].each { |file| File.unlink(file) if (file && File.readable?(file)) }
+  FileUtils.rm_rf('submissions')  # clear caching for each test. Works with or without
 end
 

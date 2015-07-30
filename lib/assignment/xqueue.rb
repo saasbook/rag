@@ -37,18 +37,19 @@ module Assignment
           if system("git clone #{spec_uri} temp_repo")
             spec_from_repo('temp_repo/autograder', file_path)
           else
-            raise IOError.new("Fatal error: Retrieving spec files from #{spec_uri} repository failed.") #
+            raise IOError.new("Fatal error: Retrieving spec files from #{spec_uri} repository failed.")
           end
+        else
+          session = Mechanize.new
+          File.open(file_path, 'w') { |f| f.write(session.get(spec_uri).body); f}
         end
-        session = Mechanize.new
-        File.open(file_path, 'w') { |f| f.write(session.get(spec_uri).body); f }
       end
       file_path
     end
 
     def spec_from_repo repo_path, dest_path
       FileUtils.cp_r(repo_path, dest_path)
-      FileUtils.rm_rf(repo_path)
+      FileUtils.rm_rf('temp_repo')
     end
   end
 

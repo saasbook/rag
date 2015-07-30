@@ -32,7 +32,7 @@ Given(/^an XQueue that has submission "(.*?)" in queue$/) do |submission|
   submission = XQueueSubmission.create_from_JSON(double('XQueue'), JSON_string)
   puts submission.files.values
   fake_files(submission.files.values)
-  fake_files(submission.grader_payload['assignment_spec_uri'])
+  fake_files(submission.grader_payload['assignment_spec_uri']) if submission.grader_payload['assignment_spec_uri'].include? 'fakedownload'
   XQueue.any_instance.stub(:authenticated?).and_return(true)
   XQueue.any_instance.stub(:queue_length).and_return(1)
   allow_any_instance_of(XQueue).to receive(:put_result) do |_instance, header, score, correct, message|
