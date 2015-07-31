@@ -36,24 +36,15 @@ module Graders
         #
         def total(features=[])
           s = Score.new
-          #m = Mutex.new
-          # threads = []
+
           features.each do |f|
-            # t = Thread.new do
               begin
                 result = f.run!
                 s+= result
-                #m.synchronize { s += result }
               rescue TestFailedError, IncorrectAnswer
                 s += -result
-                #m.synchronize { s += -result }
               end
-            # end
-            # t.join unless $config[:mt]
-            # threads << t
           end
-          # threads.each(&:join)
-
           # Dump output. TODO: better way to do this?
           features.each { |f| f.dump_output }
           return s
@@ -106,8 +97,6 @@ module Graders
 
       def run!
         log '-'*80
-        #puts "Hhhhhhhhhhhhhhhhhhhhhhhhhhhh"
-
         h = @env.dup
         score = Score.new
         num_failed = 0
@@ -132,10 +121,8 @@ module Graders
           raise TestFailedError, "Nonexistent feature file #{h["FEATURE"]}" unless File.readable? h["FEATURE"]
           raise(TestFailedError, "Failed to find test db") unless File.readable? SOURCE_DB
           FileUtils.cp SOURCE_DB, h["TEST_DB"]
-
           Open3.popen3(h, $CUKE_RUNNER, popen_opts) do |stdin, stdout, stderr, wait_thr|
             #exit_status = wait_thr.value
-
             lines = stdout.readlines
             lines.each(&:chomp!)
             self.send :process_output, lines
