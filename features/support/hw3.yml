@@ -1,4 +1,5 @@
 ---
+base_app_path: "rottenpotatoes"
 scenarios:
   - &restrict_pg_r
     match: "restrict to movies with [\"\']PG[\"\'] or [\"\']R[\"\'] ratings"

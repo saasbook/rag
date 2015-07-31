@@ -16,4 +16,5 @@ def put_points(spec_path)
   end
   t_file.close
   FileUtils.mv(t_file.path, spec_path)
+  return "success!"
 end

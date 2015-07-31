@@ -1,0 +1,117 @@
+html, body {
+  margin: 0;
+  padding: 0;
+  background: White;
+  color: DarkSlateGrey;
+  font-family: Tahoma, Verdana, sans-serif;
+  font-size: 10pt;
+}
+h2 {
+  margin: 1em 0 .5em;
+  padding: 0;
+  background: transparent;
+  color: maroon;
+  font-size: 1.5em;
+}
+.odd {
+  background: white;
+}
+.even {
+  background: wheat;
+}
+a {
+  background: transparent;
+  color: maroon;
+  text-decoration: underline;
+  font-weight: bold;
+}
+h1 {
+  margin: 0 0 1em;
+  padding: 10px;
+  background-color: orange;
+  color: white;
+  border-bottom: 4px solid gold;
+  font-size: 2em;
+}
+h1 a {
+  text-decoration: none;
+  background: transparent;
+  color: white;
+}
+table#movies {
+  border-collapse: collapse;
+  width: 100%;
+  border-bottom: 2px solid black;
+}
+table#movies th {
+  border: 2px solid black;
+  font-weight: bold;
+}
+table#movies th, table#movies td {
+  padding: 4px;
+  text-align: left;
+}
+em {
+  font-weight: bold;
+  font-style: normal;
+}
+div#body {
+  margin: 0;
+  padding: 0 20px 20px;
+}
+.errorExplanation {
+  padding: 0 10px;
+  margin: 1em 2px;
+  border: 2px solid red;
+  background: #fcb;
+}
+.errorExplanation h2 {
+  font-size: 1.1em;
+  color: red;
+}
+.errorExplanation ul {
+  list-style: disc inside;
+}
+div.fieldWithErrors {
+  display: inline;
+}
+.fieldWithErrors input, .fieldWithErrors textarea, .fieldWithErrors select {
+  background: #fcb;
+}
+#flash_notice {
+  background: rosybrown;
+  margin: 1em 0;
+  padding: 4px;
+}
+#flash_error {
+  background: pink;
+  margin: 1em 0;
+  padding: 4px;
+}
+ul#page_nav {
+  margin: 2em 0 0;
+  padding: 0;
+  list-style: none;
+}
+ul#page_nav li {
+  margin: 1em 0;
+  padding: 0;
+}
+form ul {
+  margin: 10px;
+  padding: 0;
+  list-style: none;
+}
+form li {
+  margin: 1em 0;
+  padding: 0;
+}
+form label {
+  display: inline-block;
+  width: 150px;
+  vertical-align: top;
+  line-height: 25px;
+}
+form #submit {
+  margin-left: 150px;
+}

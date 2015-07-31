@@ -40,8 +40,10 @@ module Assignment
             raise IOError.new("Fatal error: Retrieving spec files from #{spec_uri} repository failed.")
           end
         else
+          Dir.mkdir ENV['BASE_FOLDER'] unless Dir.exist? ENV['BASE_FOLDER']
           session = Mechanize.new
-          File.open(file_path, 'w') { |f| f.write(session.get(spec_uri).body); f}
+          b = session.get(spec_uri).body
+          File.open(file_path, 'w') { |f| f.write(b); f}
         end
       end
       file_path

@@ -283,5 +283,27 @@ module Graders
       end
 
     end
+
+    class ScenarioMatcher
+      attr_reader :regex, :desc
+
+      # [+"match"+] +String+ regular expression for matching +cucumber+ output
+      def initialize(grader, h, config={})
+        raise(ArgumentError, "no regex") unless @regex = h["match"]
+
+        @config = config
+        @desc = h["desc"] || h["match"]
+        @regex = /#{@regex}/
+      end
+
+      # [+str+] _String_ to match against
+      def match?(str)
+        !!(str =~ @regex)
+      end
+
+      def to_s
+        @desc
+      end
+    end
   end
 end
