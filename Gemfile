@@ -12,7 +12,7 @@ gem 'term-ansicolor'
 gem 'xqueue_ruby', :git => 'https://github.com/zhangaaron/xqueue-ruby'
 gem 'activerecord'
 gem 'ruby-filemagic'
-
+gem 'sqlite3'
 group :development, :testing do
   gem 'ZenTest'
   gem 'simplecov'
@@ -22,4 +22,5 @@ group :development, :testing do
   gem 'byebug'
   gem 'addressable'
   gem 'timecop'
+  gem 'database_cleaner'
 end

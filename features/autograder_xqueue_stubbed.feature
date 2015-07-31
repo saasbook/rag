@@ -31,9 +31,9 @@ Feature: Autograder configured to accept student submissions from edX and grade 
     Given an XQueue that has submission "hw5_submission.json" in queue
     And has been setup with the config file "conf.yml"
     Then I should receive a grade of "0" for my assignment
-  @require_net_connect
+  #@require_net_connect
   Scenario: student submits a HW3
     #Given I set up a test that requires internet connection
     Given an XQueue that has submission "hw3_submission.json" in queue
     And has been setup with the config file "conf.yml"
-    Then I should receive a grade of "0.4" for my assignment
+    Then I should receive a grade of "0.6" for my assignment
