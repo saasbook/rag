@@ -1,6 +1,6 @@
 GIT
   remote: https://github.com/zhangaaron/xqueue-ruby
-  revision: cdac2706213e13eab9290c121e89f2769979aa8d
+  revision: 04dbce8579f76d300e6451fa5675bddfeb0c171d
   specs:
     xqueue_ruby (0.0.1)
       activemodel
@@ -270,7 +270,7 @@ GEM
       tins (~> 1.0)
     thor (0.19.1)
     thread_safe (0.3.5)
-    timecop (0.7.4)
+    timecop (0.8.0)
     tins (1.5.4)
     tzinfo (1.2.2)
       thread_safe (~> 0.1)
