@@ -123,6 +123,7 @@ module Graders
           FileUtils.cp SOURCE_DB, h["TEST_DB"]
           Open3.popen3(h, $CUKE_RUNNER, popen_opts) do |stdin, stdout, stderr, wait_thr|
             #exit_status = wait_thr.value
+
             lines = stdout.readlines
             lines.each(&:chomp!)
             self.send :process_output, lines

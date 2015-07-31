@@ -38,6 +38,6 @@ end
 begin
   main
 rescue Object => e
-  puts "*** ERROR: #{e.inspect}"
+  puts "\n *** ERROR: #{e.inspect} *** \n"
   #puts e.backtrace
 end

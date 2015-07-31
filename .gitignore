@@ -8,6 +8,7 @@ config/autograders.yml
 .idea/
 coverage/
 submissions/
+rottenpotatoes/
 rspec_output.txt
 config/conf_passwords.yml
 stdout_subprocess
