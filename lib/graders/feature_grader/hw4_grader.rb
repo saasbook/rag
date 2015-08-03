@@ -18,7 +18,7 @@ module Graders
   # +AutoGrader+ that scores using weird stuff
   class HW4Grader < AutoGrader
 
-    attr_accessor :submission_archive, :description
+    attr_accessor :comments, :description
     attr_reader   :logpath
     attr_reader   :cov_opts
 
@@ -31,105 +31,86 @@ module Graders
     # :call-seq:
     #   new(submission_archive, grading_rules, app) -> FeatureGrader
 
-    def initialize(submission_archive, grading_rules={})
+    def initialize(submission_path, assignment)
       @output = []
-      @m_output = Mutex.new
+      @description = assignment.assignment_spec_file
+      @temp = submission_path
 
-      unless @submission_archive = submission_archive and File.file? @submission_archive and File.readable? @submission_archive
-        raise ArgumentError, "Unable to find submission archive #{@submission_archive.inspect}"
-      end
-
-      unless @description = (grading_rules[:spec] || grading_rules[:description]) and File.file? @description and File.readable? @description
-        raise ArgumentError, "Unable to find description file #{@description.inspect}"
-      end
-
-      $config = {:mt => grading_rules.has_key?(:mt) ? grading_rules[:mt] : true} # TODO merge all the configs
-      $config[:mt] = (ENV["AG_MT"] =~ /1|true/i) if ENV.has_key?("AG_MT")
-      $config[:mt] = false
-
-      @temp = TempArchiveFile.new(@submission_archive)
-      @logpath = File.expand_path(File.join('.', 'log', "hw4_#{File.basename @temp.path}.log"))
     end
 
     def log(*args)
-      @m_output.synchronize do
-        @output += [*args]
-      end
+
+      @output += [*args]
+
     end
 
     def dump_output
-      self.comments = @output.join("\n")
-      @m_output.synchronize do
-        STDOUT.puts *@output
-        File.open(@logpath, 'a') {|f| f.puts *@output}
-      end
+      @comments = @output.join("\n")
+
     end
 
-    def grade!
-      begin
-        load_description
+    def grade
+      load_description
 
-        @raw_score = 0
-        @raw_max = 0
-        start_time = Time.now
+      @raw_score = 0
+      @raw_max = 0
+      start_time = Time.now
 
-        Dir.mktmpdir('hw4_grader', '/tmp') do |tmpdir|
-          # Copy base app
-          FileUtils.cp_r Dir.glob(File.join(@base_app_path,"*")), tmpdir
+      Dir.mktmpdir('hw4_grader', '/tmp') do |tmpdir|
+        # Copy base app
+        FileUtils.cp_r Dir.glob(File.join(@base_app_path,"*")), tmpdir
 
-          # Copy submission files over base app
-          ## TODO: Double check that file structure is correct
-          FileUtils.cp_r Dir.glob(File.join(@temp.path,"/*")), tmpdir
+        # Copy submission files over base app
+        ## TODO: Double check that file structure is correct
+        FileUtils.cp_r Dir.glob(File.join(@temp,"/*")), tmpdir
 
-          # Cleanup things
-          FileUtils.rm_rf File.join(tmpdir, "coverage")
+        # Cleanup things
+        FileUtils.rm_rf File.join(tmpdir, "coverage")
 
-          Dir.chdir(tmpdir) do 
-            env = {
-              'RAILS_ROOT' => tmpdir,
-              'RAILS_ENV' => 'test'
-            }
-            time_operation 'setup' do
-              setup_rails_app(env)
-            end
-            separator = '-'*40  # TODO move this
+        Dir.chdir(tmpdir) do 
+          env = {
+            'RAILS_ROOT' => tmpdir,
+            'RAILS_ENV' => 'test'
+          }
+          time_operation 'setup' do
+            setup_rails_app(env)
+          end
+          separator = '-'*40  # TODO move this
 
-            time_operation 'student tests' do
-              log separator
-              log "Running student tests found in features/ spec/:"
-              check_student_tests(env)
-              log separator
-            end
+          time_operation 'student tests' do
+            log separator
+            log "Running student tests found in features/ spec/:"
+            check_student_tests(env)
+            log separator
+          end
 
-            log ''
+          log ''
 
-            # Check coverage
-            time_operation 'coverage' do
-              log separator
-              log "Checking coverage for:"
-              check_code_coverage
-              log separator
-            end
+          # Check coverage
+          time_operation 'coverage' do
+            log separator
+            log "Checking coverage for:"
+            check_code_coverage
+            log separator
+          end
 
-            log ''
+          log ''
 
-            # Check reference cucumber
-            time_operation 'reference cucumber' do
-              log separator
-              log 'Running reference Cucumber scenarios:'
-              test_prepare(env)
-              check_ref_cucumber
-              log separator
-            end
+          # Check reference cucumber
+          time_operation 'reference cucumber' do
+            log separator
+            log 'Running reference Cucumber scenarios:'
+            test_prepare(env)
+            check_ref_cucumber
+            log separator
           end
         end
-
-        log "Total score: #{@raw_score} / #{@raw_max}"
-        log "Completed in #{Time.now-start_time} seconds."
-        dump_output
-      ensure
-        @temp.destroy if @temp
       end
+
+      log "Total score: #{@raw_score} / #{@raw_max}"
+      log "Completed in #{Time.now-start_time} seconds."
+      dump_output
+      {raw_score: @raw_score, raw_max: @raw_max, comments: @comments}
     end
 
     private

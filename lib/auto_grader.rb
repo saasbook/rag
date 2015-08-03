@@ -40,6 +40,7 @@ module Graders
     require_relative 'graders/rspec_grader/heroku_rspec_grader.rb'
     require_relative 'graders/rspec_grader/hw5_grader.rb'
     require_relative 'graders/feature_grader/hw3_grader.rb'
+    require_relative 'graders/feature_grader/hw4_grader.rb'
 
 
     def self.create(submission_path, assignment)

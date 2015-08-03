@@ -1,0 +1,33 @@
+base_app_path: hw4_grader_stuff/hw4_rottenpotatoes/
+
+student_cucumber:
+  points: 40
+
+ref_cucumber:
+  points: 40
+  scenarios:
+    - &add_director
+      match: "add director to existing movie"
+    - &find_same
+      match: "find movie with same director"
+    - &sad
+      match: "can't find similar movies if we don't know director (sad path)"
+  features:
+    - &step1
+      FEATURE: required_features/director.feature
+      pass: true
+      weight: 0.5
+    - &step2
+      FEATURE: required_features/director.feature
+      pass: true
+      weight: 0.25
+    - &step3
+      FEATURE: required_features/director.feature
+      pass: true
+      weight: 0.25
+
+coverage:
+  points: 20
+  pass_threshold:
+    controllers: 0.9
+    models: 0.9
