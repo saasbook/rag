@@ -59,15 +59,16 @@ module Graders
       Dir.mktmpdir('hw4_grader', '/tmp') do |tmpdir|
         # Copy base app
         FileUtils.cp_r Dir.glob(File.join(@base_app_path,"*")), tmpdir
-
+        #raise "#{FileUtils.compare_file(Dir.glob(File.join(@base_app_path,"*")), tmpdir)}"
         # Copy submission files over base app
         ## TODO: Double check that file structure is correct
         FileUtils.cp_r Dir.glob(File.join(@temp,"/*")), tmpdir
-
         # Cleanup things
         FileUtils.rm_rf File.join(tmpdir, "coverage")
-
+        log tmpdir
+        log "--"
         Dir.chdir(tmpdir) do 
+          log Dir.pwd
           env = {
             'RAILS_ROOT' => tmpdir,
             'RAILS_ENV' => 'test'
@@ -201,7 +202,6 @@ module Graders
       @raw_max += @cov_pts
 
       log @cov_opts[:pass_threshold].collect {|g,t| "  #{g} >= #{format '%.2f%%', t*100}"}.join("\n")
-
       c = CovHelper.new(File.join(Dir::getwd, 'coverage', 'index.html'), @cov_opts)
       c.parse!
 
