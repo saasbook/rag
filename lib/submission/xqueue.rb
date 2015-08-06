@@ -18,6 +18,7 @@ module Submission
     def next_submission_with_assignment
       submission = @x_queue.get_submission
       return if submission.nil?
+      puts submission.inspect
       submission.assignment = Assignment::Xqueue.new(submission)
       submission.write_to_location! File.join( [ENV['BASE_FOLDER'], submission.student_id].join(''),
                         submission.assignment.assignment_name, Time.new.strftime(STRFMT))
