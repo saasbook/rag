@@ -63,7 +63,12 @@ module Graders
     private
 
     def load_description
-      y = YAML::load_file(@description)
+      if File.directory? @description
+        # gets the first yaml file
+        dir = Dir[File.join(@description, '*.yml')]
+        @description = dir[0]
+      end
+      y = YAML.load_file(@description)
       @base_app_path = y['base_app_path']
       # This does some hacky stuff to get references to work properly
       @config = {

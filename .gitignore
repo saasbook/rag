@@ -4,7 +4,7 @@
 log/*
 config/conf.yml
 config/autograders.yml
-
+config/
 .idea/
 coverage/
 submissions/

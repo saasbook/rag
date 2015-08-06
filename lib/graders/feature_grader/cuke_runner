@@ -16,7 +16,6 @@ def main
     "--require=#{File.join('features', 'support', 'env.rb')}",  # the bootstrapped one
     #"--require=#{File.join('features', 'support', '_rag.rb')}",
     "TEST_DB=#{ENV['TEST_DB']}",
-
     "version=#{ENV['version']}",   # XXX envvars have to be explicitly passed to drb...
     ENV["FEATURE"]
   ]
