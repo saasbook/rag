@@ -39,24 +39,28 @@ describe Assignment::Xqueue do
       @submission.stub(:submission_time).and_return(Time.parse('2000-01-01'))
       @assignment.apply_lateness! @submission
       expect(@submission.score).to be == 1.0
+      expect(@submission.message).to include('on time')
     end
 
     it 'should penalize assignments that are in grace period' do
       @submission.stub(:submission_time).and_return(Time.parse('2000-01-02'))
       @assignment.apply_lateness! @submission
       expect(@submission.score).to be == 0.75
+      expect(@submission.message).to include('late')
     end
 
     it 'should penalize assignments that are in late period' do
       @submission.stub(:submission_time).and_return(Time.parse('2000-01-03'))
       @assignment.apply_lateness! @submission
       expect(@submission.score).to be == 0.50
+      expect(@submission.message).to include('late')
     end
 
     it 'should not award points to assignments submitted past time' do
       @submission.stub(:submission_time).and_return(Time.parse('2100-01-25'))
       @assignment.apply_lateness! @submission
       expect(@submission.score).to be == 0.0
+      expect(@submission.message).to include('late')
     end
   end
 end
