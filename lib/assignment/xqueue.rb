@@ -17,6 +17,12 @@ module Assignment
     end
   end
 
+  def self.late_comments(submission_time, is_late)
+    "Your submission was recorded at #{submission_time} : ".concat(
+        is_late ?  "submission is on time.\n" :
+            "submission is late and scaled by #{grade_scale}\n")
+  end
+
   # this class contains both the assignment info extracted from grader_payload
   # as well as the submission itself. Any adapter should be able to grade this
   # type of submission and return a response.
@@ -35,9 +41,7 @@ module Assignment
       submit_range = @due_dates.map {|due_date| submission_time < due_date}.find_index(true) #return index of which date range submission falls into. if nil,
       grade_scale = submit_range ? @due_dates[submit_range].point_scaling : 0
       submission.score = grade_scale * submission.score
-      submission.message = "Your submission was recorded at #{submission_time} : ".concat(
-                        (grade_scale == 1.0) ?  "submission is on time.\n" :
-                            "submission is late and scaled by #{grade_scale}\n").concat(submission.message)
+      submission.message = Assignment::late_comments(submission_time, grade_scale == 1.0) + submission.message
       submission
     end
 
