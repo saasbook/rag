@@ -17,7 +17,7 @@ module Assignment
     end
   end
 
-  def self.late_comments(submission_time, is_late)
+  def self.late_comments(submission_time, is_late, grade_scale =1.0)
     "Your submission was recorded at #{submission_time} : ".concat(
         is_late ?  "submission is on time.\n" :
             "submission is late and scaled by #{grade_scale}\n")
@@ -41,7 +41,7 @@ module Assignment
       submit_range = @due_dates.map {|due_date| submission_time < due_date}.find_index(true) #return index of which date range submission falls into. if nil,
       grade_scale = submit_range ? @due_dates[submit_range].point_scaling : 0
       submission.score = grade_scale * submission.score
-      submission.message = Assignment::late_comments(submission_time, grade_scale == 1.0) + submission.message
+      submission.message = Assignment::late_comments(submission_time, grade_scale == 1.0, grade_scale) + submission.message
       submission
     end
 
