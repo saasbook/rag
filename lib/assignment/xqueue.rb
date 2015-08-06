@@ -35,8 +35,8 @@ module Assignment
       grade_scale = submit_range ? @due_dates[submit_range].point_scaling : 0
       submission.score = grade_scale * submission.score
       submission.message = "Your submission was recorded at #{submission_time}:" +
-                           ( (grade_scale == 1.0) ?  'submission is on time.' :
-                            "submission is late and scaled by #{grade_scale}" )
+                           ( (grade_scale == 1.0) ?  "submission is on time.\n" :
+                            "submission is late and scaled by #{grade_scale}\n")
       submission
     end
 
