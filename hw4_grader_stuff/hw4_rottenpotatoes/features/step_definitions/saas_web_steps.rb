@@ -1,6 +1,6 @@
 Then /^(?:|I )should either be on (.+) or (.+)$/ do |page_name, page_name2|
   begin
-    step %Q{I should be on #{page_name}}
+    step %Q{I should be on #{page_name2}}
   #rescue Cucumber::Undefined => e
   #  step %Q{I should be on #{page_name2}}
   #rescue
@@ -11,6 +11,6 @@ Then /^(?:|I )should either be on (.+) or (.+)$/ do |page_name, page_name2|
   #    raise
   #  end
   rescue
-    step %Q{I should be on #{page_name2}}
+    step %Q{I should be on #{page_name}}
   end
 end
