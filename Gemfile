@@ -10,7 +10,6 @@ gem 'octokit'
 gem 'term-ansicolor'
 gem 'xqueue_ruby', :git => 'https://github.com/zhangaaron/xqueue-ruby'
 gem 'activerecord'
-gem 'ruby-filemagic'
 gem 'sqlite3'
 gem 'haml'
 gem "jquery-ui-rails"
