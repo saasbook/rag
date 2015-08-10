@@ -5,10 +5,6 @@ require 'thread'
 require 'fileutils'
 require 'tempfile'
 
-$m_stdout = Mutex.new
-$m_db = Mutex.new
-$i_db = 0
-
 Dir["./lib/graders/feature_grader/lib/*.rb"].each { |file| require file }
 $CUKE_RUNNER = File.join(File.expand_path('lib/graders/feature_grader'), 'cuke_runner')
 
@@ -16,9 +12,8 @@ $CUKE_RUNNER = File.join(File.expand_path('lib/graders/feature_grader'), 'cuke_r
 module Graders
   class FeatureGrader < AutoGrader
 
-    attr_accessor :features_archive, :description
+    attr_accessor :comments
     attr_reader   :features
-    attr_reader   :logpath
 
     # Grade the features contained in the +.tar.gz+ archive _features_archive_,
     # using the reference solution _app_.
@@ -33,96 +28,70 @@ module Graders
     # TODO: assignment might need to contain path to rottenpotatoes (the app) "assignment[:app]"
     def initialize(submission_path, assignment)
       @output = []
-      @m_output = Mutex.new
       @features = []
       @description = assignment.assignment_spec_file
-      @temp = TempArchiveFile.new(submission_path)
+      @temp = submission_path
 
     end
-    # def initialize(features_archive, grading_rules={})
-    #   @output = []
-    #   @m_output = Mutex.new
-    #   @features = []
-
-    #   unless @features_archive = features_archive and File.file? @features_archive and File.readable? @features_archive
-    #     raise ArgumentError, "Unable to find features archive #{@features_archive.inspect}"
-    #   end
-
-    #   unless @description = (grading_rules[:spec] || grading_rules[:description]) and File.file? @description and File.readable? @description
-    #     raise ArgumentError, "Unable to find description file #{@description.inspect}"
-    #   end
-
-    #   $config = {:mt => grading_rules.has_key?(:mt) ? grading_rules[:mt] : true} # TODO merge all the configs
-    #   $config[:mt] = (ENV["AG_MT"] =~ /1|true/i) if ENV.has_key?("AG_MT")
-    #   $config[:mt] = false
-
-    #   @temp = TempArchiveFile.new(@features_archive)
-    #   @logpath = File.expand_path(File.join('.', 'log', "hw3_#{File.basename @temp.path}.log"))
-    # end
 
     def log(*args)
-      @m_output.synchronize do
-        @output += [*args]
-      end
+      @output += [*args]
     end
 
     def dump_output
-      self.comments = @output.join("\n")
-      @m_output.synchronize do
-        STDOUT.puts *@output
-        #File.open(@logpath, 'a') {|f| f.puts *@output}
-      end
+      @comments = @output.join("\n")
     end
 
     def grade
-      begin
-        load_description
+      load_description
 
-        ENV['RAILS_ENV'] = 'test'
+      ENV['RAILS_ENV'] = 'test'
+      ENV['RAILS_ROOT'] = @base_app_path
 
-        start_time = Time.now
+      start_time = Time.now
+      score = Feature.total(@features)   # TODO: integrate Score
 
-        score = Feature.total(@features)   # TODO: integrate Score
+      @raw_score, @raw_max = score.points, score.max
 
-        @raw_score, @raw_max = score.points, score.max
-
-        log "Total score: #{@raw_score} / #{@raw_max}"
-        log "Completed in #{Time.now - start_time} seconds."
-        dump_output
-      ensure
-        @temp.destroy if @temp
-      end
+      log "Total score: #{@raw_score} / #{@raw_max}"
+      log "Completed in #{Time.now - start_time} seconds."
+      
+      dump_output
+      {raw_score: @raw_score, raw_max: @raw_max, comments: @comments}
     end
 
     private
 
     def load_description
-      y = YAML::load_file(@description)
-
+      if File.directory? @description
+        # gets the first yaml file
+        dir = Dir[File.join(@description, '*.yml')]
+        @description = dir[0]
+      end
+      y = YAML.load_file(@description)
+      @base_app_path = y['base_app_path']
       # This does some hacky stuff to get references to work properly
-      config = {
-        :temp => @temp
+      @config = {
+        :path => @temp
       }
 
       { "scenarios" => ScenarioMatcher,
         "features"  => Feature
       }.each_pair do |label,klass|
         raise(ArgumentError, "Unable to find required key '#{label}' in #{@description}") unless y[label]
-        y[label].each {|h| h[:object] = klass.new(self, h, config)}
+        y[label].each {|h| h[:object] = klass.new(self, h, @config)}
       end
 
-      objectify = lambda {|arr| arr.collect! {|h| h[:object]}}
-      featurize = lambda do |f|
-        %w( failures ).each do |attr|
-          f[attr].collect! {|h| h.is_a?(Hash) ? h[:object] : h} if f.has_key?(attr)
-        end
-
-        f["if_pass"].collect! {|h| featurize.call(h); Feature.new(self, h, config)} if f.has_key?("if_pass")
-      end
-
-      y["features"].each {|h| featurize.call(h)}
+      y["features"].each {|h| featurize(h)}
 
       @features = y["features"].collect {|h| h[:object]}
+
+    end
+    def featurize(f)
+      %w( failures ).each do |attr|
+        f[attr].collect! {|h| h.is_a?(Hash) ? h[:object] : h} if f.has_key?(attr)
+      end
+      f["if_pass"].collect! {|h| featurize(h); Feature.new(self, h, @config)} if f.has_key?("if_pass")
     end
   end
 end

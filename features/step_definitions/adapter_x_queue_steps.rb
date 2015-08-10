@@ -54,6 +54,7 @@ Then(/^I should receive a grade of "(.*?)" for my assignment$/) do |grade|
     end
      thread.join
   end.to raise_error(PutResultException)
-  expect(@results[:score]).to be == grade.to_f
+  expect(@results[:score].round(1)).to be == grade.to_f
   expect(@results[:message]).not_to be_empty
+  puts "#{@results[:message]}"
 end

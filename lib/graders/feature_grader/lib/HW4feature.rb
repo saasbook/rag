@@ -17,8 +17,7 @@ module Graders
       attr_reader :if_pass, :target_pass, :feature, :score, :output, :desc, :weight
 
       attr_reader :grader
-      attr_reader :output
-
+      
       # +Array+ of +ScenarioMatcher+s that should fail for this step,
       # or empty if it should pass in +cucumber+.
       attr_reader :failures

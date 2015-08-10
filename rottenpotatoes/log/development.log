@@ -1,0 +1,546 @@
+
+
+Started GET "/assets/rails.png" for 127.0.0.1 at 2015-07-23 13:27:23 -0700
+Connecting to database specified by database.yml
+Served asset /rails.png - 200 OK (8ms)
+
+
+Started GET "/movies" for 127.0.0.1 at 2015-07-23 13:27:26 -0700
+Processing by MoviesController#index as HTML
+Redirected to http://localhost:3000/movies?ratings%5BG%5D=G&ratings%5BNC-17%5D=NC-17&ratings%5BPG%5D=PG&ratings%5BPG-13%5D=PG-13&ratings%5BR%5D=R&sort=release_date
+Completed 302 Found in 1.7ms (ActiveRecord: 0.0ms)
+
+
+Started GET "/movies?ratings%5BG%5D=G&ratings%5BNC-17%5D=NC-17&ratings%5BPG%5D=PG&ratings%5BPG-13%5D=PG-13&ratings%5BR%5D=R&sort=release_date" for 127.0.0.1 at 2015-07-23 13:27:26 -0700
+Processing by MoviesController#index as HTML
+  Parameters: {"ratings"=>{"G"=>"G", "NC-17"=>"NC-17", "PG"=>"PG", "PG-13"=>"PG-13", "R"=>"R"}, "sort"=>"release_date"}
+  [1m[36mMovie Load (0.5ms)[0m  [1mSELECT "movies".* FROM "movies" WHERE "movies"."rating" IN ('G', 'NC-17', 'PG', 'PG-13', 'R') ORDER BY release_date[0m
+  Rendered movies/index.html.haml within layouts/application (16.0ms)
+Compiled application.css  (0ms)  (pid 41943)
+Compiled jquery.js  (2ms)  (pid 41943)
+Compiled jquery_ujs.js  (0ms)  (pid 41943)
+Compiled application.js  (30ms)  (pid 41943)
+Completed 200 OK in 210.8ms (Views: 151.2ms | ActiveRecord: 2.8ms)
+
+
+Started GET "/assets/jquery_ujs.js?body=1" for 127.0.0.1 at 2015-07-23 13:27:27 -0700
+Served asset /jquery_ujs.js - 200 OK (5ms)
+
+
+Started GET "/assets/jquery.js?body=1" for 127.0.0.1 at 2015-07-23 13:27:27 -0700
+Served asset /jquery.js - 200 OK (1ms)
+
+
+Started GET "/assets/application.js?body=1" for 127.0.0.1 at 2015-07-23 13:27:27 -0700
+Served asset /application.js - 200 OK (4ms)
+
+
+Started GET "/assets/application.css?body=1" for 127.0.0.1 at 2015-07-23 13:27:27 -0700
+Served asset /application.css - 200 OK (2ms)
+DEPRECATION WARNING: You didn't set `secret_key_base`. Read the upgrade documentation to learn more about this new config option. (called from service at /Users/siddhantpuri/.rvm/rubies/ruby-2.2.2/lib/ruby/2.2.0/webrick/httpserver.rb:138)
+
+
+Started GET "/movies?ratings%5BG%5D=G&ratings%5BNC-17%5D=NC-17&ratings%5BPG%5D=PG&ratings%5BPG-13%5D=PG-13&ratings%5BR%5D=R&sort=release_date" for ::1 at 2015-07-23 13:38:28 -0700
+
+NoMethodError (undefined method `whitelist_attributes=' for #<Class:0x007fc3f7803a00>):
+  activerecord (4.2.1) lib/active_record/dynamic_matchers.rb:26:in `method_missing'
+  activerecord (4.2.1) lib/active_record/railtie.rb:108:in `block (3 levels) in <class:Railtie>'
+  activerecord (4.2.1) lib/active_record/railtie.rb:107:in `each'
+  activerecord (4.2.1) lib/active_record/railtie.rb:107:in `block (2 levels) in <class:Railtie>'
+  activesupport (4.2.1) lib/active_support/lazy_load_hooks.rb:38:in `instance_eval'
+  activesupport (4.2.1) lib/active_support/lazy_load_hooks.rb:38:in `execute_hook'
+  activesupport (4.2.1) lib/active_support/lazy_load_hooks.rb:45:in `block in run_load_hooks'
+  activesupport (4.2.1) lib/active_support/lazy_load_hooks.rb:44:in `each'
+  activesupport (4.2.1) lib/active_support/lazy_load_hooks.rb:44:in `run_load_hooks'
+  activerecord (4.2.1) lib/active_record/base.rb:316:in `<module:ActiveRecord>'
+  activerecord (4.2.1) lib/active_record/base.rb:26:in `<top (required)>'
+  activerecord (4.2.1) lib/active_record/connection_adapters/abstract/connection_pool.rb:656:in `rescue in call'
+  activerecord (4.2.1) lib/active_record/connection_adapters/abstract/connection_pool.rb:647:in `call'
+  actionpack (4.2.1) lib/action_dispatch/middleware/callbacks.rb:29:in `block in call'
+  activesupport (4.2.1) lib/active_support/callbacks.rb:88:in `call'
+  activesupport (4.2.1) lib/active_support/callbacks.rb:88:in `_run_callbacks'
+  activesupport (4.2.1) lib/active_support/callbacks.rb:776:in `_run_call_callbacks'
+  activesupport (4.2.1) lib/active_support/callbacks.rb:81:in `run_callbacks'
+  actionpack (4.2.1) lib/action_dispatch/middleware/callbacks.rb:27:in `call'
+  actionpack (4.2.1) lib/action_dispatch/middleware/reloader.rb:73:in `call'
+  actionpack (4.2.1) lib/action_dispatch/middleware/remote_ip.rb:78:in `call'
+  actionpack (4.2.1) lib/action_dispatch/middleware/debug_exceptions.rb:17:in `call'
+  actionpack (4.2.1) lib/action_dispatch/middleware/show_exceptions.rb:30:in `call'
+  railties (4.2.1) lib/rails/rack/logger.rb:38:in `call_app'
+  railties (4.2.1) lib/rails/rack/logger.rb:20:in `block in call'
+  activesupport (4.2.1) lib/active_support/tagged_logging.rb:68:in `block in tagged'
+  activesupport (4.2.1) lib/active_support/tagged_logging.rb:26:in `tagged'
+  activesupport (4.2.1) lib/active_support/tagged_logging.rb:68:in `tagged'
+  railties (4.2.1) lib/rails/rack/logger.rb:20:in `call'
+  actionpack (4.2.1) lib/action_dispatch/middleware/request_id.rb:21:in `call'
+  rack (1.6.4) lib/rack/methodoverride.rb:22:in `call'
+  rack (1.6.4) lib/rack/runtime.rb:18:in `call'
+  activesupport (4.2.1) lib/active_support/cache/strategy/local_cache_middleware.rb:28:in `call'
+  rack (1.6.4) lib/rack/lock.rb:17:in `call'
+  actionpack (4.2.1) lib/action_dispatch/middleware/static.rb:113:in `call'
+  rack (1.6.4) lib/rack/sendfile.rb:113:in `call'
+  railties (4.2.1) lib/rails/engine.rb:518:in `call'
+  railties (4.2.1) lib/rails/application.rb:164:in `call'
+  rack (1.6.4) lib/rack/lock.rb:17:in `call'
+  rack (1.6.4) lib/rack/content_length.rb:15:in `call'
+  rack (1.6.4) lib/rack/handler/webrick.rb:88:in `service'
+  /Users/siddhantpuri/.rvm/rubies/ruby-2.2.2/lib/ruby/2.2.0/webrick/httpserver.rb:138:in `service'
+  /Users/siddhantpuri/.rvm/rubies/ruby-2.2.2/lib/ruby/2.2.0/webrick/httpserver.rb:94:in `run'
+  /Users/siddhantpuri/.rvm/rubies/ruby-2.2.2/lib/ruby/2.2.0/webrick/server.rb:294:in `block in start_thread'
+
+
+  Rendered /Users/siddhantpuri/.rvm/gems/ruby-2.2.2/gems/actionpack-4.2.1/lib/action_dispatch/middleware/templates/rescues/_source.erb (3.0ms)
+  Rendered /Users/siddhantpuri/.rvm/gems/ruby-2.2.2/gems/actionpack-4.2.1/lib/action_dispatch/middleware/templates/rescues/_trace.html.erb (1.6ms)
+  Rendered /Users/siddhantpuri/.rvm/gems/ruby-2.2.2/gems/actionpack-4.2.1/lib/action_dispatch/middleware/templates/rescues/_request_and_response.html.erb (1.7ms)
+  Rendered /Users/siddhantpuri/.rvm/gems/ruby-2.2.2/gems/actionpack-4.2.1/lib/action_dispatch/middleware/templates/rescues/diagnostics.html.erb within rescues/layout (67.5ms)
+DEPRECATION WARNING: You didn't set `secret_key_base`. Read the upgrade documentation to learn more about this new config option. (called from service at /Users/siddhantpuri/.rvm/rubies/ruby-2.2.2/lib/ruby/2.2.0/webrick/httpserver.rb:138)
+
+
+Started GET "/movies?ratings%5BG%5D=G&ratings%5BNC-17%5D=NC-17&ratings%5BPG%5D=PG&ratings%5BPG-13%5D=PG-13&ratings%5BR%5D=R&sort=release_date" for ::1 at 2015-07-23 13:39:49 -0700
+Processing by MoviesController#index as HTML
+  Parameters: {"ratings"=>{"G"=>"G", "NC-17"=>"NC-17", "PG"=>"PG", "PG-13"=>"PG-13", "R"=>"R"}, "sort"=>"release_date"}
+Completed 500 Internal Server Error in 47ms (ActiveRecord: 1.6ms)
+
+NoMethodError (undefined method `attr_accessible' for #<Class:0x007fc5e1841760>):
+  app/models/movie.rb:2:in `<class:Movie>'
+  app/models/movie.rb:1:in `<top (required)>'
+  app/controllers/movies_controller.rb:17:in `index'
+
+
+  Rendered /Users/siddhantpuri/.rvm/gems/ruby-2.2.2/gems/actionpack-4.2.1/lib/action_dispatch/middleware/templates/rescues/_source.erb (8.1ms)
+  Rendered /Users/siddhantpuri/.rvm/gems/ruby-2.2.2/gems/actionpack-4.2.1/lib/action_dispatch/middleware/templates/rescues/_trace.html.erb (2.4ms)
+  Rendered /Users/siddhantpuri/.rvm/gems/ruby-2.2.2/gems/actionpack-4.2.1/lib/action_dispatch/middleware/templates/rescues/_request_and_response.html.erb (4.3ms)
+  Rendered /Users/siddhantpuri/.rvm/gems/ruby-2.2.2/gems/actionpack-4.2.1/lib/action_dispatch/middleware/templates/rescues/diagnostics.html.erb within rescues/layout (74.3ms)
+
+
+Started GET "/movies?ratings%5BG%5D=G&ratings%5BNC-17%5D=NC-17&ratings%5BPG%5D=PG&ratings%5BPG-13%5D=PG-13&ratings%5BR%5D=R&sort=release_date" for ::1 at 2015-07-23 13:39:50 -0700
+Processing by MoviesController#index as HTML
+  Parameters: {"ratings"=>{"G"=>"G", "NC-17"=>"NC-17", "PG"=>"PG", "PG-13"=>"PG-13", "R"=>"R"}, "sort"=>"release_date"}
+Completed 500 Internal Server Error in 3ms (ActiveRecord: 0.0ms)
+
+NoMethodError (undefined method `attr_accessible' for #<Class:0x007fc5e59a3730>):
+  app/models/movie.rb:2:in `<class:Movie>'
+  app/models/movie.rb:1:in `<top (required)>'
+  app/controllers/movies_controller.rb:17:in `index'
+
+
+  Rendered /Users/siddhantpuri/.rvm/gems/ruby-2.2.2/gems/actionpack-4.2.1/lib/action_dispatch/middleware/templates/rescues/_source.erb (5.3ms)
+  Rendered /Users/siddhantpuri/.rvm/gems/ruby-2.2.2/gems/actionpack-4.2.1/lib/action_dispatch/middleware/templates/rescues/_trace.html.erb (3.8ms)
+  Rendered /Users/siddhantpuri/.rvm/gems/ruby-2.2.2/gems/actionpack-4.2.1/lib/action_dispatch/middleware/templates/rescues/_request_and_response.html.erb (2.9ms)
+  Rendered /Users/siddhantpuri/.rvm/gems/ruby-2.2.2/gems/actionpack-4.2.1/lib/action_dispatch/middleware/templates/rescues/diagnostics.html.erb within rescues/layout (69.0ms)
+
+
+Started GET "/movies?ratings%5BG%5D=G&ratings%5BNC-17%5D=NC-17&ratings%5BPG%5D=PG&ratings%5BPG-13%5D=PG-13&ratings%5BR%5D=R&sort=release_date" for ::1 at 2015-07-23 13:39:50 -0700
+Processing by MoviesController#index as HTML
+  Parameters: {"ratings"=>{"G"=>"G", "NC-17"=>"NC-17", "PG"=>"PG", "PG-13"=>"PG-13", "R"=>"R"}, "sort"=>"release_date"}
+Completed 500 Internal Server Error in 3ms (ActiveRecord: 0.3ms)
+
+NoMethodError (undefined method `attr_accessible' for #<Class:0x007fc5e50a1a60>):
+  app/models/movie.rb:2:in `<class:Movie>'
+  app/models/movie.rb:1:in `<top (required)>'
+  app/controllers/movies_controller.rb:17:in `index'
+
+
+  Rendered /Users/siddhantpuri/.rvm/gems/ruby-2.2.2/gems/actionpack-4.2.1/lib/action_dispatch/middleware/templates/rescues/_source.erb (7.5ms)
+  Rendered /Users/siddhantpuri/.rvm/gems/ruby-2.2.2/gems/actionpack-4.2.1/lib/action_dispatch/middleware/templates/rescues/_trace.html.erb (2.2ms)
+  Rendered /Users/siddhantpuri/.rvm/gems/ruby-2.2.2/gems/actionpack-4.2.1/lib/action_dispatch/middleware/templates/rescues/_request_and_response.html.erb (2.0ms)
+  Rendered /Users/siddhantpuri/.rvm/gems/ruby-2.2.2/gems/actionpack-4.2.1/lib/action_dispatch/middleware/templates/rescues/diagnostics.html.erb within rescues/layout (63.1ms)
+DEPRECATION WARNING: You didn't set `secret_key_base`. Read the upgrade documentation to learn more about this new config option. (called from service at /Users/siddhantpuri/.rvm/rubies/ruby-2.2.2/lib/ruby/2.2.0/webrick/httpserver.rb:138)
+
+
+Started GET "/movies?ratings%5BG%5D=G&ratings%5BNC-17%5D=NC-17&ratings%5BPG%5D=PG&ratings%5BPG-13%5D=PG-13&ratings%5BR%5D=R&sort=release_date" for ::1 at 2015-07-23 13:43:45 -0700
+Processing by MoviesController#index as HTML
+  Parameters: {"ratings"=>{"G"=>"G", "NC-17"=>"NC-17", "PG"=>"PG", "PG-13"=>"PG-13", "R"=>"R"}, "sort"=>"release_date"}
+Completed 500 Internal Server Error in 13ms (ActiveRecord: 0.0ms)
+
+NoMethodError (undefined method `find_all_by_rating' for #<Class:0x007f97c7ac2f68>):
+  app/controllers/movies_controller.rb:29:in `index'
+
+
+  Rendered /Users/siddhantpuri/.rvm/gems/ruby-2.2.2/gems/actionpack-4.2.1/lib/action_dispatch/middleware/templates/rescues/_source.erb (8.6ms)
+  Rendered /Users/siddhantpuri/.rvm/gems/ruby-2.2.2/gems/actionpack-4.2.1/lib/action_dispatch/middleware/templates/rescues/_trace.html.erb (2.7ms)
+  Rendered /Users/siddhantpuri/.rvm/gems/ruby-2.2.2/gems/actionpack-4.2.1/lib/action_dispatch/middleware/templates/rescues/_request_and_response.html.erb (2.0ms)
+  Rendered /Users/siddhantpuri/.rvm/gems/ruby-2.2.2/gems/actionpack-4.2.1/lib/action_dispatch/middleware/templates/rescues/diagnostics.html.erb within rescues/layout (69.9ms)
+
+
+Started GET "/movies?ratings%5BG%5D=G&ratings%5BNC-17%5D=NC-17&ratings%5BPG%5D=PG&ratings%5BPG-13%5D=PG-13&ratings%5BR%5D=R&sort=release_date" for ::1 at 2015-07-23 13:50:38 -0700
+Processing by MoviesController#index as HTML
+  Parameters: {"ratings"=>{"G"=>"G", "NC-17"=>"NC-17", "PG"=>"PG", "PG-13"=>"PG-13", "R"=>"R"}, "sort"=>"release_date"}
+Completed 500 Internal Server Error in 16ms (ActiveRecord: 0.0ms)
+
+NoMethodError (undefined method `find_all_by_rating' for #<Class:0x007ff3af85a3b8>):
+  app/controllers/movies_controller.rb:29:in `index'
+
+
+  Rendered /Users/siddhantpuri/.rvm/gems/ruby-2.2.2/gems/actionpack-4.2.1/lib/action_dispatch/middleware/templates/rescues/_source.erb (4.0ms)
+  Rendered /Users/siddhantpuri/.rvm/gems/ruby-2.2.2/gems/actionpack-4.2.1/lib/action_dispatch/middleware/templates/rescues/_trace.html.erb (2.9ms)
+  Rendered /Users/siddhantpuri/.rvm/gems/ruby-2.2.2/gems/actionpack-4.2.1/lib/action_dispatch/middleware/templates/rescues/_request_and_response.html.erb (1.0ms)
+  Rendered /Users/siddhantpuri/.rvm/gems/ruby-2.2.2/gems/actionpack-4.2.1/lib/action_dispatch/middleware/templates/rescues/diagnostics.html.erb within rescues/layout (70.4ms)
+
+
+Started GET "/movies?ratings%5BG%5D=G&ratings%5BNC-17%5D=NC-17&ratings%5BPG%5D=PG&ratings%5BPG-13%5D=PG-13&ratings%5BR%5D=R&sort=release_date" for ::1 at 2015-07-23 13:50:39 -0700
+Processing by MoviesController#index as HTML
+  Parameters: {"ratings"=>{"G"=>"G", "NC-17"=>"NC-17", "PG"=>"PG", "PG-13"=>"PG-13", "R"=>"R"}, "sort"=>"release_date"}
+Completed 500 Internal Server Error in 1ms (ActiveRecord: 0.0ms)
+
+NoMethodError (undefined method `find_all_by_rating' for #<Class:0x007ff3af85a3b8>):
+  app/controllers/movies_controller.rb:29:in `index'
+
+
+  Rendered /Users/siddhantpuri/.rvm/gems/ruby-2.2.2/gems/actionpack-4.2.1/lib/action_dispatch/middleware/templates/rescues/_source.erb (4.6ms)
+  Rendered /Users/siddhantpuri/.rvm/gems/ruby-2.2.2/gems/actionpack-4.2.1/lib/action_dispatch/middleware/templates/rescues/_trace.html.erb (3.0ms)
+  Rendered /Users/siddhantpuri/.rvm/gems/ruby-2.2.2/gems/actionpack-4.2.1/lib/action_dispatch/middleware/templates/rescues/_request_and_response.html.erb (1.1ms)
+  Rendered /Users/siddhantpuri/.rvm/gems/ruby-2.2.2/gems/actionpack-4.2.1/lib/action_dispatch/middleware/templates/rescues/diagnostics.html.erb within rescues/layout (60.8ms)
+
+
+Started GET "/movies?ratings%5BG%5D=G&ratings%5BNC-17%5D=NC-17&ratings%5BPG%5D=PG&ratings%5BPG-13%5D=PG-13&ratings%5BR%5D=R&sort=release_date" for ::1 at 2015-07-23 13:50:40 -0700
+Processing by MoviesController#index as HTML
+  Parameters: {"ratings"=>{"G"=>"G", "NC-17"=>"NC-17", "PG"=>"PG", "PG-13"=>"PG-13", "R"=>"R"}, "sort"=>"release_date"}
+Completed 500 Internal Server Error in 10ms (ActiveRecord: 0.0ms)
+
+NoMethodError (undefined method `find_all_by_rating' for #<Class:0x007ff3af85a3b8>):
+  app/controllers/movies_controller.rb:29:in `index'
+
+
+  Rendered /Users/siddhantpuri/.rvm/gems/ruby-2.2.2/gems/actionpack-4.2.1/lib/action_dispatch/middleware/templates/rescues/_source.erb (7.0ms)
+  Rendered /Users/siddhantpuri/.rvm/gems/ruby-2.2.2/gems/actionpack-4.2.1/lib/action_dispatch/middleware/templates/rescues/_trace.html.erb (9.0ms)
+  Rendered /Users/siddhantpuri/.rvm/gems/ruby-2.2.2/gems/actionpack-4.2.1/lib/action_dispatch/middleware/templates/rescues/_request_and_response.html.erb (1.9ms)
+  Rendered /Users/siddhantpuri/.rvm/gems/ruby-2.2.2/gems/actionpack-4.2.1/lib/action_dispatch/middleware/templates/rescues/diagnostics.html.erb within rescues/layout (98.5ms)
+
+
+Started GET "/movies?ratings%5BG%5D=G&ratings%5BNC-17%5D=NC-17&ratings%5BPG%5D=PG&ratings%5BPG-13%5D=PG-13&ratings%5BR%5D=R&sort=release_date" for ::1 at 2015-07-23 13:54:49 -0700
+Processing by MoviesController#index as HTML
+  Parameters: {"ratings"=>{"G"=>"G", "NC-17"=>"NC-17", "PG"=>"PG", "PG-13"=>"PG-13", "R"=>"R"}, "sort"=>"release_date"}
+Completed 500 Internal Server Error in 10ms (ActiveRecord: 0.0ms)
+
+ArgumentError (Direction "release_date" is invalid. Valid directions are: [:asc, :desc, :ASC, :DESC, "asc", "desc", "ASC", "DESC"]):
+  app/controllers/movies_controller.rb:29:in `index'
+
+
+  Rendered /Users/siddhantpuri/.rvm/gems/ruby-2.2.2/gems/actionpack-4.2.1/lib/action_dispatch/middleware/templates/rescues/_source.erb (4.5ms)
+  Rendered /Users/siddhantpuri/.rvm/gems/ruby-2.2.2/gems/actionpack-4.2.1/lib/action_dispatch/middleware/templates/rescues/_trace.html.erb (2.0ms)
+  Rendered /Users/siddhantpuri/.rvm/gems/ruby-2.2.2/gems/actionpack-4.2.1/lib/action_dispatch/middleware/templates/rescues/_request_and_response.html.erb (1.4ms)
+  Rendered /Users/siddhantpuri/.rvm/gems/ruby-2.2.2/gems/actionpack-4.2.1/lib/action_dispatch/middleware/templates/rescues/diagnostics.html.erb within rescues/layout (67.0ms)
+
+
+Started GET "/movies?ratings%5BG%5D=G&ratings%5BNC-17%5D=NC-17&ratings%5BPG%5D=PG&ratings%5BPG-13%5D=PG-13&ratings%5BR%5D=R&sort=release_date" for ::1 at 2015-07-23 13:55:09 -0700
+Processing by MoviesController#index as HTML
+  Parameters: {"ratings"=>{"G"=>"G", "NC-17"=>"NC-17", "PG"=>"PG", "PG-13"=>"PG-13", "R"=>"R"}, "sort"=>"release_date"}
+Completed 500 Internal Server Error in 2ms (ActiveRecord: 0.0ms)
+
+ArgumentError (Direction "release_date" is invalid. Valid directions are: [:asc, :desc, :ASC, :DESC, "asc", "desc", "ASC", "DESC"]):
+  app/controllers/movies_controller.rb:29:in `index'
+
+
+  Rendered /Users/siddhantpuri/.rvm/gems/ruby-2.2.2/gems/actionpack-4.2.1/lib/action_dispatch/middleware/templates/rescues/_source.erb (4.6ms)
+  Rendered /Users/siddhantpuri/.rvm/gems/ruby-2.2.2/gems/actionpack-4.2.1/lib/action_dispatch/middleware/templates/rescues/_trace.html.erb (1.9ms)
+  Rendered /Users/siddhantpuri/.rvm/gems/ruby-2.2.2/gems/actionpack-4.2.1/lib/action_dispatch/middleware/templates/rescues/_request_and_response.html.erb (0.9ms)
+  Rendered /Users/siddhantpuri/.rvm/gems/ruby-2.2.2/gems/actionpack-4.2.1/lib/action_dispatch/middleware/templates/rescues/diagnostics.html.erb within rescues/layout (65.4ms)
+
+
+Started GET "/movies?ratings%5BG%5D=G&ratings%5BNC-17%5D=NC-17&ratings%5BPG%5D=PG&ratings%5BPG-13%5D=PG-13&ratings%5BR%5D=R&sort=release_date" for ::1 at 2015-07-23 13:55:10 -0700
+Processing by MoviesController#index as HTML
+  Parameters: {"ratings"=>{"G"=>"G", "NC-17"=>"NC-17", "PG"=>"PG", "PG-13"=>"PG-13", "R"=>"R"}, "sort"=>"release_date"}
+Completed 500 Internal Server Error in 1ms (ActiveRecord: 0.0ms)
+
+ArgumentError (Direction "release_date" is invalid. Valid directions are: [:asc, :desc, :ASC, :DESC, "asc", "desc", "ASC", "DESC"]):
+  app/controllers/movies_controller.rb:29:in `index'
+
+
+  Rendered /Users/siddhantpuri/.rvm/gems/ruby-2.2.2/gems/actionpack-4.2.1/lib/action_dispatch/middleware/templates/rescues/_source.erb (4.1ms)
+  Rendered /Users/siddhantpuri/.rvm/gems/ruby-2.2.2/gems/actionpack-4.2.1/lib/action_dispatch/middleware/templates/rescues/_trace.html.erb (2.0ms)
+  Rendered /Users/siddhantpuri/.rvm/gems/ruby-2.2.2/gems/actionpack-4.2.1/lib/action_dispatch/middleware/templates/rescues/_request_and_response.html.erb (2.3ms)
+  Rendered /Users/siddhantpuri/.rvm/gems/ruby-2.2.2/gems/actionpack-4.2.1/lib/action_dispatch/middleware/templates/rescues/diagnostics.html.erb within rescues/layout (61.3ms)
+
+
+Started GET "/movies?ratings%5BG%5D=G&ratings%5BNC-17%5D=NC-17&ratings%5BPG%5D=PG&ratings%5BPG-13%5D=PG-13&ratings%5BR%5D=R&sort=release_date" for ::1 at 2015-07-23 13:55:10 -0700
+Processing by MoviesController#index as HTML
+  Parameters: {"ratings"=>{"G"=>"G", "NC-17"=>"NC-17", "PG"=>"PG", "PG-13"=>"PG-13", "R"=>"R"}, "sort"=>"release_date"}
+Completed 500 Internal Server Error in 2ms (ActiveRecord: 0.0ms)
+
+ArgumentError (Direction "release_date" is invalid. Valid directions are: [:asc, :desc, :ASC, :DESC, "asc", "desc", "ASC", "DESC"]):
+  app/controllers/movies_controller.rb:29:in `index'
+
+
+  Rendered /Users/siddhantpuri/.rvm/gems/ruby-2.2.2/gems/actionpack-4.2.1/lib/action_dispatch/middleware/templates/rescues/_source.erb (4.2ms)
+  Rendered /Users/siddhantpuri/.rvm/gems/ruby-2.2.2/gems/actionpack-4.2.1/lib/action_dispatch/middleware/templates/rescues/_trace.html.erb (8.4ms)
+  Rendered /Users/siddhantpuri/.rvm/gems/ruby-2.2.2/gems/actionpack-4.2.1/lib/action_dispatch/middleware/templates/rescues/_request_and_response.html.erb (0.9ms)
+  Rendered /Users/siddhantpuri/.rvm/gems/ruby-2.2.2/gems/actionpack-4.2.1/lib/action_dispatch/middleware/templates/rescues/diagnostics.html.erb within rescues/layout (66.0ms)
+
+
+Started GET "/movies?ratings%5BG%5D=G&ratings%5BNC-17%5D=NC-17&ratings%5BPG%5D=PG&ratings%5BPG-13%5D=PG-13&ratings%5BR%5D=R&sort=release_date" for ::1 at 2015-07-23 13:55:37 -0700
+Processing by MoviesController#index as HTML
+  Parameters: {"ratings"=>{"G"=>"G", "NC-17"=>"NC-17", "PG"=>"PG", "PG-13"=>"PG-13", "R"=>"R"}, "sort"=>"release_date"}
+  [1m[36mMovie Load (0.2ms)[0m  [1mSELECT "movies".* FROM "movies" WHERE "movies"."raing" IN ('G', 'NC-17', 'PG', 'PG-13', 'R')  ORDER BY "movies"."release_date" ASC[0m
+SQLite3::SQLException: no such column: movies.raing: SELECT "movies".* FROM "movies" WHERE "movies"."raing" IN ('G', 'NC-17', 'PG', 'PG-13', 'R')  ORDER BY "movies"."release_date" ASC
+  Rendered movies/index.html.haml within layouts/application (16.5ms)
+Completed 500 Internal Server Error in 26ms (ActiveRecord: 0.7ms)
+
+ActionView::Template::Error (SQLite3::SQLException: no such column: movies.raing: SELECT "movies".* FROM "movies" WHERE "movies"."raing" IN ('G', 'NC-17', 'PG', 'PG-13', 'R')  ORDER BY "movies"."release_date" ASC):
+    18:       %th{:class => @date_header}= link_to 'Release Date', movies_path(:sort => 'release_date', :ratings => @selected_ratings), :id => 'release_date_header'
+    19:       %th More Info
+    20:   %tbody
+    21:     - @movies.each do |movie|
+    22:       %tr
+    23:         %td= movie.title 
+    24:         %td= movie.rating
+  app/views/movies/index.html.haml:21:in `_app_views_movies_index_html_haml___2393803234402044519_70342312905280'
+
+
+  Rendered /Users/siddhantpuri/.rvm/gems/ruby-2.2.2/gems/actionpack-4.2.1/lib/action_dispatch/middleware/templates/rescues/_source.erb (6.9ms)
+  Rendered /Users/siddhantpuri/.rvm/gems/ruby-2.2.2/gems/actionpack-4.2.1/lib/action_dispatch/middleware/templates/rescues/_trace.html.erb (6.0ms)
+  Rendered /Users/siddhantpuri/.rvm/gems/ruby-2.2.2/gems/actionpack-4.2.1/lib/action_dispatch/middleware/templates/rescues/_request_and_response.html.erb (1.7ms)
+  Rendered /Users/siddhantpuri/.rvm/gems/ruby-2.2.2/gems/actionpack-4.2.1/lib/action_dispatch/middleware/templates/rescues/template_error.html.erb within rescues/layout (69.7ms)
+  [1m[36mActiveRecord::SchemaMigration Load (0.1ms)[0m  [1mSELECT "schema_migrations".* FROM "schema_migrations"[0m
+  [1m[35mActiveRecord::SchemaMigration Load (0.1ms)[0m  SELECT "schema_migrations".* FROM "schema_migrations"
+  [1m[36mActiveRecord::SchemaMigration Load (0.1ms)[0m  [1mSELECT "schema_migrations".* FROM "schema_migrations"[0m
+  [1m[35m (0.1ms)[0m  begin transaction
+  [1m[36mSQL (1.4ms)[0m  [1mINSERT INTO "movies" ("title", "rating", "release_date", "created_at", "updated_at") VALUES (?, ?, ?, ?, ?)[0m  [["title", "Aladdin"], ["rating", "G"], ["release_date", "1992-11-25 00:00:00.000000"], ["created_at", "2015-07-23 20:56:17.941173"], ["updated_at", "2015-07-23 20:56:17.941173"]]
+  [1m[35m (0.9ms)[0m  commit transaction
+  [1m[36m (0.1ms)[0m  [1mbegin transaction[0m
+  [1m[35mSQL (0.4ms)[0m  INSERT INTO "movies" ("title", "rating", "release_date", "created_at", "updated_at") VALUES (?, ?, ?, ?, ?)  [["title", "The Terminator"], ["rating", "R"], ["release_date", "1984-10-26 00:00:00.000000"], ["created_at", "2015-07-23 20:56:17.950814"], ["updated_at", "2015-07-23 20:56:17.950814"]]
+  [1m[36m (1.0ms)[0m  [1mcommit transaction[0m
+  [1m[35m (0.1ms)[0m  begin transaction
+  [1m[36mSQL (0.4ms)[0m  [1mINSERT INTO "movies" ("title", "rating", "release_date", "created_at", "updated_at") VALUES (?, ?, ?, ?, ?)[0m  [["title", "When Harry Met Sally"], ["rating", "R"], ["release_date", "1989-07-21 00:00:00.000000"], ["created_at", "2015-07-23 20:56:17.954874"], ["updated_at", "2015-07-23 20:56:17.954874"]]
+  [1m[35m (1.0ms)[0m  commit transaction
+  [1m[36m (0.1ms)[0m  [1mbegin transaction[0m
+  [1m[35mSQL (0.2ms)[0m  INSERT INTO "movies" ("title", "rating", "release_date", "created_at", "updated_at") VALUES (?, ?, ?, ?, ?)  [["title", "The Help"], ["rating", "PG-13"], ["release_date", "2011-08-10 00:00:00.000000"], ["created_at", "2015-07-23 20:56:17.959412"], ["updated_at", "2015-07-23 20:56:17.959412"]]
+  [1m[36m (0.6ms)[0m  [1mcommit transaction[0m
+  [1m[35m (0.1ms)[0m  begin transaction
+  [1m[36mSQL (0.3ms)[0m  [1mINSERT INTO "movies" ("title", "rating", "release_date", "created_at", "updated_at") VALUES (?, ?, ?, ?, ?)[0m  [["title", "Chocolat"], ["rating", "PG-13"], ["release_date", "2001-01-05 00:00:00.000000"], ["created_at", "2015-07-23 20:56:17.962009"], ["updated_at", "2015-07-23 20:56:17.962009"]]
+  [1m[35m (0.7ms)[0m  commit transaction
+  [1m[36m (0.0ms)[0m  [1mbegin transaction[0m
+  [1m[35mSQL (0.3ms)[0m  INSERT INTO "movies" ("title", "rating", "release_date", "created_at", "updated_at") VALUES (?, ?, ?, ?, ?)  [["title", "Amelie"], ["rating", "R"], ["release_date", "2001-04-25 00:00:00.000000"], ["created_at", "2015-07-23 20:56:17.964574"], ["updated_at", "2015-07-23 20:56:17.964574"]]
+  [1m[36m (0.7ms)[0m  [1mcommit transaction[0m
+  [1m[35m (0.1ms)[0m  begin transaction
+  [1m[36mSQL (0.2ms)[0m  [1mINSERT INTO "movies" ("title", "rating", "release_date", "created_at", "updated_at") VALUES (?, ?, ?, ?, ?)[0m  [["title", "2001: A Space Odyssey"], ["rating", "G"], ["release_date", "1968-04-06 00:00:00.000000"], ["created_at", "2015-07-23 20:56:17.967046"], ["updated_at", "2015-07-23 20:56:17.967046"]]
+  [1m[35m (0.6ms)[0m  commit transaction
+  [1m[36m (0.1ms)[0m  [1mbegin transaction[0m
+  [1m[35mSQL (0.2ms)[0m  INSERT INTO "movies" ("title", "rating", "release_date", "created_at", "updated_at") VALUES (?, ?, ?, ?, ?)  [["title", "The Incredibles"], ["rating", "PG"], ["release_date", "2004-11-05 00:00:00.000000"], ["created_at", "2015-07-23 20:56:17.969312"], ["updated_at", "2015-07-23 20:56:17.969312"]]
+  [1m[36m (0.6ms)[0m  [1mcommit transaction[0m
+  [1m[35m (0.1ms)[0m  begin transaction
+  [1m[36mSQL (0.2ms)[0m  [1mINSERT INTO "movies" ("title", "rating", "release_date", "created_at", "updated_at") VALUES (?, ?, ?, ?, ?)[0m  [["title", "Raiders of the Lost Ark"], ["rating", "PG"], ["release_date", "1981-06-12 00:00:00.000000"], ["created_at", "2015-07-23 20:56:17.971769"], ["updated_at", "2015-07-23 20:56:17.971769"]]
+  [1m[35m (0.7ms)[0m  commit transaction
+  [1m[36m (0.0ms)[0m  [1mbegin transaction[0m
+  [1m[35mSQL (0.2ms)[0m  INSERT INTO "movies" ("title", "rating", "release_date", "created_at", "updated_at") VALUES (?, ?, ?, ?, ?)  [["title", "Chicken Run"], ["rating", "G"], ["release_date", "2000-06-21 00:00:00.000000"], ["created_at", "2015-07-23 20:56:17.973961"], ["updated_at", "2015-07-23 20:56:17.973961"]]
+  [1m[36m (0.6ms)[0m  [1mcommit transaction[0m
+
+
+Started GET "/movies?ratings%5BG%5D=G&ratings%5BNC-17%5D=NC-17&ratings%5BPG%5D=PG&ratings%5BPG-13%5D=PG-13&ratings%5BR%5D=R&sort=release_date" for ::1 at 2015-07-23 13:56:27 -0700
+Processing by MoviesController#index as HTML
+  Parameters: {"ratings"=>{"G"=>"G", "NC-17"=>"NC-17", "PG"=>"PG", "PG-13"=>"PG-13", "R"=>"R"}, "sort"=>"release_date"}
+  [1m[36mMovie Load (0.5ms)[0m  [1mSELECT "movies".* FROM "movies" WHERE "movies"."raing" IN ('G', 'NC-17', 'PG', 'PG-13', 'R')  ORDER BY "movies"."release_date" ASC[0m
+SQLite3::SQLException: no such column: movies.raing: SELECT "movies".* FROM "movies" WHERE "movies"."raing" IN ('G', 'NC-17', 'PG', 'PG-13', 'R')  ORDER BY "movies"."release_date" ASC
+  Rendered movies/index.html.haml within layouts/application (18.9ms)
+Completed 500 Internal Server Error in 42ms (ActiveRecord: 2.1ms)
+
+ActionView::Template::Error (SQLite3::SQLException: no such column: movies.raing: SELECT "movies".* FROM "movies" WHERE "movies"."raing" IN ('G', 'NC-17', 'PG', 'PG-13', 'R')  ORDER BY "movies"."release_date" ASC):
+    18:       %th{:class => @date_header}= link_to 'Release Date', movies_path(:sort => 'release_date', :ratings => @selected_ratings), :id => 'release_date_header'
+    19:       %th More Info
+    20:   %tbody
+    21:     - @movies.each do |movie|
+    22:       %tr
+    23:         %td= movie.title 
+    24:         %td= movie.rating
+  app/views/movies/index.html.haml:21:in `_app_views_movies_index_html_haml__3867729511746276783_70131320677280'
+
+
+  Rendered /Users/siddhantpuri/.rvm/gems/ruby-2.2.2/gems/actionpack-4.2.1/lib/action_dispatch/middleware/templates/rescues/_source.erb (11.4ms)
+  Rendered /Users/siddhantpuri/.rvm/gems/ruby-2.2.2/gems/actionpack-4.2.1/lib/action_dispatch/middleware/templates/rescues/_trace.html.erb (21.3ms)
+  Rendered /Users/siddhantpuri/.rvm/gems/ruby-2.2.2/gems/actionpack-4.2.1/lib/action_dispatch/middleware/templates/rescues/_request_and_response.html.erb (0.9ms)
+  Rendered /Users/siddhantpuri/.rvm/gems/ruby-2.2.2/gems/actionpack-4.2.1/lib/action_dispatch/middleware/templates/rescues/template_error.html.erb within rescues/layout (83.1ms)
+
+
+Started GET "/movies?ratings%5BG%5D=G&ratings%5BNC-17%5D=NC-17&ratings%5BPG%5D=PG&ratings%5BPG-13%5D=PG-13&ratings%5BR%5D=R&sort=release_date" for ::1 at 2015-07-23 13:56:28 -0700
+Processing by MoviesController#index as HTML
+  Parameters: {"ratings"=>{"G"=>"G", "NC-17"=>"NC-17", "PG"=>"PG", "PG-13"=>"PG-13", "R"=>"R"}, "sort"=>"release_date"}
+  [1m[35mMovie Load (0.3ms)[0m  SELECT "movies".* FROM "movies" WHERE "movies"."raing" IN ('G', 'NC-17', 'PG', 'PG-13', 'R')  ORDER BY "movies"."release_date" ASC
+SQLite3::SQLException: no such column: movies.raing: SELECT "movies".* FROM "movies" WHERE "movies"."raing" IN ('G', 'NC-17', 'PG', 'PG-13', 'R')  ORDER BY "movies"."release_date" ASC
+  Rendered movies/index.html.haml within layouts/application (3.0ms)
+Completed 500 Internal Server Error in 7ms (ActiveRecord: 0.3ms)
+
+ActionView::Template::Error (SQLite3::SQLException: no such column: movies.raing: SELECT "movies".* FROM "movies" WHERE "movies"."raing" IN ('G', 'NC-17', 'PG', 'PG-13', 'R')  ORDER BY "movies"."release_date" ASC):
+    18:       %th{:class => @date_header}= link_to 'Release Date', movies_path(:sort => 'release_date', :ratings => @selected_ratings), :id => 'release_date_header'
+    19:       %th More Info
+    20:   %tbody
+    21:     - @movies.each do |movie|
+    22:       %tr
+    23:         %td= movie.title 
+    24:         %td= movie.rating
+  app/views/movies/index.html.haml:21:in `_app_views_movies_index_html_haml__3867729511746276783_70131320677280'
+
+
+  Rendered /Users/siddhantpuri/.rvm/gems/ruby-2.2.2/gems/actionpack-4.2.1/lib/action_dispatch/middleware/templates/rescues/_source.erb (10.5ms)
+  Rendered /Users/siddhantpuri/.rvm/gems/ruby-2.2.2/gems/actionpack-4.2.1/lib/action_dispatch/middleware/templates/rescues/_trace.html.erb (2.6ms)
+  Rendered /Users/siddhantpuri/.rvm/gems/ruby-2.2.2/gems/actionpack-4.2.1/lib/action_dispatch/middleware/templates/rescues/_request_and_response.html.erb (1.2ms)
+  Rendered /Users/siddhantpuri/.rvm/gems/ruby-2.2.2/gems/actionpack-4.2.1/lib/action_dispatch/middleware/templates/rescues/template_error.html.erb within rescues/layout (65.0ms)
+
+
+Started GET "/movies?ratings%5BG%5D=G&ratings%5BNC-17%5D=NC-17&ratings%5BPG%5D=PG&ratings%5BPG-13%5D=PG-13&ratings%5BR%5D=R&sort=release_date" for ::1 at 2015-07-23 13:56:29 -0700
+Processing by MoviesController#index as HTML
+  Parameters: {"ratings"=>{"G"=>"G", "NC-17"=>"NC-17", "PG"=>"PG", "PG-13"=>"PG-13", "R"=>"R"}, "sort"=>"release_date"}
+  [1m[36mMovie Load (0.3ms)[0m  [1mSELECT "movies".* FROM "movies" WHERE "movies"."raing" IN ('G', 'NC-17', 'PG', 'PG-13', 'R')  ORDER BY "movies"."release_date" ASC[0m
+SQLite3::SQLException: no such column: movies.raing: SELECT "movies".* FROM "movies" WHERE "movies"."raing" IN ('G', 'NC-17', 'PG', 'PG-13', 'R')  ORDER BY "movies"."release_date" ASC
+  Rendered movies/index.html.haml within layouts/application (3.4ms)
+Completed 500 Internal Server Error in 8ms (ActiveRecord: 0.3ms)
+
+ActionView::Template::Error (SQLite3::SQLException: no such column: movies.raing: SELECT "movies".* FROM "movies" WHERE "movies"."raing" IN ('G', 'NC-17', 'PG', 'PG-13', 'R')  ORDER BY "movies"."release_date" ASC):
+    18:       %th{:class => @date_header}= link_to 'Release Date', movies_path(:sort => 'release_date', :ratings => @selected_ratings), :id => 'release_date_header'
+    19:       %th More Info
+    20:   %tbody
+    21:     - @movies.each do |movie|
+    22:       %tr
+    23:         %td= movie.title 
+    24:         %td= movie.rating
+  app/views/movies/index.html.haml:21:in `_app_views_movies_index_html_haml__3867729511746276783_70131320677280'
+
+
+  Rendered /Users/siddhantpuri/.rvm/gems/ruby-2.2.2/gems/actionpack-4.2.1/lib/action_dispatch/middleware/templates/rescues/_source.erb (7.6ms)
+  Rendered /Users/siddhantpuri/.rvm/gems/ruby-2.2.2/gems/actionpack-4.2.1/lib/action_dispatch/middleware/templates/rescues/_trace.html.erb (2.8ms)
+  Rendered /Users/siddhantpuri/.rvm/gems/ruby-2.2.2/gems/actionpack-4.2.1/lib/action_dispatch/middleware/templates/rescues/_request_and_response.html.erb (0.9ms)
+  Rendered /Users/siddhantpuri/.rvm/gems/ruby-2.2.2/gems/actionpack-4.2.1/lib/action_dispatch/middleware/templates/rescues/template_error.html.erb within rescues/layout (65.0ms)
+
+
+Started GET "/movies?ratings%5BG%5D=G&ratings%5BNC-17%5D=NC-17&ratings%5BPG%5D=PG&ratings%5BPG-13%5D=PG-13&ratings%5BR%5D=R&sort=release_date" for ::1 at 2015-07-23 13:57:10 -0700
+Processing by MoviesController#index as HTML
+  Parameters: {"ratings"=>{"G"=>"G", "NC-17"=>"NC-17", "PG"=>"PG", "PG-13"=>"PG-13", "R"=>"R"}, "sort"=>"release_date"}
+  [1m[35mMovie Load (0.4ms)[0m  SELECT "movies".* FROM "movies" WHERE "movies"."rating" IN ('G', 'NC-17', 'PG', 'PG-13', 'R')  ORDER BY "movies"."release_date" ASC
+  Rendered movies/index.html.haml within layouts/application (22.3ms)
+Completed 200 OK in 314ms (Views: 310.2ms | ActiveRecord: 1.0ms)
+
+
+Started GET "/assets/application.self.css?body=1" for ::1 at 2015-07-23 13:57:11 -0700
+
+
+Started GET "/assets/jquery.self.js?body=1" for ::1 at 2015-07-23 13:57:11 -0700
+
+
+Started GET "/assets/jquery_ujs.self.js?body=1" for ::1 at 2015-07-23 13:57:11 -0700
+
+
+Started GET "/assets/application.self.js?body=1" for ::1 at 2015-07-23 13:57:11 -0700
+
+
+Started GET "/movies?ratings%5BG%5D=G&ratings%5BNC-17%5D=NC-17&ratings%5BPG%5D=PG&ratings%5BPG-13%5D=PG-13&ratings%5BR%5D=R&sort=title" for ::1 at 2015-07-23 13:57:13 -0700
+Processing by MoviesController#index as HTML
+  Parameters: {"ratings"=>{"G"=>"G", "NC-17"=>"NC-17", "PG"=>"PG", "PG-13"=>"PG-13", "R"=>"R"}, "sort"=>"title"}
+Redirected to http://localhost:3000/movies?ratings%5BG%5D=G&ratings%5BNC-17%5D=NC-17&ratings%5BPG%5D=PG&ratings%5BPG-13%5D=PG-13&ratings%5BR%5D=R&sort=title
+Completed 302 Found in 2ms (ActiveRecord: 0.0ms)
+
+
+Started GET "/movies?ratings%5BG%5D=G&ratings%5BNC-17%5D=NC-17&ratings%5BPG%5D=PG&ratings%5BPG-13%5D=PG-13&ratings%5BR%5D=R&sort=title" for ::1 at 2015-07-23 13:57:13 -0700
+Processing by MoviesController#index as HTML
+  Parameters: {"ratings"=>{"G"=>"G", "NC-17"=>"NC-17", "PG"=>"PG", "PG-13"=>"PG-13", "R"=>"R"}, "sort"=>"title"}
+  [1m[36mMovie Load (0.3ms)[0m  [1mSELECT "movies".* FROM "movies" WHERE "movies"."rating" IN ('G', 'NC-17', 'PG', 'PG-13', 'R')  ORDER BY "movies"."title" ASC[0m
+  Rendered movies/index.html.haml within layouts/application (6.0ms)
+Completed 200 OK in 22ms (Views: 20.6ms | ActiveRecord: 0.3ms)
+
+
+Started GET "/assets/application.self.css?body=1" for ::1 at 2015-07-23 13:57:13 -0700
+
+
+Started GET "/assets/jquery.self.js?body=1" for ::1 at 2015-07-23 13:57:13 -0700
+
+
+Started GET "/assets/jquery_ujs.self.js?body=1" for ::1 at 2015-07-23 13:57:13 -0700
+
+
+Started GET "/assets/application.self.js?body=1" for ::1 at 2015-07-23 13:57:13 -0700
+
+
+Started GET "/movies?ratings%5BG%5D=G&ratings%5BNC-17%5D=NC-17&ratings%5BPG%5D=PG&ratings%5BPG-13%5D=PG-13&ratings%5BR%5D=R&sort=release_date" for ::1 at 2015-07-23 13:57:15 -0700
+Processing by MoviesController#index as HTML
+  Parameters: {"ratings"=>{"G"=>"G", "NC-17"=>"NC-17", "PG"=>"PG", "PG-13"=>"PG-13", "R"=>"R"}, "sort"=>"release_date"}
+Redirected to http://localhost:3000/movies?ratings%5BG%5D=G&ratings%5BNC-17%5D=NC-17&ratings%5BPG%5D=PG&ratings%5BPG-13%5D=PG-13&ratings%5BR%5D=R&sort=release_date
+Completed 302 Found in 3ms (ActiveRecord: 0.0ms)
+
+
+Started GET "/movies?ratings%5BG%5D=G&ratings%5BNC-17%5D=NC-17&ratings%5BPG%5D=PG&ratings%5BPG-13%5D=PG-13&ratings%5BR%5D=R&sort=release_date" for ::1 at 2015-07-23 13:57:15 -0700
+Processing by MoviesController#index as HTML
+  Parameters: {"ratings"=>{"G"=>"G", "NC-17"=>"NC-17", "PG"=>"PG", "PG-13"=>"PG-13", "R"=>"R"}, "sort"=>"release_date"}
+  [1m[35mMovie Load (0.3ms)[0m  SELECT "movies".* FROM "movies" WHERE "movies"."rating" IN ('G', 'NC-17', 'PG', 'PG-13', 'R')  ORDER BY "movies"."release_date" ASC
+  Rendered movies/index.html.haml within layouts/application (5.2ms)
+Completed 200 OK in 16ms (Views: 14.8ms | ActiveRecord: 0.3ms)
+
+
+Started GET "/assets/application.self.css?body=1" for ::1 at 2015-07-23 13:57:15 -0700
+
+
+Started GET "/assets/application.self.js?body=1" for ::1 at 2015-07-23 13:57:15 -0700
+
+
+Started GET "/assets/jquery_ujs.self.js?body=1" for ::1 at 2015-07-23 13:57:15 -0700
+
+
+Started GET "/assets/jquery.self.js?body=1" for ::1 at 2015-07-23 13:57:15 -0700
+
+
+Started GET "/movies?ratings%5BG%5D=G&ratings%5BNC-17%5D=NC-17&ratings%5BPG%5D=PG&ratings%5BPG-13%5D=PG-13&ratings%5BR%5D=R&sort=release_date" for ::1 at 2015-07-23 13:57:16 -0700
+Processing by MoviesController#index as HTML
+  Parameters: {"ratings"=>{"G"=>"G", "NC-17"=>"NC-17", "PG"=>"PG", "PG-13"=>"PG-13", "R"=>"R"}, "sort"=>"release_date"}
+  [1m[36mMovie Load (0.3ms)[0m  [1mSELECT "movies".* FROM "movies" WHERE "movies"."rating" IN ('G', 'NC-17', 'PG', 'PG-13', 'R')  ORDER BY "movies"."release_date" ASC[0m
+  Rendered movies/index.html.haml within layouts/application (6.5ms)
+Completed 200 OK in 20ms (Views: 16.5ms | ActiveRecord: 0.3ms)
+
+
+Started GET "/assets/jquery_ujs.self.js?body=1" for ::1 at 2015-07-23 13:57:16 -0700
+
+
+Started GET "/assets/jquery.self.js?body=1" for ::1 at 2015-07-23 13:57:16 -0700
+
+
+Started GET "/assets/application.self.css?body=1" for ::1 at 2015-07-23 13:57:16 -0700
+
+
+Started GET "/assets/application.self.js?body=1" for ::1 at 2015-07-23 13:57:16 -0700
+  [1m[36m (3.6ms)[0m  [1mCREATE TABLE "schema_migrations" ("version" varchar NOT NULL) [0m
+  [1m[35m (0.1ms)[0m  select sqlite_version(*)
+  [1m[36m (4.0ms)[0m  [1mCREATE UNIQUE INDEX "unique_schema_migrations" ON "schema_migrations" ("version")[0m
+  [1m[35mActiveRecord::SchemaMigration Load (0.2ms)[0m  SELECT "schema_migrations".* FROM "schema_migrations"
+Migrating to CreateMovies (20111119180638)
+  [1m[36m (0.1ms)[0m  [1mbegin transaction[0m
+DEPRECATION WARNING: `#timestamp` was called without specifying an option for `null`. In Rails 5, this behavior will change to `null: false`. You should manually specify `null: true` to prevent the behavior of your existing migrations from changing. (called from block in up at /Users/mac/Documents/sum2015/rag/rottenpotatoes/db/migrate/20111119180638_create_movies.rb:10)
+  [1m[35m (0.6ms)[0m  CREATE TABLE "movies" ("id" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, "title" varchar, "rating" varchar, "description" text, "release_date" datetime, "created_at" datetime, "updated_at" datetime) 
+  [1m[36mSQL (0.3ms)[0m  [1mINSERT INTO "schema_migrations" ("version") VALUES (?)[0m  [["version", "20111119180638"]]
+  [1m[35m (3.6ms)[0m  commit transaction
+  [1m[36mActiveRecord::SchemaMigration Load (0.2ms)[0m  [1mSELECT "schema_migrations".* FROM "schema_migrations"[0m
+  [1m[36m (2.7ms)[0m  [1mCREATE TABLE "movies" ("id" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, "title" varchar, "rating" varchar, "description" text, "release_date" datetime, "created_at" datetime, "updated_at" datetime) [0m
+  [1m[35m (2.9ms)[0m  CREATE TABLE "schema_migrations" ("version" varchar NOT NULL) 
+  [1m[36m (0.1ms)[0m  [1mselect sqlite_version(*)[0m
+  [1m[35m (2.9ms)[0m  CREATE UNIQUE INDEX "unique_schema_migrations" ON "schema_migrations" ("version")
+  [1m[36m (0.1ms)[0m  [1mSELECT version FROM "schema_migrations"[0m
+  [1m[35m (3.5ms)[0m  INSERT INTO "schema_migrations" (version) VALUES ('20111119180638')
+  [1m[36m (2.9ms)[0m  [1mCREATE TABLE "schema_migrations" ("version" varchar NOT NULL) [0m
+  [1m[35m (0.2ms)[0m  select sqlite_version(*)
+  [1m[36m (2.7ms)[0m  [1mCREATE UNIQUE INDEX "unique_schema_migrations" ON "schema_migrations" ("version")[0m
+  [1m[35mActiveRecord::SchemaMigration Load (0.2ms)[0m  SELECT "schema_migrations".* FROM "schema_migrations"
+Migrating to CreateMovies (20111119180638)
+  [1m[36m (0.1ms)[0m  [1mbegin transaction[0m
+DEPRECATION WARNING: `#timestamp` was called without specifying an option for `null`. In Rails 5, this behavior will change to `null: false`. You should manually specify `null: true` to prevent the behavior of your existing migrations from changing. (called from block in up at /Users/mac/Documents/sum2015/rag/rottenpotatoes/db/migrate/20111119180638_create_movies.rb:10)
+  [1m[35m (1.0ms)[0m  CREATE TABLE "movies" ("id" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, "title" varchar, "rating" varchar, "description" text, "release_date" datetime, "created_at" datetime, "updated_at" datetime) 
+  [1m[36mSQL (0.3ms)[0m  [1mINSERT INTO "schema_migrations" ("version") VALUES (?)[0m  [["version", "20111119180638"]]
+  [1m[35m (3.2ms)[0m  commit transaction
+  [1m[36mActiveRecord::SchemaMigration Load (0.3ms)[0m  [1mSELECT "schema_migrations".* FROM "schema_migrations"[0m
+  [1m[36m (2.9ms)[0m  [1mCREATE TABLE "movies" ("id" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, "title" varchar, "rating" varchar, "description" text, "release_date" datetime, "created_at" datetime, "updated_at" datetime) [0m
+  [1m[35m (3.1ms)[0m  CREATE TABLE "schema_migrations" ("version" varchar NOT NULL) 
+  [1m[36m (0.1ms)[0m  [1mselect sqlite_version(*)[0m
+  [1m[35m (3.2ms)[0m  CREATE UNIQUE INDEX "unique_schema_migrations" ON "schema_migrations" ("version")
+  [1m[36m (0.2ms)[0m  [1mSELECT version FROM "schema_migrations"[0m
+  [1m[35m (3.4ms)[0m  INSERT INTO "schema_migrations" (version) VALUES ('20111119180638')
+  [1m[36m (54.7ms)[0m  [1mCREATE TABLE "schema_migrations" ("version" varchar NOT NULL) [0m
+  [1m[35m (0.2ms)[0m  select sqlite_version(*)
+  [1m[36m (3.2ms)[0m  [1mCREATE UNIQUE INDEX "unique_schema_migrations" ON "schema_migrations" ("version")[0m
+  [1m[35mActiveRecord::SchemaMigration Load (0.2ms)[0m  SELECT "schema_migrations".* FROM "schema_migrations"
+Migrating to CreateMovies (20111119180638)
+  [1m[36m (0.1ms)[0m  [1mbegin transaction[0m
+DEPRECATION WARNING: `#timestamp` was called without specifying an option for `null`. In Rails 5, this behavior will change to `null: false`. You should manually specify `null: true` to prevent the behavior of your existing migrations from changing. (called from block in up at /Users/mac/Documents/sum2015/rag/rottenpotatoes/db/migrate/20111119180638_create_movies.rb:10)
+  [1m[35m (0.6ms)[0m  CREATE TABLE "movies" ("id" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, "title" varchar, "rating" varchar, "description" text, "release_date" datetime, "created_at" datetime, "updated_at" datetime) 
+  [1m[36mSQL (0.3ms)[0m  [1mINSERT INTO "schema_migrations" ("version") VALUES (?)[0m  [["version", "20111119180638"]]
+  [1m[35m (3.9ms)[0m  commit transaction
+  [1m[36mActiveRecord::SchemaMigration Load (0.1ms)[0m  [1mSELECT "schema_migrations".* FROM "schema_migrations"[0m
+  [1m[36m (2.5ms)[0m  [1mCREATE TABLE "movies" ("id" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, "title" varchar, "rating" varchar, "description" text, "release_date" datetime, "created_at" datetime, "updated_at" datetime) [0m
+  [1m[35m (3.0ms)[0m  CREATE TABLE "schema_migrations" ("version" varchar NOT NULL) 
+  [1m[36m (0.1ms)[0m  [1mselect sqlite_version(*)[0m
+  [1m[35m (2.8ms)[0m  CREATE UNIQUE INDEX "unique_schema_migrations" ON "schema_migrations" ("version")
+  [1m[36m (0.1ms)[0m  [1mSELECT version FROM "schema_migrations"[0m
+  [1m[35m (3.4ms)[0m  INSERT INTO "schema_migrations" (version) VALUES ('20111119180638')

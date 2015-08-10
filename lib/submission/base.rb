@@ -13,7 +13,6 @@ module Submission
       assignment = submission.assignment
       grader = Graders::AutoGrader.create(submission.files.values.first, assignment)
       grader_output = grader.grade
-      puts "graderoutput is #{grader_output}"
       assignment.apply_lateness! submission  # optionally scales submission by lateness and provides comments.
       submission.grade!(grader_output[:comments], grader_output[:raw_score], grader_output[:raw_max])
       puts "SUBMISSION MESSAGE = #{submission.message}"

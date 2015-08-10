@@ -4,10 +4,11 @@
 log/*
 config/conf.yml
 config/autograders.yml
-
+config/
 .idea/
 coverage/
 submissions/
+rottenpotatoes/
 rspec_output.txt
 config/conf_passwords.yml
 stdout_subprocess

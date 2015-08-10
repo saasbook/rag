@@ -1,10 +1,11 @@
 module Graders
   class FeatureGrader < AutoGrader
+    #!/usr/bin/env ruby
     class Feature
       class TestFailedError < StandardError; end   # Internal error
       class IncorrectAnswer < StandardError; end   # Incorrect answer encountered
 
-      SOURCE_DB = "../rottenpotatoes/db/test.sqlite3"
+      SOURCE_DB = "rottenpotatoes/db/test.sqlite3"
 
       module Regex
         BlankLine = /^$/
@@ -35,22 +36,15 @@ module Graders
         #
         def total(features=[])
           s = Score.new
-          m = Mutex.new
-          # threads = []
+
           features.each do |f|
-            # t = Thread.new do
               begin
                 result = f.run!
-                m.synchronize { s += result }
+                s+= result
               rescue TestFailedError, IncorrectAnswer
-                m.synchronize { s += -result }
+                s += -result
               end
-            # end
-            # t.join unless $config[:mt]
-            # threads << t
           end
-          # threads.each(&:join)
-
           # Dump output. TODO: better way to do this?
           features.each { |f| f.dump_output }
           return s
@@ -103,20 +97,20 @@ module Graders
 
       def run!
         log '-'*80
-
         h = @env.dup
-
         score = Score.new
         num_failed = 0
         passed = false
         lines = []
-        h["FEATURE"] = File.join(@config[:temp].path, h["FEATURE"])
-        $m_db.synchronize do
-          Dir.mkdir File.join(@config[:temp].path, "db")
-          h["TEST_DB"] = File.join(@config[:temp].path, "db/test_#{$i_db}.sqlite3")
-          $i_db += 1
+        h["FEATURE"] = File.join(@config[:path], h["FEATURE"])
+        # $m_db.synchronize do
+        if !File.directory?(File.join(@config[:path], "db"))
+          #puts Dir.entries(Dir.pwd)
+          Dir.mkdir File.join(@config[:path], "db")
         end
-
+        h["TEST_DB"] = File.join(@config[:path], "db/test.sqlite3")
+        #$i_db += 1
+        # end
         popen_opts = {
           #:unsetenv_others => true     # TODO why does this make cucumber not work?
         }
@@ -126,9 +120,7 @@ module Graders
         begin
           raise TestFailedError, "Nonexistent feature file #{h["FEATURE"]}" unless File.readable? h["FEATURE"]
           raise(TestFailedError, "Failed to find test db") unless File.readable? SOURCE_DB
-          puts Dir.pwd
           FileUtils.cp SOURCE_DB, h["TEST_DB"]
-          ENV["RAILS_ROOT"] = "../rottenpotatoes"
           Open3.popen3(h, $CUKE_RUNNER, popen_opts) do |stdin, stdout, stderr, wait_thr|
             #exit_status = wait_thr.value
 
@@ -224,7 +216,6 @@ module Graders
       # [+output+] +Array+ of stdout lines from +rake cucumber+, e.g. from +readlines+
       def process_output(output)
         raise ArgumentError unless output and output.is_a? Array
-
         begin # parse failing scenarios (between FailingScenarios and BlankLine)
           if i = output.find_index {|line| line =~ Regex::FailingScenarios}
 

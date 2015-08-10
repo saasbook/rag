@@ -4,7 +4,7 @@ def main
   require 'rubygems'
   require 'bundler/setup'
   require 'cucumber'
-
+  
   fpath = ENV["FEATURE_PATH"] || File.dirname(ENV["FEATURE"])
 
   opts = [
@@ -23,20 +23,20 @@ def main
   opts.unshift "--drb" if ENV.has_key?("DRB") ? (ENV["DRB"] =~ /1|true/i) : true
   opts.unshift "--port=#{ENV["DRB_PORT"]}" if ENV.has_key?("DRB_PORT")
 
- config = Cucumber::Cli::Configuration.new
- config.parse! opts
- runner = Cucumber::Runtime.new(config)
- runner.run!
+ # config = Cucumber::Cli::Configuration.new
+ # config.parse! opts
+ # runner = Cucumber::Runtime.new(config)
+ # runner.run!
 
   #out, err = File.open("out_#{File.basename ENV['TEST_DB']}",'w+'), File.open("err_#{File.basename ENV['TEST_DB']}",'w+')
 #  m = Cucumber::Cli::Main.new(opts, out, err)
 #  m.execute!
-  # Cucumber::Cli::Main.execute(opts)
+  Cucumber::Cli::Main.execute(opts)
 end
 
 begin
   main
 rescue Object => e
-  puts "*** ERROR: #{e.inspect}"
+  puts "\n *** ERROR: #{e.inspect} *** \n"
   #puts e.backtrace
 end
