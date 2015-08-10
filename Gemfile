@@ -15,6 +15,8 @@ gem 'sqlite3'
 gem 'haml'
 gem "jquery-ui-rails"
 gem "jquery-rails"
+gem 'rspec-rails'
+gem 'activeresource'
 group :development, :testing do
   gem 'ZenTest'
   gem 'simplecov'

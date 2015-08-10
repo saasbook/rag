@@ -35,8 +35,12 @@ module Graders
       @output = []
       @description = assignment.assignment_spec_file
       @temp = submission_path
-      @orig = Dir.pwd
+      @submissiondir = Dir[File.join(@temp, '*')][-1]
 
+      # if File.directory? mdir
+      #   FileUtils.cp_r(File.join(mdir, "."),"/t")
+      #   FileUtils.remove_dir(mdir)
+      # end
     end
 
     def log(*args)
@@ -47,7 +51,6 @@ module Graders
 
     def dump_output
       @comments = @output.join("\n")
-
     end
 
     def grade
@@ -57,17 +60,19 @@ module Graders
       @raw_max = 0
       start_time = Time.now
 
-      FileUtils.cp_r Dir.glob(File.join(@base_app_path,"*")), @temp
+      FileUtils.cp_r Dir.glob(File.join(@base_app_path, "*")), @temp
+      FileUtils.cp_r Dir.glob(File.join(@submissiondir, ".")), @temp
       tmpdir = @temp
       Dir.chdir(tmpdir) do 
         env = {
-          'RAILS_ROOT' => tmpdir,
+          'RAILS_ROOT' => Dir.pwd,
           'RAILS_ENV' => 'test'
         }
         time_operation 'setup' do
           setup_rails_app(env)
         end
         separator = '-'*40  # TODO move this
+
 
         time_operation 'student tests' do
           log separator
@@ -76,16 +81,12 @@ module Graders
           log separator
         end
 
-        
-        Dir.chdir(@orig) do
-          # Check coverage
-          log ''
-          time_operation 'coverage' do
-            log separator
-            log "Checking coverage for:"
-            check_code_coverage
-            log separator
-          end
+        log ''
+        time_operation 'coverage' do
+          log separator
+          log "Checking coverage for:"
+          check_code_coverage
+          log separator
         end
 
         log ''
@@ -98,64 +99,7 @@ module Graders
           check_ref_cucumber
           log separator
         end
-
-
       end
-
-
-
-      # Dir.mktmpdir('hw4_grader', '/tmp') do |tmpdir|
-      #   # Copy base app
-      #   FileUtils.cp_r Dir.glob(File.join(@base_app_path,"*")), tmpdir
-      #   #raise "#{FileUtils.compare_file(Dir.glob(File.join(@base_app_path,"*")), tmpdir)}"
-      #   # Copy submission files over base app
-      #   ## TODO: Double check that file structure is correct
-      #   FileUtils.cp_r Dir.glob(File.join(@temp,"/*")), tmpdir
-      #   # Cleanup things
-      #   FileUtils.rm_rf File.join(tmpdir, "coverage")
-      #   Dir.chdir(tmpdir) do 
-      #     env = {
-      #       'RAILS_ROOT' => tmpdir,
-      #       'RAILS_ENV' => 'test'
-      #     }
-      #     time_operation 'setup' do
-      #       setup_rails_app(env)
-      #     end
-      #     separator = '-'*40  # TODO move this
-
-      #     time_operation 'student tests' do
-      #       log separator
-      #       log "Running student tests found in features/ spec/:"
-      #       check_student_tests(env)
-      #       log separator
-      #     end
-
-          
-      #     Dir.chdir(@orig) do
-      #       # Check coverage
-      #       log ''
-      #       time_operation 'coverage' do
-      #         log separator
-      #         log "Checking coverage for:"
-      #         check_code_coverage
-      #         log separator
-      #       end
-      #     end
-
-      #     log ''
-
-      #     # Check reference cucumber
-      #     time_operation 'reference cucumber' do
-      #       log separator
-      #       log 'Running reference Cucumber scenarios:'
-      #       test_prepare(env)
-      #       check_ref_cucumber
-      #       log separator
-      #     end
-
-
-      #   end
-      # end
 
       log "Total score: #{@raw_score} / #{@raw_max}"
       log "Completed in #{Time.now-start_time} seconds."
