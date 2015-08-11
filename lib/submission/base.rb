@@ -1,7 +1,9 @@
 require 'yaml'
 require 'byebug'
+require_relative '../rag_logger'
 module Submission
   class Base
+    include RagLogger
     def initialize(_config_hash)
     end
     def run
@@ -15,8 +17,7 @@ module Submission
       grader_output = grader.grade
       assignment.apply_lateness! submission  # optionally scales submission by lateness and provides comments.
       submission.grade!(grader_output[:comments], grader_output[:raw_score], grader_output[:raw_max])
-      puts "SUBMISSION MESSAGE = #{submission.message}"
-      # submission.message = "<pre>#{'yoloswag\n' * 500}</pre>"
+      logger.debug "SUBMISSION MESSAGE = #{submission.message}"
       submit_response(submission)
     end
     def submit_response(_submission)

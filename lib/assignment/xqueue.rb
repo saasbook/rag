@@ -29,7 +29,7 @@ module Assignment
   class Xqueue < Base
     def initialize(submission)
       grader_payload = submission.grader_payload
-      puts "GRADER PAYLOAD: #{grader_payload.pretty_inspect}"
+      logger.debug "Grader payload: #{grader_payload.pretty_inspect}"
       @assignment_name = grader_payload['assignment_name']
       @assignment_spec_file = fetch_spec_file(grader_payload['assignment_spec_uri'])
       @autograder_type = grader_payload['autograder_type']
