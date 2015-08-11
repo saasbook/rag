@@ -72,8 +72,8 @@ end
 def sorted?(column)
   column = column.select{|x| x != ""}.# gets rid of that Amelie blank release date field
     map{|x| x.downcase.gsub(/[^a-z0-9]/, ' ').strip}
-  column.should_not be_empty
-  column.should == column.sort
+  expect(column).not_to be_empty
+  expect(column).to equal(column.sort)
 end
 
 
@@ -84,11 +84,11 @@ describe "Table header" do
   end
   it "should have link to sort by title [10 points]" , points: 10 do
     page = @startpage.link_with(:id => 'title_header')
-    page.should_not be_nil
+    expect(page).not_to be_nil
   end
   it "should have link to sort by release date [10 points]" , points: 10 do
     page = @startpage.link_with(:id => 'release_date_header')
-    page.should_not be_nil
+    expect(page).not_to be_nil
   end
 end
 
@@ -101,14 +101,14 @@ describe "Table" do
     sorted_page = get_sort_link(@startpage, 'title').click
     table = sorted_page.parser.css("#movies").first
     column = TableExtractor.extract_column table, :title
-    sorted?(column).should be_truthy
+    expect(sorted?(column)).to be_truthy
 
   end
   it "should be sortable by release date [20 points]" , points: 20 do
     sorted_page = get_sort_link(@startpage, 'release_date').click
     table = sorted_page.parser.css("#movies").first
     column = TableExtractor.extract_column table, :release_date
-    sorted?(column).should be_truthy
+    expect(sorted?(column)).to be_truthy
   end
   # This is not actually part of the spec
   #it "should highlight neither header by default" do
@@ -121,14 +121,14 @@ describe "Table" do
     title = sorted_page.parser.css('#title_header')
     release_date = sorted_page.parser.css('#release_date_header')
     # TODO check css styling
-    sorted_page.search('table[@id=movies]/thead/tr/th[1]')[0].attributes['class'].value.should =~ /\bhilite\b/
+    expect(sorted_page.search('table[@id=movies]/thead/tr/th[1]')[0].attributes['class'].value).to match(/\bhilite\b/)
   end
   it "should highlight release date header when sorted [20 points]" , points: 20 do
     sorted_page = get_sort_link(@startpage, 'release_date').click
     title = sorted_page.parser.css('#title_header')
     release_date = sorted_page.parser.css('#release_date_header')
     # TODO check css styling
-    sorted_page.search('table[@id=movies]/thead/tr/th[3]')[0].attributes['class'].value.should =~ /\bhilite\b/
+    expect(sorted_page.search('table[@id=movies]/thead/tr/th[3]')[0].attributes['class'].value).to match(/\bhilite\b/)
   end
 end
 
@@ -168,27 +168,26 @@ describe "GET /movies" do
   end
 
   it "should have #ratings_form form [5 points]" , points: 5 do
-    @page.should_not be_nil
-    @page.form_with(:id =>'ratings_form').should_not be_nil
+    expect(@page).not_to be_nil
+    expect(@page.form_with(:id =>'ratings_form')).not_to be_nil
   end
   
   it "should have #ratings_submit button [5 points]" , points: 5 do
     # FIXME: In future offerings, tell students to specify an id for the form itself.
-
-    @page.form_with(:id => 'ratings_form').button_with(:id => 'ratings_submit').should_not == nil
+    expect(@page.form_with(:id => 'ratings_form').button_with(:id => 'ratings_submit')).not_to equal(nil)
   end
 
   it "should have checkboxes [5 points]" , points: 5 do
     # FIXME
     # Use the following test case in the future
     @page.form_with(:id => 'ratings_form').checkboxes.each do |checkbox|
-      checkbox[:id].should =~ /ratings_\w+/
+      expect(checkbox[:id]).to match(/ratings_\w+/)
     end
   end
   # Get movie rating
   def find_rating(page = @page)
     rating = page.search("table[@id=movies]/tbody/tr[1]/td[2]").text
-    rating.should_not be_empty
+    expect(rating).not_to be_empty
     rating
   end
 
@@ -202,7 +201,7 @@ describe "GET /movies" do
       end
     end
     return page.forms.first if (ratings_form.nil? && page.forms.size == 1)
-    ratings_form.should_not be_nil
+    expect(ratings_form).not_to be_nil
     ratings_form
   end
 
@@ -260,8 +259,8 @@ describe "GET /movies" do
   def sorted?(column)
     column = column.select{|x| x != ""}. # gets rid of that Amelie blank release date field
       map{|x| x.downcase.gsub(/[^a-z0-9]/, ' ').strip}
-    column.should_not be_empty
-    column.should == column.sort
+    expect(column).not_to be_empty
+    expect(column).to equal(column.sort)
   end
  
   context "When I first visit the page" do
@@ -269,8 +268,8 @@ describe "GET /movies" do
      checked_boxes=@page.form_with(:id => 'ratings_form').checkboxes_with(:checked=>true)
      
      checkboxes= @page.form_with(:id => 'ratings_form').checkboxes.each do |checkbox|
-       checkbox[:id].should =~ /ratings_\w+/
-       checked_boxes.include?(checkbox).should be_truthy, "unchecked checkbox found with id #{checkbox[:id]}"
+       expect(checkbox[:id]).to match(/ratings_\w+/)
+       expect(checked_boxes.include?(checkbox)).to be_truthy, "unchecked checkbox found with id #{checkbox[:id]}"
      end
     end
     it "should have movies visible [7 points]" , points: 7 do
@@ -284,8 +283,8 @@ describe "GET /movies" do
       MoviesTable.new(@page).each_body_row do |row|
         total_rows+=1
       end
-      
-      initial_rows.should == total_rows
+
+      expect(initial_rows).to equal(total_rows)
     end 
   
   
@@ -302,10 +301,10 @@ describe "GET /movies" do
       count = 0
       table = MoviesTable.new(response)
       table.each_body_row do |row|
-        row.columns[:rating].should == rating
+        expect(row.columns[:rating]).to equal(rating)
         count += 1
       end
-      count.should be >= 1
+      expect(count).to be >= 1
     end
 
     it "should automatically check the selected rating in the response [25 points]" , points: 25 do
@@ -313,12 +312,13 @@ describe "GET /movies" do
       new_ratings_form = get_form(response)
 
       #p response
-      new_ratings_form.checkboxes.should_not be_empty
+
+      expect(new_ratings_form.checkboxes).not_to be_empty
       new_ratings_form.checkboxes.each do |checkbox|
         if checkbox[:id] == "ratings_#{rating}"
-          checkbox.should be_checked
+          expect(checkbox).to be_checked
         else
-          checkbox.should_not be_checked
+          expect(checkbox).not_to be_checked
         end
       end
     end
@@ -334,7 +334,7 @@ describe "GET /movies" do
     #  table = MoviesTable.new(response)
     #  previous_title = ''
     #  table.each_body_row do |row|
-    #    row.columns[:title].should be >= previous_title
+    #    expect(row.columns[:title]).to be >= previous_title
     #    previous_title = row.columns[:title]
     #  end
     #end
@@ -351,9 +351,9 @@ describe "GET /movies" do
       columns = []
       table.each_body_row do |row|
         columns << row.columns[:title]
-        row.columns[:rating].should eq(rating)
+        expect(row.columns[:rating]).to equal(rating)
       end
-      sorted?(columns).should be_truthy
+      expect(sorted?(columns)).to be_truthy
     end
   end
 end
@@ -392,34 +392,34 @@ describe "GET /movies" do
 
   context "basic tests" do
     it "should be successful" do
-      @page.should_not be_nil
+      expect(@page).not_to be_nil
     end
     it 'should have a form with id ratings_form' do
-      @page.should_not be_nil
-      @page.form_with(:id =>'ratings_form').should_not be_nil
+      expect(@page).not_to be_nil
+      expect(@page.form_with(:id =>'ratings_form')).not_to be_nil
     end
     it "should have #ratings_submit button" do
-      @page.should_not be_nil
-      @page.form_with(:id => 'ratings_form').button_with(:id => 'ratings_submit').should_not == nil
+      expect(@page).not_to be_nil
+      expect(@page.form_with(:id =>'ratings_form').button_with(:id => 'ratings_submit')).not_to equal(nil)
     end
 
     it "should have checkboxes" do
-      @page.should_not be_nil
+      expect(@page).not_to be_nil
       @page.form_with(:id => 'ratings_form').checkboxes.each do |checkbox|
-        checkbox[:id].should =~ /ratings_\w+/
+        expect(checkbox[:id]).to match(/ratings_\w+/)
       end
     end
 
     it "should have #movies" do
-      @page.search("#movies").should_not be_empty
+      expect(@page.search("#movies")).not_to be_empty
     end
 
     it "should have #title_header" do
-      @page.search("#title_header").should_not be_empty
+      expect(@page.search("#title_header")).not_to be_empty
     end
 
     it "should have #release_date_header" do
-      @page.search("#release_date_header").should_not be_empty
+      expect(@page.search("#release_date_header")).not_to be_empty
     end
   end
 
@@ -442,7 +442,7 @@ describe "GET /movies" do
       end
     end
     return page.forms.first if (ratings_form.nil? && page.forms.size == 1)
-    ratings_form.should_not be_nil
+    expect(ratings_form).not_to be_nil
     ratings_form
   end
 
@@ -490,10 +490,10 @@ describe "GET /movies" do
     count = 0
     table = MoviesTable.new(page)
     table.each_body_row do |row|
-      ratings.should include row.columns[:rating]
+      expect(ratings).to include(row.columns[:rating])
       count += 1
     end
-    count.should be >= 1
+    expect(count).to be >= 1
   end
 
   def verify_sort_order(page, field)
@@ -502,8 +502,8 @@ describe "GET /movies" do
     table.each_body_row {|x| column << x.columns[field]}
     column = column.select{|x| x != ""}. # gets rid of that Amelie blank release date field
       map{|x| x.downcase.gsub(/[^a-z0-9]/, ' ').strip}
-    column.should_not be_empty
-    column.should == column.sort
+    expect(column).not_to be_empty
+    expect(column).to equal(column.sort)
   end
 
   def select_all_ratings_and_submit(page)
@@ -562,7 +562,7 @@ describe "GET /movies" do
 
     it "should allow new ratings to be selected [15 points]" , points: 15 do
       ratings = find_ratings(@page)
-      ratings.length.should be >= 2
+      expect(ratings.length)to be >= 2
       #repeats above test with deprecated methods
       #ratings.should have_at_least(2).items
       first_rating = ratings[0]

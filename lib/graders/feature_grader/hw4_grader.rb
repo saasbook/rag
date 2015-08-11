@@ -4,7 +4,6 @@ require 'term/ansicolor'
 require 'thread'
 require 'fileutils'
 require 'tempfile'
-require 'tmpdir'
 require './lib/cov_helper.rb'
 require './lib/util.rb'
 
@@ -36,11 +35,6 @@ module Graders
       @description = assignment.assignment_spec_file
       @temp = submission_path
       @submissiondir = Dir[File.join(@temp, '*')][-1]
-
-      # if File.directory? mdir
-      #   FileUtils.cp_r(File.join(mdir, "."),"/t")
-      #   FileUtils.remove_dir(mdir)
-      # end
     end
 
     def log(*args)
@@ -62,6 +56,7 @@ module Graders
 
       FileUtils.cp_r Dir.glob(File.join(@base_app_path, "*")), @temp
       FileUtils.cp_r Dir.glob(File.join(@submissiondir, ".")), @temp
+      FileUtils.rm_r Dir.glob(@submissiondir)
       tmpdir = @temp
       Dir.chdir(tmpdir) do 
         env = {
@@ -100,7 +95,6 @@ module Graders
           log separator
         end
       end
-
       log "Total score: #{@raw_score} / #{@raw_max}"
       log "Completed in #{Time.now-start_time} seconds."
       dump_output
@@ -259,19 +253,18 @@ module Graders
         y[label].each {|h| h[:object] = klass.new(self, h, feature_config)}
       end
 
-      objectify = lambda {|arr| arr.collect! {|h| h[:object]}}
-      featurize = lambda do |f|
-        %w( failures ).each do |attr|
-          f[attr].collect! {|h| h.is_a?(Hash) ? h[:object] : h} if f.has_key?(attr)
-        end
-
-        f[:if_pass].collect! {|h| featurize.call(h); HW4Grader::Feature.new(self, h, feature_config)} if f.has_key?(:if_pass)
-      end
-
-      y[:features].each {|h| featurize.call(h)}
+      y[:features].each {|h| featurize(h)}
 
       y[:features] = y[:features].collect {|h| h[:object]}
     end
+
+    def featurize(f)
+      %w( failures ).each do |attr|
+        f[attr].collect! {|h| h.is_a?(Hash) ? h[:object] : h} if f.has_key?(attr)
+      end
+      f[:if_pass].collect! {|h| featurize(h); HW4Grader::Feature.new(self, h, @config)} if f.has_key?(:if_pass)
+    end
+
 
     def parse_student_test_output(text)
       cuke = text.match(/^----BEGIN CUCUMBER----\n#{'-'*80}\n(.*)#{'-'*80}\n----END CUCUMBER----$/m)[1]
