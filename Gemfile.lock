@@ -1,6 +1,6 @@
 GIT
   remote: https://github.com/zhangaaron/xqueue-ruby
-  revision: a7d2acff2416bb2776bb1bd88a7ab04c1c6380e7
+  revision: 8690aad01eac88605c8503ac5e88a65822631458
   specs:
     xqueue_ruby (0.0.1)
       activemodel
@@ -119,7 +119,7 @@ GEM
       multi_json (~> 1.3)
     globalid (0.3.6)
       activesupport (>= 4.1.0)
-    haml (4.0.6)
+    haml (4.0.7)
       tilt
     hirb (0.7.3)
     http-cookie (1.0.2)
