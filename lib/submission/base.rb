@@ -4,7 +4,8 @@ require_relative '../rag_logger'
 module Submission
   class Base
     include RagLogger
-    def initialize(_config_hash)
+    def initialize(config_hash)
+      RagLogger.configure_logger(config_hash['log_file']) if config_hash['log_file'].present?
     end
     def run
       raise NotImplementedError, 'abstract method'

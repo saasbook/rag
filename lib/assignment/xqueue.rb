@@ -17,7 +17,7 @@ module Assignment
     end
   end
 
-  def self.late_comments(submission_time, is_late, grade_scale =1.0)
+  def self.late_comments(submission_time, is_late, grade_scale=1.0)
     "Your submission was recorded at #{submission_time} : ".concat(
         is_late ?  "submission is on time.\n" :
             "submission is late and scaled by #{grade_scale}\n")
