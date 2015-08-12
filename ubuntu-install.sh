@@ -40,8 +40,8 @@ verbose-short() {
 # install things
 verbose sudo apt-get install -y git curl
 if ! test -e ~/.rvm/scripts/rvm; then
-    verbose curl -sSL https://rvm. io/mpapis.asc | verbose-short gpg --import -
-    verbose curl -sSL https://get.rvm.io | verbose-short bash -s stable --quiet-curl --ruby=1.9.3
+    verbose curl -sSL https://rvm.io/mpapis.asc | verbose-short gpg --import -
+    verbose curl -sSL https://get.rvm.io | verbose-short bash -s stable --quiet-curl --ruby=2.2.2
 fi
 verbose source ~/.rvm/scripts/rvm
 # rag
