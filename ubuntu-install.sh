@@ -43,7 +43,7 @@ if ! test -e ~/.rvm/scripts/rvm; then
     verbose curl -sSL https://rvm.io/mpapis.asc | verbose-short gpg --import -
     verbose curl -sSL https://get.rvm.io | verbose-short bash -s stable --quiet-curl --ruby=2.2.2
 fi
-verbose source ~/.rvm/scripts/rvm
+verbose source /usr/local/rvm/scripts/rvm
 # rag
 verbose git-clone-ifmissing-cd https://github.com/saasbook/rag.git ~/rag
 # To get a nice footer for screen for .screenrc
