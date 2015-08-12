@@ -53,6 +53,8 @@ verbose printenv GITHUB_DEPLOY_SSH_KEY > ~/.ssh/id_rsa
 #Add required native extensions for ruby-filemagic gem
 verbose sudo apt-get install libmagic-dev
 verbose cd ~/rag/
+verbose gem install bundler
+
 #verbose rvm use 2.2.2 # for some reason, rvm doesn't automatically change ruby version from inside script
 #verbose bundle-install-ifmissing
 
