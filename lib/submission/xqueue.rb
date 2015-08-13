@@ -27,7 +27,6 @@ module Submission
     def submit_response(graded_submission)
       graded_submission.correct = graded_submission.score != 0  # as defined in edx_controller.rb in rag.
       graded_submission.post_back
-      puts "really sent back"
     end
 
     def create_xqueue_hash(config_hash)

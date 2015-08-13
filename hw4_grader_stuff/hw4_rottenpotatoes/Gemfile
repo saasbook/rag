@@ -1,36 +1,41 @@
 source 'http://rubygems.org'
 
-gem 'rails', '3.1.0'
+gem 'rails', '4.2.1'
 
 # Bundle edge Rails instead:
 # gem 'rails',     :git => 'git://github.com/rails/rails.git'
 
 group :development do
-  gem 'ruby-debug19', :require => 'ruby-debug'
   gem 'cucumber-rails-training-wheels'
 end
 
 group :development, :test do
-  gem 'sqlite3'
-  gem 'cucumber-rails', :require => false
+  # gem 'cucumber-rails', :require => false
   gem 'database_cleaner'
   gem 'capybara'
   gem 'launchy'
   gem 'rspec-rails'
-  gem 'simplecov', "~> 0.6.1"
+  gem 'simplecov'
+  gem 'autotest'
+  gem 'spring'
+  gem 'web-console'
+  gem 'byebug'
 end
 group :production do
   gem 'pg'
+  gem 'rails_12factor'
 end
 
 # Gems used only for assets and not required
 # in production environments by default.
 group :assets do
   gem 'therubyracer'              
-  gem 'sass-rails', "  ~> 3.1.0"
-  gem 'coffee-rails', "~> 3.1.0"
+  gem 'sass-rails'
+  gem 'coffee-rails'
   gem 'uglifier'
 end
+
+gem 'sqlite3'
 
 gem 'jquery-rails'
 
@@ -42,3 +47,9 @@ gem 'jquery-rails'
 
 # To use debugger
 gem 'haml'
+
+gem 'turbolinks'
+
+gem 'jbuilder'
+
+gem 'sdoc', group: :doc
