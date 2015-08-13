@@ -38,24 +38,22 @@ verbose-short() {
 }
 
 sudo su - ubuntu #in install script everything is run as superuser, run as regular user so don't have to mess with permission levels
+verbose whoami
 # install things
 verbose sudo apt-get install -y git curl
 if ! test -e ~/.rvm/scripts/rvm; then
     verbose curl -sSL https://rvm.io/mpapis.asc | verbose-short gpg --import -
     verbose curl -sSL https://get.rvm.io | verbose-short bash -s stable --quiet-curl --ruby=2.2.2
 fi
-
-# rag
-verbose git-clone-ifmissing-cd https://github.com/saasbook/rag.git home//rag
+verbose git-clone-ifmissing-cd https://github.com/saasbook/rag.git /home/ubuntu/rag/
 # To get a nice footer for screen for .screenrc
-verbose cp -f ~/rag/.screenrc ~/.screenrc
+verbose cp -f /home/ubuntu/rag/.screenrc /home/ubuntu/.screenrc
 #Take ssh key out of ENV hash and move to ./ssh.
-verbose printenv GITHUB_DEPLOY_SSH_KEY > ~/.ssh/id_rsa
+#verbose printenv GITHUB_DEPLOY_SSH_KEY > /home/ubuntu/.ssh/id_rsa
 #Add required native extensions for ruby-filemagic gem
 verbose chmod -R 777 /usr/local/rvm/gems/ruby-2.2.2
 verbose source /usr/local/rvm/scripts/rvm
-verbose cd ~/rag/
-
+verbose cd /home/ubuntu/rag/
 verbose rvm use 2.2.2 # for some reason, rvm doesn't automatically change ruby version from inside script
 verbose gem install bundler
 verbose bundle-install-ifmissing
