@@ -283,7 +283,7 @@ module Graders
       end
       [passed, total]
     rescue StandardError => e
-      puts e.to_s
+      logger.debug e.to_s
       [0,0]
     end
 
@@ -304,7 +304,7 @@ module Graders
       passed = total - failed - pending
       [passed, (total - pending)]
     rescue StandardError => e
-      puts e.to_s
+      logger.debug e.to_s
       [0,0]
     end
 
@@ -313,7 +313,7 @@ module Graders
       yield
       end_time = Time.now.to_f
       # TODO: Make this a debug mode setting
-      puts "#{name}: #{end_time - start_time}s"
+      logger.debug "#{name}: #{end_time - start_time}s"
     end
   end
 end
