@@ -73,7 +73,7 @@ def sorted?(column)
   column = column.select{|x| x != ""}.# gets rid of that Amelie blank release date field
     map{|x| x.downcase.gsub(/[^a-z0-9]/, ' ').strip}
   expect(column).not_to be_empty
-  expect(column).to equal(column.sort)
+  expect(column).to match_array(column.sort)
 end
 
 
@@ -260,7 +260,7 @@ describe "GET /movies" do
     column = column.select{|x| x != ""}. # gets rid of that Amelie blank release date field
       map{|x| x.downcase.gsub(/[^a-z0-9]/, ' ').strip}
     expect(column).not_to be_empty
-    expect(column).to equal(column.sort)
+    expect(column).to match_array(column.sort)
   end
  
   context "When I first visit the page" do
@@ -301,7 +301,7 @@ describe "GET /movies" do
       count = 0
       table = MoviesTable.new(response)
       table.each_body_row do |row|
-        expect(row.columns[:rating]).to equal(rating)
+        expect(row.columns[:rating]).to match(rating)
         count += 1
       end
       expect(count).to be >= 1
@@ -351,7 +351,7 @@ describe "GET /movies" do
       columns = []
       table.each_body_row do |row|
         columns << row.columns[:title]
-        expect(row.columns[:rating]).to equal(rating)
+        expect(row.columns[:rating]).to match(rating)
       end
       expect(sorted?(columns)).to be_truthy
     end
@@ -503,7 +503,7 @@ describe "GET /movies" do
     column = column.select{|x| x != ""}. # gets rid of that Amelie blank release date field
       map{|x| x.downcase.gsub(/[^a-z0-9]/, ' ').strip}
     expect(column).not_to be_empty
-    expect(column).to equal(column.sort)
+    expect(column).to match_array(column.sort)
   end
 
   def select_all_ratings_and_submit(page)
@@ -562,7 +562,7 @@ describe "GET /movies" do
 
     it "should allow new ratings to be selected [15 points]" , points: 15 do
       ratings = find_ratings(@page)
-      expect(ratings.length)to be >= 2
+      expect(ratings.length).to be >= 2
       #repeats above test with deprecated methods
       #ratings.should have_at_least(2).items
       first_rating = ratings[0]
