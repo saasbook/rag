@@ -7,7 +7,7 @@ module Submission
 
     #start with logger if user specifies a log file.
     def initialize(config_hash)
-      RagLogger.configure_logger(config_hash['log_file'], config_hash['log_level'] || 0) if config_hash['log_file'].present?
+      RagLogger.configure_logger(config_hash['log_to_file'], config_hash['log_level'] || 0)
     end
     def run
       raise NotImplementedError, 'abstract method'
@@ -16,6 +16,7 @@ module Submission
     def handle_submission(submission)
       raise 'No submission received' if submission.nil?
       assignment = submission.assignment
+      logger.info("Recieved a submission at #{Time.now.to_s} for assignment #{assignment}")
       grader = Graders::AutoGrader.create(submission.files.values.first, assignment)
       grader_output = grader.grade
       submission.grade!(grader_output[:comments], grader_output[:raw_score], grader_output[:raw_max])
