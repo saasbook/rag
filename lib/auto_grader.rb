@@ -1,14 +1,16 @@
-require_relative 'rag_logger'
+
+#TODO: FIGURE OUT HOW TO LOAD OTHER AUTOGRADERS IN SMART WAY. PROBABLY SHOULD BE DONE THROUGH EXTERNAL GEMS
+
 
 module Graders
   def self.load_student_files(file_path)
     raise "#{file_path} is not a directory. Student submission could not be loaded" unless Dir.exist? file_path
     Dir[File.join(file_path, '*.rb')].each do  |file_name|
+      puts "File loaded: #{file_name}, file contents: \n #{IO.read(file_name)}"
       load file_name
     end
   end
   class AutoGrader
-    include RagLogger
     class AutoGrader::NoSuchGraderError < StandardError ; end
 
     # ==== Attributes
@@ -39,7 +41,6 @@ module Graders
     require_relative 'graders/rspec_grader/hw5_grader.rb'
     require_relative 'graders/feature_grader/hw3_grader.rb'
     require_relative 'graders/feature_grader/hw4_grader.rb'
-
 
 
     def self.create(submission_path, assignment)

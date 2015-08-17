@@ -5,6 +5,7 @@ require_relative 'polling'
 module Submission
   ENV['BASE_FOLDER'] ||= 'submissions/'
   FileUtils.mkdir ENV['BASE_FOLDER'] unless File.exist? ENV['BASE_FOLDER']
+  puts "Autograder is downloading remote files to #{ENV['BASE_FOLDER']}"
   class Xqueue < Polling
     attr_reader :x_queue
 
@@ -17,7 +18,6 @@ module Submission
     def next_submission_with_assignment
       submission = @x_queue.get_submission
       return if submission.nil?
-      logger.debug submission.inspect
       submission.assignment = Assignment::Xqueue.new(submission)
       submission.write_to_location! File.join( [ENV['BASE_FOLDER'], submission.student_id].join(''),
                         submission.assignment.assignment_name, Time.new.strftime(STRFMT))
@@ -25,6 +25,7 @@ module Submission
     end
 
     def submit_response(graded_submission)
+      graded_submission.correct = graded_submission.score != 0  # as defined in edx_controller.rb in rag.
       graded_submission.post_back
     end
 

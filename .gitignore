@@ -8,7 +8,7 @@ config/
 .idea/
 coverage/
 submissions/
-rottenpotatoes/*
+rottenpotatoes/
 rspec_output.txt
 config/conf_passwords.yml
 stdout_subprocess

@@ -25,4 +25,4 @@ require 'submission/xqueue.rb'
 require 'fakeweb'  # stub out network responses.
 require 'fakefs/safe'  # stub out filesys IO calls
 
-# FakeWeb.allow_net_connect = false
+FakeWeb.allow_net_connect = false 
