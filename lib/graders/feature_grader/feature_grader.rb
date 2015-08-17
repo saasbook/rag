@@ -44,7 +44,19 @@ module Graders
     def dump_output
       @comments = @output.join("\n")
     end
-    
+
+    def grade
+      response = run_in_subprocess(method(:runner_block))
+      response
+      # if response
+      #   response
+      # else
+      #   ERROR_HASH
+      # end
+    end
+
+    private
+
     def runner_block
       begin
         load_description
@@ -59,24 +71,15 @@ module Graders
 
         log "Total score: #{@raw_score} / #{@raw_max}"
         log "Completed in #{Time.now - start_time} seconds."
-        
+
         dump_output
         {raw_score: @raw_score, raw_max: @raw_max, comments: @comments}
       rescue Exception => e
-        ERROR_HASH
+        {comments: e.message}
+
+        #ERROR_HASH
       end
     end
-
-    def grade
-      response = run_in_subprocess(method(:runner_block))
-      if response
-        response
-      else
-        ERROR_HASH
-      end
-    end
-
-    private
 
     def load_description
       if File.directory? @description
