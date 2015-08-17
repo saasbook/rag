@@ -51,7 +51,7 @@ module Graders
     end
 
     def grade
-      response = run_in_subprocess(method(:runner_block))
+      response = run_in_subprocess(method(:runner_blocko))
       if response
         response
       else
@@ -62,62 +62,58 @@ module Graders
 
     private
 
-    def runner_block
-      begin
-        load_description
+    def runner_blocko
+      load_description
 
-        @raw_score = 0
-        @raw_max = 0
-        start_time = Time.now
+      @raw_score = 0
+      @raw_max = 0
+      start_time = Time.now
 
-        FileUtils.cp_r Dir.glob(File.join(@base_app_path, "*")), @temp
-        FileUtils.cp_r Dir.glob(File.join(@submissiondir, ".")), @temp
-        FileUtils.rm_r Dir.glob(@submissiondir)
-        tmpdir = @temp
-        Dir.chdir(tmpdir) do 
-          env = {
-            'RAILS_ROOT' => Dir.pwd,
-            'RAILS_ENV' => 'test'
-          }
-          time_operation 'setup' do
-            setup_rails_app(env)
-          end
-          separator = '-'*40  # TODO move this
-
-
-          time_operation 'student tests' do
-            log separator
-            log "Running student tests found in features/ spec/:"
-            check_student_tests(env)
-            log separator
-          end
-
-          log ''
-          time_operation 'coverage' do
-            log separator
-            log "Checking coverage for:"
-            check_code_coverage
-            log separator
-          end
-
-          log ''
-
-          # Check reference cucumber
-          time_operation 'reference cucumber' do
-            log separator
-            log 'Running reference Cucumber scenarios:'
-            test_prepare(env)
-            check_ref_cucumber
-            log separator
-          end
+      FileUtils.cp_r Dir.glob(File.join(@base_app_path, "*")), @temp
+      FileUtils.cp_r Dir.glob(File.join(@submissiondir, ".")), @temp
+      FileUtils.rm_r Dir.glob(@submissiondir)
+      tmpdir = @temp
+      Dir.chdir(tmpdir) do 
+        env = {
+          'RAILS_ROOT' => Dir.pwd,
+          'RAILS_ENV' => 'test'
+        }
+        time_operation 'setup' do
+          setup_rails_app(env)
         end
-        log "Total score: #{@raw_score} / #{@raw_max}"
-        log "Completed in #{Time.now-start_time} seconds."
-        dump_output
-        {raw_score: @raw_score, raw_max: @raw_max, comments: @comments}
-      rescue Exception => e
-        ERROR_HASH
+        separator = '-'*40  # TODO move this
+
+
+        time_operation 'student tests' do
+          log separator
+          log "Running student tests found in features/ spec/:"
+          check_student_tests(env)
+          log separator
+        end
+
+        log ''
+        time_operation 'coverage' do
+          log separator
+          log "Checking coverage for:"
+          check_code_coverage
+          log separator
+        end
+
+        log ''
+
+        # Check reference cucumber
+        time_operation 'reference cucumber' do
+          log separator
+          log 'Running reference Cucumber scenarios:'
+          test_prepare(env)
+          check_ref_cucumber
+          log separator
+        end
       end
+      log "Total score: #{@raw_score} / #{@raw_max}"
+      log "Completed in #{Time.now-start_time} seconds."
+      dump_output
+      {raw_score: @raw_score, raw_max: @raw_max, comments: @comments}
     end
 
     def load_description
