@@ -43,11 +43,11 @@ module Graders
 
 
     def self.create(submission_path, assignment)
-      begin
+      # begin
         Graders.const_get(assignment.autograder_type.strip).new(submission_path, assignment)
-      rescue NameError
-        raise AutoGrader::NoSuchGraderError, "Can't find grading strategy for #{assignment.autograder_type}"
-      end
+      # rescue NameError
+      #   raise AutoGrader::NoSuchGraderError, "Can't find grading strategy for #{assignment.autograder_type}"
+      # end
     end
 
     # Grade the given question using the specified grader, strategy, and

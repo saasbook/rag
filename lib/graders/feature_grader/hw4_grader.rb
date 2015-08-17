@@ -4,7 +4,6 @@ require 'term/ansicolor'
 require 'thread'
 require 'fileutils'
 require 'tempfile'
-require 'tmpdir'
 require './lib/cov_helper.rb'
 require './lib/util.rb'
 
@@ -22,6 +21,9 @@ module Graders
     attr_reader   :logpath
     attr_reader   :cov_opts
 
+    ERROR_HASH = {raw_score: 0, raw_max: 100, comments: 'There was a fatal error with your submission. It either timed out or caused an exception.'}
+    
+
     # Grade the features contained in the +.tar.gz+ archive _submission_archive_,
     # using the reference solution _app_.
     #
@@ -35,8 +37,7 @@ module Graders
       @output = []
       @description = assignment.assignment_spec_file
       @temp = submission_path
-      @orig = Dir.pwd
-
+      @submissiondir = Dir[File.join(@temp, '*')][-1]
     end
 
     def log(*args)
@@ -47,38 +48,38 @@ module Graders
 
     def dump_output
       @comments = @output.join("\n")
-
     end
 
     def grade
-      load_description
+      begin
+        load_description
 
-      @raw_score = 0
-      @raw_max = 0
-      start_time = Time.now
+        @raw_score = 0
+        @raw_max = 0
+        start_time = Time.now
 
-      FileUtils.cp_r Dir.glob(File.join(@base_app_path,"*")), @temp
-      tmpdir = @temp
-      Dir.chdir(tmpdir) do 
-        env = {
-          'RAILS_ROOT' => tmpdir,
-          'RAILS_ENV' => 'test'
-        }
-        time_operation 'setup' do
-          setup_rails_app(env)
-        end
-        separator = '-'*40  # TODO move this
+        FileUtils.cp_r Dir.glob(File.join(@base_app_path, "*")), @temp
+        FileUtils.cp_r Dir.glob(File.join(@submissiondir, ".")), @temp
+        FileUtils.rm_r Dir.glob(@submissiondir)
+        tmpdir = @temp
+        Dir.chdir(tmpdir) do 
+          env = {
+            'RAILS_ROOT' => Dir.pwd,
+            'RAILS_ENV' => 'test'
+          }
+          time_operation 'setup' do
+            setup_rails_app(env)
+          end
+          separator = '-'*40  # TODO move this
 
-        time_operation 'student tests' do
-          log separator
-          log "Running student tests found in features/ spec/:"
-          check_student_tests(env)
-          log separator
-        end
 
-        
-        Dir.chdir(@orig) do
-          # Check coverage
+          time_operation 'student tests' do
+            log separator
+            log "Running student tests found in features/ spec/:"
+            check_student_tests(env)
+            log separator
+          end
+
           log ''
           time_operation 'coverage' do
             log separator
@@ -86,81 +87,25 @@ module Graders
             check_code_coverage
             log separator
           end
+
+          log ''
+
+          # Check reference cucumber
+          time_operation 'reference cucumber' do
+            log separator
+            log 'Running reference Cucumber scenarios:'
+            test_prepare(env)
+            check_ref_cucumber
+            log separator
+          end
         end
-
-        log ''
-
-        # Check reference cucumber
-        time_operation 'reference cucumber' do
-          log separator
-          log 'Running reference Cucumber scenarios:'
-          test_prepare(env)
-          check_ref_cucumber
-          log separator
-        end
-
-
+        log "Total score: #{@raw_score} / #{@raw_max}"
+        log "Completed in #{Time.now-start_time} seconds."
+        dump_output
+        {raw_score: @raw_score, raw_max: @raw_max, comments: @comments}
+      rescue Exception => e
+        ERROR_HASH
       end
-
-
-
-      # Dir.mktmpdir('hw4_grader', '/tmp') do |tmpdir|
-      #   # Copy base app
-      #   FileUtils.cp_r Dir.glob(File.join(@base_app_path,"*")), tmpdir
-      #   #raise "#{FileUtils.compare_file(Dir.glob(File.join(@base_app_path,"*")), tmpdir)}"
-      #   # Copy submission files over base app
-      #   ## TODO: Double check that file structure is correct
-      #   FileUtils.cp_r Dir.glob(File.join(@temp,"/*")), tmpdir
-      #   # Cleanup things
-      #   FileUtils.rm_rf File.join(tmpdir, "coverage")
-      #   Dir.chdir(tmpdir) do 
-      #     env = {
-      #       'RAILS_ROOT' => tmpdir,
-      #       'RAILS_ENV' => 'test'
-      #     }
-      #     time_operation 'setup' do
-      #       setup_rails_app(env)
-      #     end
-      #     separator = '-'*40  # TODO move this
-
-      #     time_operation 'student tests' do
-      #       log separator
-      #       log "Running student tests found in features/ spec/:"
-      #       check_student_tests(env)
-      #       log separator
-      #     end
-
-          
-      #     Dir.chdir(@orig) do
-      #       # Check coverage
-      #       log ''
-      #       time_operation 'coverage' do
-      #         log separator
-      #         log "Checking coverage for:"
-      #         check_code_coverage
-      #         log separator
-      #       end
-      #     end
-
-      #     log ''
-
-      #     # Check reference cucumber
-      #     time_operation 'reference cucumber' do
-      #       log separator
-      #       log 'Running reference Cucumber scenarios:'
-      #       test_prepare(env)
-      #       check_ref_cucumber
-      #       log separator
-      #     end
-
-
-      #   end
-      # end
-
-      log "Total score: #{@raw_score} / #{@raw_max}"
-      log "Completed in #{Time.now-start_time} seconds."
-      dump_output
-      {raw_score: @raw_score, raw_max: @raw_max, comments: @comments}
     end
 
     private
@@ -315,19 +260,18 @@ module Graders
         y[label].each {|h| h[:object] = klass.new(self, h, feature_config)}
       end
 
-      objectify = lambda {|arr| arr.collect! {|h| h[:object]}}
-      featurize = lambda do |f|
-        %w( failures ).each do |attr|
-          f[attr].collect! {|h| h.is_a?(Hash) ? h[:object] : h} if f.has_key?(attr)
-        end
-
-        f[:if_pass].collect! {|h| featurize.call(h); HW4Grader::Feature.new(self, h, feature_config)} if f.has_key?(:if_pass)
-      end
-
-      y[:features].each {|h| featurize.call(h)}
+      y[:features].each {|h| featurize(h)}
 
       y[:features] = y[:features].collect {|h| h[:object]}
     end
+
+    def featurize(f)
+      %w( failures ).each do |attr|
+        f[attr].collect! {|h| h.is_a?(Hash) ? h[:object] : h} if f.has_key?(attr)
+      end
+      f[:if_pass].collect! {|h| featurize(h); HW4Grader::Feature.new(self, h, @config)} if f.has_key?(:if_pass)
+    end
+
 
     def parse_student_test_output(text)
       cuke = text.match(/^----BEGIN CUCUMBER----\n#{'-'*80}\n(.*)#{'-'*80}\n----END CUCUMBER----$/m)[1]
