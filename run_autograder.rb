@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 
 require 'optparse'
-require 'fileutils'
+
 options = {}
 OptionParser.new do |opts|
   options = opts
@@ -20,7 +20,3 @@ end
 require_relative 'lib/adapter'
 autograder = Submission.load(ARGV[0])
 autograder.run
-
-at_exit do
-  FileUtils.rm_rf('temp_repo') # make sure we always do this even if we exit abnormally
-end
