@@ -49,8 +49,8 @@ module Graders
     def dump_output
       @comments = @output.join("\n")
     end
-
-    def grade
+    
+    def runner_block
       begin
         load_description
 
@@ -104,6 +104,15 @@ module Graders
         dump_output
         {raw_score: @raw_score, raw_max: @raw_max, comments: @comments}
       rescue Exception => e
+        ERROR_HASH
+      end
+    end
+
+    def grade
+      response = run_in_subprocess(method(:runner_block))
+      if response
+        response
+      else
         ERROR_HASH
       end
     end
