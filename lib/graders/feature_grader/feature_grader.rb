@@ -75,7 +75,7 @@ module Graders
         dump_output
         {raw_score: @raw_score, raw_max: @raw_max, comments: @comments}
       rescue Exception => e
-        {comments: e.message}
+        e.message
 
         #ERROR_HASH
       end
