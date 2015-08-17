@@ -11,7 +11,6 @@ module Submission
 
     def run
       loop do
-        puts "new"
         submission = next_submission_with_assignment
         submission.nil? ? sleep(@sleep_duration) : handle_submission(submission)
       end
