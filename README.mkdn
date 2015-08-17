@@ -15,12 +15,9 @@ Travis C. I. [![Build Status](https://travis-ci.org/saasbook/rag.png)](https://t
 Usage
 --------------------
 
-1. Launch an EC2 instance (micro is fine) with autograder AMI. If you are using solutions from a private repo, make sure you set up a deploy key and place it into the Amazon ENV as GITHUB_DEPLOY_KEY. 
-
-2. hw6Grader1 has the latest version of rag, so move the content from it to the new instance.
-   * You might want to move the logs before you copy as they take up a lot of space.
-
-    NOTE: <i>Somebody should make a new AMI with the updated connection code, and enabled to pull from the saasbook repos</i>
+1. Launch an EC2 instance (micro is fine) with autograder AMI (Ubuntu 14.04). If you are using solutions from a private repo, make sure you put the private key in /home/ubuntu/.ssh/id_rsa
+2. You will need to provide a config file that provides login information. See configuration below. 
+3. The autograder should be run from CLI in the background once properly configured. 
 
 Configuration and setup
 ------------------------
@@ -41,7 +38,9 @@ There is one config file hosted locally on the autograder required for setup wit
 	    password: 'password'
 	  user_auth:
 	    user_name: 'username'
-	    user_pass: 'password' 
+	    user_pass: 'password'
+    	  log_to_file: true
+    	  log_level: 1
 	```
 
  * ```default``` defines the current strategy being used by the autograder.
@@ -57,7 +56,6 @@ There is one config file hosted locally on the autograder required for setup wit
     assignment_name: 'assign1'  # the name of the assignment
     autograder_type: 'HerokuRspecGrader'  # type of grader to use on the submission. Will be deprecated and moved into hw repo.
     assignment_spec_uri: 'git@github.com:zhangaaron/example_hw1_sol.git'  #  a homework directory containing spec files for the autograder to run against HW
-    deploy_key: 'xxx'  # a read-only deploy key configured for use with private repo for homework solutions. Only necessary if the deploy key has not been set in ENV
     due_dates: {'20150619000000': 1.00, '20150620000000': 0.30}  # a hash that defines time brackets and grade scaling based on submission time. If date < key, then will receive scaling value associated with key. 
     version: 1.0.0  # the version of RAG configured to use with this homework
     ```
@@ -68,7 +66,24 @@ Execution and tests
 --------------------------------
 
 ####To run the autograder program:
- ``` bundle exec ruby run_autograder.rb path/to/configfile ```
+ ``` while true; do bundle exec ruby run_autograder.rb path/to/configfile ; done```
+ 
+ 	Under normal execution it is possible for the autograder to crash. The autograder is resilent against student code submission but network interruptions can cause the autograder to crash, this will allow it to start up again. 
+
+## Autograder Refactoring Summer 2015
+
+The rag autograder was completely refactored in summer of 2015. The only legacy code that remains is FeatureGrader and HW4Grader, which were minimally refactored to work with the new autograder structure. One of the main goals of the refactoring project were to increase ease of setup and configuration of the autograder. We eliminated several set up steps required to get the autograder started, and simplified config files.
+
+We also wanted to make the autograder easier to extend. This was accomplished by doing major refactoring and adopting software design patterns. We split up the autograder into three basic classes, assignments, submission systems, and autograder engines. The hope is that those three classes can be easily subclassed for future extension. 
+
+We made the autograder less brittle by eliminating almost all cases of regex parsing to grade submissions and opted to pass information through classes when possible. This should help future proof the autograder from external changes. 
+
+In respect to the edX submission system, which is the only submission system that the autograder currently uses, we heavily refactored it to use an external gem xqueue_ruby which handles the low-level API calls to edX's XQueue platform and started using the grader_payload as a JSON dictionary configuring how the assignment is graded. This paves the way for "grading as a service" since anyone should be able to create an assignment on edX to be graded by our grader without having to go through the setup of the autograder themselves. 
+
+One thing that we wish we were able to do was increase autograder resilence against malicious code but this turns out to be rather hard to do. Options considered for making the autograder more secure were chrooting the grading subprocess, setting the $SAFE ENV value for the subprocess, and disabling the Kernel library to prevent calls to fork or killing the main grading process. These efforts were confounded by the fact that all of these interfere with the operation of external libraries such as RSpec. 
+
+
+
 
 ## The mutation testing/feature grader (HW 3)
 
@@ -151,46 +166,4 @@ When a feature is run, the environment variable `version` will be set to
 the value of the `version` property for that feature.  Use this as a
 feature flag in the app (by checking `ENV["version"]`) to trigger a
 "bug", e.g. reversing sort order/not returning all data. 
-
-
-Notes on the related homework and CI repos
-----
-
-This repo exists as a result of a process of splitting all the 169 homeworks into separate repos, e.g.
-
-https://github.com/saasbook/ruby-intro
-
-that are each paired with a private CI repo that would check their integrity, e.g. this one:
-
-https://github.com/saasbook/ruby-intro-ci
-
-The entire set up might be easier if everything with public.  The argument for the privacy is that if students have access to the tests that check their solutions they will be able to somehow 'cheat' although the counter-argument is that none of the 169 homework tests really reveal how to create a solution given that they are usually high level behavioural tests. Anyhow, the customer requirement was that some tests were to be kept private, so the *-ci repos are private.  And the workflow is this.
-
-Anytime that one wants to make a change to the student visible homework (e.g. to https://github.com/saasbook/ruby-intro), or the way in which they are graded (e.g. to https://github.com/saasbook/ruby-intro-ci) they submit  a pull request to the relevant repo.  Pull requests to the public student repo don't really have any effect - they just need to be reviewed and sanity checked by an admin - because the two repos are separate and the tests are in a private repo it's not obvious how to have pull request to publie repos kick off the tests.
-
-You might we should just have one repo, but then that would have to be private, and there would be no starting repo for students to fork and then submit pull requests if they find issues.  Enabling students to submit pull requests on the public repos is absolutely critical for QA.  1000's of students try the early homeworks, finding all sorts of corner cases that we need to fix.  It's sooooo much more manageable to handle as pull requests rather than emails or forum posts.
-
-So any admin wanting to approve a pull request on a public repo needs to kick off a run of the Travis CI on the private repo to make sure that the proposed changes don't break the grader or are incompatible with the private tests etc.
-
-Given that an instructor is proposing changes to the private repo, i.e. the private tests, then Travis will automatically kick off a check on any pull request.  The way things are set up there is a two stage process:
-
-1. Travis pulls out the autograder (without edx component)
-2. Travis runs the autograder on code from both the private and public repos in order to check consistency
-
-Both these stages are coded in cucumber, e.g.
-
-https://github.com/saasbook/ruby-intro-ci/blob/master/install/install.feature
-https://github.com/saasbook/ruby-intro-ci/blob/master/features/skeleton_and_solution_check.feature
-
-The whole process is designed to try and prevent errors from creeping in from any changes to the skeletons and public tests that the students clone, the private tests that are used to check the solutions, the example solutions, and even the autograder itself.
-
-This was all fairly simple for the first few homeworks, however as one gets up to the more complex rails homeworks there was a fair deal of complexity and hard work to make everything flow.  If memory serves everything is working on all hws due to particularly herculean efforts on the part of Paul, but I think the process left all of us rather tired of the whole autograder setup, which seems much more complex than in needs to be.  Paul did a great job, but the complexity of the whole thing meant that it was very difficult to onboard other volunteers, so Paul often ended up working alone with just a little outside support.   If only we could have got two or three other committed volunteers involved it might have been a different story.
-
-Anyhow, the framework is largely there, and working - please do check out the relevant repos and you can run the cucumber tests locally to do the same thing that Travis does.
-
-Most complexity will usually come from the autograder install.  Unfortunately the autograder codebase is extremely convoluted and in a rather poor state.  The intention of all this Travis C.I. work with all the different repos was to get us to the point that we could start safely refactoring the autograder itself knowing that we weren't breaking all the homeworks, however we never really got to the that point - we set up the overarching CI with a lot of effort, but by that time we were all pretty much burnt out.
-
-So the options moving forward are to try and refactor the existing autograder, which should be able to be done with some reliability now (although still the checks against all homeworks make the debug cycle a bit long); or to effectively bin the existing autograder as beyond hope and replace it with something leaner, that's actually programmed according to agile principles, i.e. test driven and not just hacked together to basically work given a few manual tests.
-
-Best of luck!
 
