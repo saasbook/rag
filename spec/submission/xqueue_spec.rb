@@ -22,7 +22,7 @@ describe Submission::Xqueue do
   context 'it can create an assignment from a submission and grade it' do
     before(:each) do
       @x_queue_adapter = Submission.load('./spec/fixtures/x_queue_config.yml')
-      allow_any_instance_of(::XQueue).to receive(:get_submission).and_return(::XQueueSubmission.create_from_JSON(@x_queue_adapter.x_queue, IO.read('spec/fixtures/x_queue_submission.json')))
+      ::XQueue.any_instance.stub(:get_submission).and_return(::XQueueSubmission.create_from_JSON(@x_queue_adapter.x_queue, IO.read('spec/fixtures/x_queue_submission.json')))
     end
 
     it 'should create an assignment (correctly) from the grader_payload' do
@@ -43,7 +43,7 @@ describe Submission::Xqueue do
   context 'when there is no submission in queue' do
     before(:each) do
       @x_queue_adapter = Submission.load('./spec/fixtures/x_queue_config.yml')
-      allow_any_instance_of(::XQueue).to receive(:get_submission).and_return(nil)
+      ::XQueue.any_instance.stub(:get_submission).and_return(nil)
     end
 
     it 'it should not create an assignment' do

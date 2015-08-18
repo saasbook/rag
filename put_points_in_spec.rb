@@ -1,22 +1,5 @@
 require 'fileutils'
 require 'tempfile'
-require 'optparse'
-
-options = {}
-OptionParser.new do |opts|
-  options = opts
-  opts.banner = "Usage: example.rb [options]"
-
-  opts.on("-v", "--[no-]verbose", "Run verbosely") do |v|
-    options[:verbose] = v
-  end
-end.parse!
-
-unless ARGV.count == 1
-  puts options
-  puts "ARGV #{ARGV}"
-  exit 1
-end
 
 def put_points(spec_path)
   t_file = Tempfile.new('filename_temp.txt')
@@ -35,5 +18,3 @@ def put_points(spec_path)
   FileUtils.mv(t_file.path, spec_path)
   return "success!"
 end
-
-put_points(ARGV[0])
