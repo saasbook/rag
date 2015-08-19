@@ -1,15 +1,16 @@
-# http://stackoverflow.com/questions/917566/ruby-share-logger-instance-among-module-classes
 require 'logger'
+
 module RagLogger
-  def logger
-    RagLogger.logger
+
+  #Create a singleton logger used across all rag classes. Write to a specified log file, if already exists, create a new file w/ timestamp in file name
+  def self.configure_logger(output_file, level)
+    log_file = File.exist?(output_file) ? File.open(output_file + Time.now.to_s, 'w') : File.open(output_file, 'w')
+    @@logger = Logger.new(log_file)
+    @@logger.level = level
   end
 
-  def self.logger
-    unless @logger_file
-      Dir.mkdir('log/') unless File.directory?('log/')
-      @logger_file ||= "log/rag-#{Process.pid}.log"
-    end
-    @logger ||= Logger.new(@logger_file, 0, 1024*1024)
+  #If not configured, set logger to be stdout
+  def logger
+    @@logger ||= Logger.new(STDOUT)
   end
 end

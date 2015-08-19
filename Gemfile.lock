@@ -1,6 +1,6 @@
 GIT
   remote: https://github.com/zhangaaron/xqueue-ruby
-  revision: a7d2acff2416bb2776bb1bd88a7ab04c1c6380e7
+  revision: 8690aad01eac88605c8503ac5e88a65822631458
   specs:
     xqueue_ruby (0.0.1)
       activemodel
@@ -210,7 +210,7 @@ GEM
       sprockets-rails
     rails-deprecated_sanitizer (1.0.3)
       activesupport (>= 4.2.0.alpha)
-    rails-dom-testing (1.0.6)
+    rails-dom-testing (1.0.7)
       activesupport (>= 4.2.0.beta, < 5.0)
       nokogiri (~> 1.6.0)
       rails-deprecated_sanitizer (>= 1.0.1)
@@ -267,7 +267,6 @@ GEM
       rspec-mocks (~> 3.3.0)
       rspec-support (~> 3.3.0)
     rspec-support (3.3.0)
-    ruby-filemagic (0.7.0)
     ruby-progressbar (1.7.5)
     ruby_parser (3.7.1)
       sexp_processor (~> 4.1)
@@ -283,7 +282,7 @@ GEM
     simplecov-html (0.10.0)
     simplecov-rcov (0.2.3)
       simplecov (>= 0.4.1)
-    sprockets (3.2.0)
+    sprockets (3.3.0)
       rack (~> 1.0)
     sprockets-rails (2.3.2)
       actionpack (>= 3.0)
@@ -296,7 +295,7 @@ GEM
     thread_safe (0.3.5)
     tilt (2.0.1)
     timecop (0.8.0)
-    tins (1.5.4)
+    tins (1.6.0)
     tzinfo (1.2.2)
       thread_safe (~> 0.1)
     unf (0.1.4)
@@ -336,7 +335,6 @@ DEPENDENCIES
   octokit
   rspec
   rspec-rails
-  ruby-filemagic
   simplecov
   simplecov-rcov
   sqlite3
