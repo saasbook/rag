@@ -1,0 +1,23 @@
+todo:
+  - support run once/singleton pattern via flock/lockfile
+  - config generation support
+
+
+  - support for logging/logs too!
+  - examples of new features
+  - use map.rb
+
+done:
+  - clean up warnings under 'ruby -w'
+  - intput/output arguments
+  - support io cast '-' (:input, :output)
+  - slug casts
+  - support uri casts
+  - dotdir support (based on name)
+  - db support
+  - configuration/configfile file support
+  - calls to abort sometimes lead to STDERR prining twice ;-(
+  - main's' with modes, but no run do not operate properly - add default run w/wrap_run!
+  - usage fubar when extra chunks are set
+  - usage of arguments is fubar when negative arities are used
+  - add sanity checks at parameter contruction completion

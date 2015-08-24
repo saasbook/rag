@@ -1,0 +1,10 @@
+#!/usr/bin/env ruby
+# encoding: UTF-8
+
+trap('INT') do |status|
+  exit! 128 + status
+end
+
+require 'unparser/cli'
+
+exit Unparser::CLI.run(ARGV)

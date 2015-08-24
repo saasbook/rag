@@ -1,0 +1,11 @@
+* CHANGES
+* MANIFEST
+* README
+* Rakefile
+* getopt.gemspec
+* examples/example_std.rb
+* examples/example_long.rb
+* lib/getopt/std.rb
+* lib/getopt/long.rb
+* test/test_getopt_std.rb
+* test/test_getopt_long.rb

@@ -1,0 +1,9 @@
+#!/usr/bin/env ruby
+require 'metric_fu'
+require 'metric_fu/cli/client'
+
+cli = MetricFu::Cli::Client.new
+# see http://obtiva.com/blog/185-fun-with-ruby-it-s-a-trap
+trap("INT") { cli.shutdown }
+
+cli.run

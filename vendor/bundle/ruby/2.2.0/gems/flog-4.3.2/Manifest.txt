@@ -1,0 +1,12 @@
+.autotest
+History.txt
+Manifest.txt
+README.txt
+Rakefile
+bin/flog
+lib/flog.rb
+lib/flog_cli.rb
+lib/flog_task.rb
+lib/gauntlet_flog.rb
+test/test_flog.rb
+test/test_flog_cli.rb

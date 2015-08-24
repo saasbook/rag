@@ -1,0 +1,26 @@
+sudo: false
+cache: bundler
+language: ruby
+bundler_args: --without local_development
+script: bundle exec rake
+rvm:
+  - 1.9.3
+  - 2.0.0
+  - 2.1
+  - 2.2
+  - jruby-19mode
+  - rbx-2
+  - ruby-head
+  - jruby-head
+matrix:
+  allow_failures:
+    - rvm: jruby-head
+    - rvm: ruby-head
+  fast_finish: true
+notifications:
+  recipients:
+    - timo.roessner@googlemail.com
+    - matijs@matijs.net
+    - emil.rehnberg@gmail.com
+    - chastell@chastell.net
+  irc: "irc.freenode.org#reek"

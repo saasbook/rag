@@ -1,0 +1,15 @@
+#!/usr/bin/env ruby
+# Example:
+#   code_metrics-profile activesupport/lib/active_support.rb [ruby-prof mode]
+
+require 'code_metrics'
+require 'code_metrics/profiler'
+if (filename = ARGV.shift)
+  path = File.expand_path(filename)
+  mode = ARGV.shift
+  CodeMetrics::Profiler.new(path, mode).profile_requires rescue STDERR.puts(
+   "#{$!.message}\t #{$!.class} on #{$!.backtrace.detect {|line| line =~ /code_metrics/ }}"
+  )
+else
+  STDERR.puts "No file path entered. Usage is code_metrics-profile path/to/file.rb [ruby-prof mode]"
+end

@@ -1,0 +1,31 @@
+<html>
+  <head>
+    <style>
+      <%=  inline_css('css/syntax.css') %>
+    </style>
+    <title>Analyzed File Report</title>
+  </head>
+  <body>
+    <table cellpadding='0' cellspacing='0' class='ruby'>
+      <% @data.each_with_index do |line, idx| %>
+        <% line_number = (idx + 1).to_s %>
+        <tr>
+          <td valign='top'>
+           <% if @lines.has_key?(line_number) %>
+             <ul>
+               <% @lines[line_number].each do |problem| %>
+                 <li><%= "#{problem[:description]} &raquo; #{problem[:type]}" %></li>
+               <% end %>
+            </ul>
+          <% else %>
+              &nbsp;
+          <% end %>
+          </td>
+          <td valign='top'>
+            <%= line_for_display(line, line_number) %>
+          </td>
+         </tr>
+         <% end %>
+    </table>
+  </body>
+</html>

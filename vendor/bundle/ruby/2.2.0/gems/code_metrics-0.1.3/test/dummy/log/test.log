@@ -1,0 +1,309 @@
+-----------------------------------------------------------------------
+CodeStatisticsCalculatorTest: test_add_statistics_to_another_using_#add
+-----------------------------------------------------------------------
+--------------------------------------------------------------
+CodeStatisticsCalculatorTest: test_calculate_CoffeeScript_LOCs
+--------------------------------------------------------------
+----------------------------------------------------
+CodeStatisticsCalculatorTest: test_calculate_JS_LOCs
+----------------------------------------------------
+------------------------------------------------------
+CodeStatisticsCalculatorTest: test_calculate_Ruby_LOCs
+------------------------------------------------------
+---------------------------------------------------------------------------
+CodeStatisticsCalculatorTest: test_calculate_number_of_CoffeeScript_classes
+---------------------------------------------------------------------------
+---------------------------------------------------------------------------
+CodeStatisticsCalculatorTest: test_calculate_number_of_CoffeeScript_methods
+---------------------------------------------------------------------------
+-----------------------------------------------------------------
+CodeStatisticsCalculatorTest: test_calculate_number_of_JS_methods
+-----------------------------------------------------------------
+-------------------------------------------------------------------
+CodeStatisticsCalculatorTest: test_calculate_number_of_Ruby_classes
+-------------------------------------------------------------------
+-------------------------------------------------------------------
+CodeStatisticsCalculatorTest: test_calculate_number_of_Ruby_methods
+-------------------------------------------------------------------
+-------------------------------------------------------------------------------
+CodeStatisticsCalculatorTest: test_calculate_statistics_using_#add_by_file_path
+-------------------------------------------------------------------------------
+-------------------------------------------------------------
+CodeStatisticsCalculatorTest: test_skip_CoffeeScript_comments
+-------------------------------------------------------------
+---------------------------------------------------
+CodeStatisticsCalculatorTest: test_skip_JS_comments
+---------------------------------------------------
+-----------------------------------------------------
+CodeStatisticsCalculatorTest: test_skip_Ruby_comments
+-----------------------------------------------------
+------------------------------
+CodeStatisticsTest: test_truth
+------------------------------
+-----------------------------------------------------------------------
+CodeStatisticsCalculatorTest: test_add_statistics_to_another_using_#add
+-----------------------------------------------------------------------
+--------------------------------------------------------------
+CodeStatisticsCalculatorTest: test_calculate_CoffeeScript_LOCs
+--------------------------------------------------------------
+----------------------------------------------------
+CodeStatisticsCalculatorTest: test_calculate_JS_LOCs
+----------------------------------------------------
+------------------------------------------------------
+CodeStatisticsCalculatorTest: test_calculate_Ruby_LOCs
+------------------------------------------------------
+---------------------------------------------------------------------------
+CodeStatisticsCalculatorTest: test_calculate_number_of_CoffeeScript_classes
+---------------------------------------------------------------------------
+---------------------------------------------------------------------------
+CodeStatisticsCalculatorTest: test_calculate_number_of_CoffeeScript_methods
+---------------------------------------------------------------------------
+-----------------------------------------------------------------
+CodeStatisticsCalculatorTest: test_calculate_number_of_JS_methods
+-----------------------------------------------------------------
+-------------------------------------------------------------------
+CodeStatisticsCalculatorTest: test_calculate_number_of_Ruby_classes
+-------------------------------------------------------------------
+-------------------------------------------------------------------
+CodeStatisticsCalculatorTest: test_calculate_number_of_Ruby_methods
+-------------------------------------------------------------------
+-------------------------------------------------------------------------------
+CodeStatisticsCalculatorTest: test_calculate_statistics_using_#add_by_file_path
+-------------------------------------------------------------------------------
+-------------------------------------------------------------
+CodeStatisticsCalculatorTest: test_skip_CoffeeScript_comments
+-------------------------------------------------------------
+---------------------------------------------------
+CodeStatisticsCalculatorTest: test_skip_JS_comments
+---------------------------------------------------
+-----------------------------------------------------
+CodeStatisticsCalculatorTest: test_skip_Ruby_comments
+-----------------------------------------------------
+------------------------------
+CodeStatisticsTest: test_truth
+------------------------------
+  [1m[36m (0.3ms)[0m  [1mbegin transaction[0m
+-------------------------------------------------------------------------
+CodeStatisticsCalculatorTest: test_accumulate_statistics_using_#add_by_io
+-------------------------------------------------------------------------
+  [1m[35m (0.0ms)[0m  rollback transaction
+  [1m[36m (0.0ms)[0m  [1mbegin transaction[0m
+-----------------------------------------------------------------------
+CodeStatisticsCalculatorTest: test_add_statistics_to_another_using_#add
+-----------------------------------------------------------------------
+  [1m[35m (0.0ms)[0m  rollback transaction
+  [1m[36m (0.0ms)[0m  [1mbegin transaction[0m
+--------------------------------------------------------------
+CodeStatisticsCalculatorTest: test_calculate_CoffeeScript_LOCs
+--------------------------------------------------------------
+  [1m[35m (0.0ms)[0m  rollback transaction
+  [1m[36m (0.0ms)[0m  [1mbegin transaction[0m
+----------------------------------------------------
+CodeStatisticsCalculatorTest: test_calculate_JS_LOCs
+----------------------------------------------------
+  [1m[35m (0.0ms)[0m  rollback transaction
+  [1m[36m (0.0ms)[0m  [1mbegin transaction[0m
+------------------------------------------------------
+CodeStatisticsCalculatorTest: test_calculate_Ruby_LOCs
+------------------------------------------------------
+  [1m[35m (0.0ms)[0m  rollback transaction
+  [1m[36m (0.0ms)[0m  [1mbegin transaction[0m
+---------------------------------------------------------------------------
+CodeStatisticsCalculatorTest: test_calculate_number_of_CoffeeScript_classes
+---------------------------------------------------------------------------
+  [1m[35m (0.0ms)[0m  rollback transaction
+  [1m[36m (0.0ms)[0m  [1mbegin transaction[0m
+---------------------------------------------------------------------------
+CodeStatisticsCalculatorTest: test_calculate_number_of_CoffeeScript_methods
+---------------------------------------------------------------------------
+  [1m[35m (0.0ms)[0m  rollback transaction
+  [1m[36m (0.0ms)[0m  [1mbegin transaction[0m
+-----------------------------------------------------------------
+CodeStatisticsCalculatorTest: test_calculate_number_of_JS_methods
+-----------------------------------------------------------------
+  [1m[35m (0.0ms)[0m  rollback transaction
+  [1m[36m (0.0ms)[0m  [1mbegin transaction[0m
+-------------------------------------------------------------------
+CodeStatisticsCalculatorTest: test_calculate_number_of_Ruby_classes
+-------------------------------------------------------------------
+  [1m[35m (0.0ms)[0m  rollback transaction
+  [1m[36m (0.0ms)[0m  [1mbegin transaction[0m
+-------------------------------------------------------------------
+CodeStatisticsCalculatorTest: test_calculate_number_of_Ruby_methods
+-------------------------------------------------------------------
+  [1m[35m (0.0ms)[0m  rollback transaction
+  [1m[36m (0.0ms)[0m  [1mbegin transaction[0m
+-------------------------------------------------------------------------------
+CodeStatisticsCalculatorTest: test_calculate_statistics_using_#add_by_file_path
+-------------------------------------------------------------------------------
+  [1m[35m (0.0ms)[0m  rollback transaction
+  [1m[36m (0.0ms)[0m  [1mbegin transaction[0m
+-------------------------------------------------------------
+CodeStatisticsCalculatorTest: test_skip_CoffeeScript_comments
+-------------------------------------------------------------
+  [1m[35m (0.0ms)[0m  rollback transaction
+  [1m[36m (0.0ms)[0m  [1mbegin transaction[0m
+---------------------------------------------------
+CodeStatisticsCalculatorTest: test_skip_JS_comments
+---------------------------------------------------
+  [1m[35m (0.0ms)[0m  rollback transaction
+  [1m[36m (0.0ms)[0m  [1mbegin transaction[0m
+-----------------------------------------------------
+CodeStatisticsCalculatorTest: test_skip_Ruby_comments
+-----------------------------------------------------
+  [1m[35m (0.0ms)[0m  rollback transaction
+  [1m[36m (0.0ms)[0m  [1mbegin transaction[0m
+------------------------------
+CodeStatisticsTest: test_truth
+------------------------------
+  [1m[35m (0.0ms)[0m  rollback transaction
+  [1m[36m (0.3ms)[0m  [1mbegin transaction[0m
+-------------------------------------------------------------------------
+CodeStatisticsCalculatorTest: test_accumulate_statistics_using_#add_by_io
+-------------------------------------------------------------------------
+  [1m[35m (0.0ms)[0m  rollback transaction
+  [1m[36m (0.0ms)[0m  [1mbegin transaction[0m
+-----------------------------------------------------------------------
+CodeStatisticsCalculatorTest: test_add_statistics_to_another_using_#add
+-----------------------------------------------------------------------
+  [1m[35m (0.0ms)[0m  rollback transaction
+  [1m[36m (0.0ms)[0m  [1mbegin transaction[0m
+--------------------------------------------------------------
+CodeStatisticsCalculatorTest: test_calculate_CoffeeScript_LOCs
+--------------------------------------------------------------
+  [1m[35m (0.0ms)[0m  rollback transaction
+  [1m[36m (0.0ms)[0m  [1mbegin transaction[0m
+----------------------------------------------------
+CodeStatisticsCalculatorTest: test_calculate_JS_LOCs
+----------------------------------------------------
+  [1m[35m (0.0ms)[0m  rollback transaction
+  [1m[36m (0.0ms)[0m  [1mbegin transaction[0m
+------------------------------------------------------
+CodeStatisticsCalculatorTest: test_calculate_Ruby_LOCs
+------------------------------------------------------
+  [1m[35m (0.0ms)[0m  rollback transaction
+  [1m[36m (0.0ms)[0m  [1mbegin transaction[0m
+---------------------------------------------------------------------------
+CodeStatisticsCalculatorTest: test_calculate_number_of_CoffeeScript_classes
+---------------------------------------------------------------------------
+  [1m[35m (0.0ms)[0m  rollback transaction
+  [1m[36m (0.0ms)[0m  [1mbegin transaction[0m
+---------------------------------------------------------------------------
+CodeStatisticsCalculatorTest: test_calculate_number_of_CoffeeScript_methods
+---------------------------------------------------------------------------
+  [1m[35m (0.0ms)[0m  rollback transaction
+  [1m[36m (0.0ms)[0m  [1mbegin transaction[0m
+-----------------------------------------------------------------
+CodeStatisticsCalculatorTest: test_calculate_number_of_JS_methods
+-----------------------------------------------------------------
+  [1m[35m (0.0ms)[0m  rollback transaction
+  [1m[36m (0.0ms)[0m  [1mbegin transaction[0m
+-------------------------------------------------------------------
+CodeStatisticsCalculatorTest: test_calculate_number_of_Ruby_classes
+-------------------------------------------------------------------
+  [1m[35m (0.0ms)[0m  rollback transaction
+  [1m[36m (0.0ms)[0m  [1mbegin transaction[0m
+-------------------------------------------------------------------
+CodeStatisticsCalculatorTest: test_calculate_number_of_Ruby_methods
+-------------------------------------------------------------------
+  [1m[35m (0.0ms)[0m  rollback transaction
+  [1m[36m (0.0ms)[0m  [1mbegin transaction[0m
+-------------------------------------------------------------------------------
+CodeStatisticsCalculatorTest: test_calculate_statistics_using_#add_by_file_path
+-------------------------------------------------------------------------------
+  [1m[35m (0.0ms)[0m  rollback transaction
+  [1m[36m (0.0ms)[0m  [1mbegin transaction[0m
+-------------------------------------------------------------
+CodeStatisticsCalculatorTest: test_skip_CoffeeScript_comments
+-------------------------------------------------------------
+  [1m[35m (0.0ms)[0m  rollback transaction
+  [1m[36m (0.0ms)[0m  [1mbegin transaction[0m
+---------------------------------------------------
+CodeStatisticsCalculatorTest: test_skip_JS_comments
+---------------------------------------------------
+  [1m[35m (0.0ms)[0m  rollback transaction
+  [1m[36m (0.0ms)[0m  [1mbegin transaction[0m
+-----------------------------------------------------
+CodeStatisticsCalculatorTest: test_skip_Ruby_comments
+-----------------------------------------------------
+  [1m[35m (0.0ms)[0m  rollback transaction
+  [1m[36m (0.0ms)[0m  [1mbegin transaction[0m
+------------------------------
+CodeStatisticsTest: test_truth
+------------------------------
+  [1m[35m (0.0ms)[0m  rollback transaction
+  [1m[36m (0.3ms)[0m  [1mbegin transaction[0m
+-------------------------------------------------------------------------
+CodeStatisticsCalculatorTest: test_accumulate_statistics_using_#add_by_io
+-------------------------------------------------------------------------
+  [1m[35m (0.0ms)[0m  rollback transaction
+  [1m[36m (0.0ms)[0m  [1mbegin transaction[0m
+-----------------------------------------------------------------------
+CodeStatisticsCalculatorTest: test_add_statistics_to_another_using_#add
+-----------------------------------------------------------------------
+  [1m[35m (0.0ms)[0m  rollback transaction
+  [1m[36m (0.0ms)[0m  [1mbegin transaction[0m
+--------------------------------------------------------------
+CodeStatisticsCalculatorTest: test_calculate_CoffeeScript_LOCs
+--------------------------------------------------------------
+  [1m[35m (0.0ms)[0m  rollback transaction
+  [1m[36m (0.0ms)[0m  [1mbegin transaction[0m
+----------------------------------------------------
+CodeStatisticsCalculatorTest: test_calculate_JS_LOCs
+----------------------------------------------------
+  [1m[35m (0.0ms)[0m  rollback transaction
+  [1m[36m (0.0ms)[0m  [1mbegin transaction[0m
+------------------------------------------------------
+CodeStatisticsCalculatorTest: test_calculate_Ruby_LOCs
+------------------------------------------------------
+  [1m[35m (0.0ms)[0m  rollback transaction
+  [1m[36m (0.0ms)[0m  [1mbegin transaction[0m
+---------------------------------------------------------------------------
+CodeStatisticsCalculatorTest: test_calculate_number_of_CoffeeScript_classes
+---------------------------------------------------------------------------
+  [1m[35m (0.0ms)[0m  rollback transaction
+  [1m[36m (0.0ms)[0m  [1mbegin transaction[0m
+---------------------------------------------------------------------------
+CodeStatisticsCalculatorTest: test_calculate_number_of_CoffeeScript_methods
+---------------------------------------------------------------------------
+  [1m[35m (0.0ms)[0m  rollback transaction
+  [1m[36m (0.0ms)[0m  [1mbegin transaction[0m
+-----------------------------------------------------------------
+CodeStatisticsCalculatorTest: test_calculate_number_of_JS_methods
+-----------------------------------------------------------------
+  [1m[35m (0.0ms)[0m  rollback transaction
+  [1m[36m (0.0ms)[0m  [1mbegin transaction[0m
+-------------------------------------------------------------------
+CodeStatisticsCalculatorTest: test_calculate_number_of_Ruby_classes
+-------------------------------------------------------------------
+  [1m[35m (0.0ms)[0m  rollback transaction
+  [1m[36m (0.0ms)[0m  [1mbegin transaction[0m
+-------------------------------------------------------------------
+CodeStatisticsCalculatorTest: test_calculate_number_of_Ruby_methods
+-------------------------------------------------------------------
+  [1m[35m (0.0ms)[0m  rollback transaction
+  [1m[36m (0.0ms)[0m  [1mbegin transaction[0m
+-------------------------------------------------------------------------------
+CodeStatisticsCalculatorTest: test_calculate_statistics_using_#add_by_file_path
+-------------------------------------------------------------------------------
+  [1m[35m (0.0ms)[0m  rollback transaction
+  [1m[36m (0.0ms)[0m  [1mbegin transaction[0m
+-------------------------------------------------------------
+CodeStatisticsCalculatorTest: test_skip_CoffeeScript_comments
+-------------------------------------------------------------
+  [1m[35m (0.0ms)[0m  rollback transaction
+  [1m[36m (0.0ms)[0m  [1mbegin transaction[0m
+---------------------------------------------------
+CodeStatisticsCalculatorTest: test_skip_JS_comments
+---------------------------------------------------
+  [1m[35m (0.0ms)[0m  rollback transaction
+  [1m[36m (0.0ms)[0m  [1mbegin transaction[0m
+-----------------------------------------------------
+CodeStatisticsCalculatorTest: test_skip_Ruby_comments
+-----------------------------------------------------
+  [1m[35m (0.0ms)[0m  rollback transaction
+  [1m[36m (0.0ms)[0m  [1mbegin transaction[0m
+------------------------------
+CodeStatisticsTest: test_truth
+------------------------------
+  [1m[35m (0.0ms)[0m  rollback transaction

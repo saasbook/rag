@@ -1,0 +1,10 @@
+#!/usr/bin/env ruby
+require 'rubygems'
+
+require 'metric_fu/gem_run'
+options = {
+  gem_name:     'churn',
+  metric_name:  'churn',
+  args:         ARGV.dup,
+}
+STDOUT.puts MetricFu::GemRun.new(options).run.output
