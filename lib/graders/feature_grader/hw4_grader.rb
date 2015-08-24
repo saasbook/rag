@@ -101,13 +101,13 @@ module Graders
         log ''
 
         # Check reference cucumber
-        time_operation 'reference cucumber' do
-          log separator
-          log 'Running reference Cucumber scenarios:'
-          test_prepare(env)
-          check_ref_cucumber
-          log separator
-        end
+        # time_operation 'reference cucumber' do
+        #   log separator
+        #   log 'Running reference Cucumber scenarios:'
+        #   test_prepare(env)
+        #   check_ref_cucumber
+        #   log separator
+        # end
       end
       log "Total score: #{@raw_score} / #{@raw_max}"
       log "Completed in #{Time.now-start_time} seconds."
