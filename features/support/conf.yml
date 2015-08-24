@@ -8,7 +8,7 @@ default:
   user_auth:
     user_name: 'username' 
     user_pass: 'password'
-  log_to_file: true
+  log_file: logs/log.txt
   log_level: 1
 queue_nickname_02:
   adapter: XQueue
