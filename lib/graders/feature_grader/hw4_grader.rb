@@ -52,12 +52,11 @@ module Graders
     
     def grade
       response = run_in_subprocess(method(:runner_block))
-      response
-      # if response
-      #   response
-      # else
-      #   ERROR_HASH
-      # end
+      if response
+        response
+      else
+        ERROR_HASH
+      end
     end
 
     private
