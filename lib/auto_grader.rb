@@ -4,7 +4,11 @@ module Graders
   def self.load_student_files(file_path)
     raise "#{file_path} is not a directory. Student submission could not be loaded" unless Dir.exist? file_path
     Dir[File.join(file_path, '*.rb')].each do  |file_name|
-      load file_name
+      # begin
+        load file_name
+      # rescue StandardError => e
+      #   raise
+      # end
     end
   end
   class AutoGrader
@@ -43,11 +47,11 @@ module Graders
 
 
     def self.create(submission_path, assignment)
-      # begin
+      begin
         Graders.const_get(assignment.autograder_type.strip).new(submission_path, assignment)
-      # rescue NameError
-      #   raise AutoGrader::NoSuchGraderError, "Can't find grading strategy for #{assignment.autograder_type}"
-      # end
+      rescue NameError
+        raise AutoGrader::NoSuchGraderError, "Can't find grading strategy for #{assignment.autograder_type}"
+      end
     end
 
     # Grade the given question using the specified grader, strategy, and

@@ -27,7 +27,7 @@ module Graders
       if response
         response
       else
-        ERROR_HASH
+        ERROR_HASH.merge({comments: IO.read('err_subprocess')})
       end
     end
     
