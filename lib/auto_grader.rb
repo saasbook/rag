@@ -81,8 +81,10 @@ module Graders
         read, write = IO.pipe
         @pid = fork do
             read.close
-            $stdout.reopen('stdout_subprocess', 'w')  # Don't clutter the main terminal with subprocess information.
-            $stderr.reopen('err_subprocess', 'w')
+            $stdout = STDOUT
+            $stderr = STDERR 
+            # $stdout.reopen('stdout_subprocess', 'w')  # Don't clutter the main terminal with subprocess information.
+            # $stderr.reopen('err_subprocess', 'w')
             output_hash = grading_func.call
             write.puts JSON.generate output_hash
             write.close
