@@ -13,13 +13,14 @@ module Graders
     #   against the student's code.  The spec should <b>not</b> try to
     #   +require+ or +include+ the subject code file, but it can +require+
     #   or +include+ any other Ruby libraries needed for the specs to run.
+
     ERROR_HASH = {raw_score: 0, raw_max: 100, comments: 'There was a fatal error with your submission. It either timed out or caused an exception.'}
     def initialize(submission_path, assignment)
       super(submission_path, assignment)
       @timeout = 50
       @spec_file_path = assignment.assignment_spec_file
       raise NoSuchSpecError, 'Specs could not be found' unless File.readable? @spec_file_path
-      @load_student_files = true  # some graders don't load student files.
+      @load_student_files = true  # True if you need to load student files into testing subprocess namespace. HerokuGrader and subclasses do not load student code.
     end
 
     def grade
@@ -27,7 +28,7 @@ module Graders
       if response
         response
       else
-        ERROR_HASH.merge({comments: IO.read('err_subprocess')})
+        ERROR_HASH #.merge({comments: IO.read('err_subprocess')})
       end
     end
     
