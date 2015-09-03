@@ -46,28 +46,32 @@ module Graders
     end
 
     def grade
-      begin
-        load_description
-
-        ENV['RAILS_ENV'] = 'test'
-        ENV['RAILS_ROOT'] = @base_app_path
-
-        start_time = Time.now
-        score = Feature.total(@features)   # TODO: integrate Score
-
-        @raw_score, @raw_max = score.points, score.max
-
-        log "Total score: #{@raw_score} / #{@raw_max}"
-        log "Completed in #{Time.now - start_time} seconds."
-        
-        dump_output
-        {raw_score: @raw_score, raw_max: @raw_max, comments: @comments}
-      rescue Exception => e
+      response = run_in_subprocess(method(:runner_block))
+      if response
+        response
+      else
         ERROR_HASH
       end
     end
 
     private
+    def runner_block
+      load_description
+
+      ENV['RAILS_ENV'] = 'test'
+      ENV['RAILS_ROOT'] = @base_app_path
+
+      start_time = Time.now
+      score = Feature.total(@features)   # TODO: integrate Score
+
+      @raw_score, @raw_max = score.points, score.max
+
+      log "Total score: #{@raw_score} / #{@raw_max}"
+      log "Completed in #{Time.now - start_time} seconds."
+      
+      dump_output
+      {raw_score: @raw_score, raw_max: @raw_max, comments: @comments}
+    end
 
     def load_description
       if File.directory? @description

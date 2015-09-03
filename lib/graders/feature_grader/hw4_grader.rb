@@ -49,66 +49,72 @@ module Graders
     def dump_output
       @comments = @output.join("\n")
     end
-
+    
     def grade
-      begin
-        load_description
-
-        @raw_score = 0
-        @raw_max = 0
-        start_time = Time.now
-
-        FileUtils.cp_r Dir.glob(File.join(@base_app_path, "*")), @temp
-        FileUtils.cp_r Dir.glob(File.join(@submissiondir, ".")), @temp
-        FileUtils.rm_r Dir.glob(@submissiondir)
-        tmpdir = @temp
-        Dir.chdir(tmpdir) do 
-          env = {
-            'RAILS_ROOT' => Dir.pwd,
-            'RAILS_ENV' => 'test'
-          }
-          time_operation 'setup' do
-            setup_rails_app(env)
-          end
-          separator = '-'*40  # TODO move this
-
-
-          time_operation 'student tests' do
-            log separator
-            log "Running student tests found in features/ spec/:"
-            check_student_tests(env)
-            log separator
-          end
-
-          log ''
-          time_operation 'coverage' do
-            log separator
-            log "Checking coverage for:"
-            check_code_coverage
-            log separator
-          end
-
-          log ''
-
-          # Check reference cucumber
-          time_operation 'reference cucumber' do
-            log separator
-            log 'Running reference Cucumber scenarios:'
-            test_prepare(env)
-            check_ref_cucumber
-            log separator
-          end
-        end
-        log "Total score: #{@raw_score} / #{@raw_max}"
-        log "Completed in #{Time.now-start_time} seconds."
-        dump_output
-        {raw_score: @raw_score, raw_max: @raw_max, comments: @comments}
-      rescue Exception => e
+      response = run_in_subprocess(method(:runner_block))
+      if response
+        response
+      else
         ERROR_HASH
       end
     end
 
     private
+
+    def runner_block
+      load_description
+
+      @raw_score = 0
+      @raw_max = 0
+      start_time = Time.now
+
+      FileUtils.cp_r Dir.glob(File.join(@base_app_path, "*")), @temp
+      FileUtils.cp_r Dir.glob(File.join(@submissiondir, ".")), @temp
+      FileUtils.rm_r Dir.glob(@submissiondir)
+      tmpdir = @temp
+      Dir.chdir(tmpdir) do 
+        env = {
+          'RAILS_ROOT' => Dir.pwd,
+          'RAILS_ENV' => 'test'
+        }
+        time_operation 'setup' do
+          setup_rails_app(env)
+        end
+        separator = '-'*40  # TODO move this
+
+
+        time_operation 'student tests' do
+          log separator
+          log "Running student tests found in features/ spec/:"
+          check_student_tests(env)
+          log separator
+        end
+
+        log ''
+        time_operation 'coverage' do
+          log separator
+          log "Checking coverage for:"
+          check_code_coverage
+          log separator
+        end
+
+        log ''
+
+        # Check reference cucumber
+        time_operation 'reference cucumber' do
+          log separator
+          log 'Running reference Cucumber scenarios:'
+          test_prepare(env)
+          check_ref_cucumber
+          log separator
+        end
+      end
+      log "Total score: #{@raw_score} / #{@raw_max}"
+      log "Completed in #{Time.now-start_time} seconds."
+      dump_output
+      {raw_score: @raw_score, raw_max: @raw_max, comments: @comments}
+    end
+
 
     def load_description
       y = YAML::load_file(@description)
