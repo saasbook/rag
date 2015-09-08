@@ -7,7 +7,7 @@ module Submission
 
     #start with logger if user specifies a log file.
     def initialize(config_hash)
-      RagLogger.configure_logger(config_hash['log_file'], config_hash['log_level'] || 0) if config_hash['log_file'].present?
+      RagLogger.configure_logger(config_hash['log_file'], config_hash['log_level'] || 0)  # if log_file not present or false, then logs to STDOUT
     end
     def run
       raise NotImplementedError, 'abstract method'
