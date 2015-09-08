@@ -14,6 +14,7 @@ rspec_output.txt
 config/conf_passwords.yml
 stdout_subprocess
 err_subprocess
+logs/
 cert_file
 config/test_conf.yml
 spec/log/
