@@ -9,7 +9,7 @@ module RagLogger
   def self.configure_logger(log_to_file, level)
     if log_to_file
       FileUtils.mkdir_p('logs') unless File.directory?('logs')
-      log_file = File.open('logs/log' + Time.now.strftime('%Y-%m-%d-%H:%M:%S') + 'txt', 'w')
+      log_file = File.open('logs/log' + Time.now.strftime('%Y-%m-%d-%H:%M:%S') + '.txt', 'w')
       @@logger = Logger.new(log_file)
     else
       @@logger = Logger.new(STDOUT)

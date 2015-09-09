@@ -12,12 +12,13 @@ module Submission
     def initialize(config_hash)
       super(config_hash)
       @x_queue = ::XQueue.new(*create_xqueue_hash(config_hash))
+      @@logger.debug('Successfully started an XQueue submission adapter.')
     end
 
     def next_submission_with_assignment
       submission = @x_queue.get_submission
       return if submission.nil?
-      logger.debug submission.inspect
+      logger.debug('XQueue adapter received submission.')
       submission.assignment = Assignment::Xqueue.new(submission)
       submission.write_to_location! File.join( [ENV['BASE_FOLDER'], submission.student_id].join(''),
                         submission.assignment.assignment_name, Time.new.strftime(STRFMT))
