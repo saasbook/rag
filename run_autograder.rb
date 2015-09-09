@@ -2,14 +2,15 @@
 
 require 'optparse'
 require 'fileutils'
+require_relative 'lib/rag_logger'
+include RagLogger
 options = {}
 OptionParser.new do |opts|
   options = opts
-  opts.banner = "Usage: example.rb [options]"
-
-  opts.on("-v", "--[no-]verbose", "Run verbosely") do |v|
-    options[:verbose] = v
-  end
+  opts.banner = "Usage: run_autograder.rb configfile.yml"
+  # opts.on("-v", "--[no-]verbose", "Run verbosely") do |v|
+  #   options[:verbose] = v
+  # end
 end.parse!
 
 unless ARGV.count == 1
@@ -23,4 +24,5 @@ autograder.run
 
 at_exit do
   FileUtils.rm_rf('temp_repo') # make sure we always do this even if we exit abnormally
+  @@logger.flush # flush the log file by closing the log.
 end

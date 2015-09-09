@@ -4,11 +4,7 @@ module Graders
   def self.load_student_files(file_path)
     raise "#{file_path} is not a directory. Student submission could not be loaded" unless Dir.exist? file_path
     Dir[File.join(file_path, '*.rb')].each do  |file_name|
-      # begin
-        load file_name
-      # rescue StandardError => e
-      #   raise
-      # end
+      load file_name
     end
   end
   class AutoGrader
