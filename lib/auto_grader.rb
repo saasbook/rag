@@ -2,10 +2,10 @@ require_relative 'rag_logger'
 
 module Graders
   def self.load_student_files(file_path)
-    raise "#{file_path} is not a directory. Student submission could not be loaded" unless Dir.exist? file_path
-    Dir[File.join(file_path, '*.rb')].each do  |file_name|
-      load file_name
-    end
+    # raise "#{file_path} is not a directory. Student submission could not be loaded" unless Dir.exist? file_path
+    # Dir[File.join(file_path, '*.rb')].each do  |file_name|
+    #   load file_name
+    # end
   end
   class AutoGrader
     include RagLogger
@@ -51,7 +51,7 @@ module Graders
     end
 
     # Grade the given question using the specified grader, strategy, and
-    # maximum score. Default method does nothing and leaves a score of 0
+    # maximum score. Return a hash of {raw_score: fixnum, raw_max: fixnum, comments: string}
     def grade
     end
 
@@ -75,6 +75,7 @@ module Graders
     def run_in_subprocess(grading_func)
       begin
         read, write = IO.pipe
+        logger.debug('Start subprocess to run student code.')
         @pid = fork do
             read.close
             $stdout = STDOUT
@@ -93,6 +94,7 @@ module Graders
         output_hash = HashWithIndifferentAccess.new(JSON.parse(subprocess_response)) unless subprocess_response.nil?
         read.close
       rescue Timeout::Error
+        logger.info('Subprocess timed out killed and submission received 0 pts.')
         Process.kill 9, @pid # dunno what signal to put for this
         Process.detach @pid  # express disinterest in process so that OS hopefully takes care of zombie
       end

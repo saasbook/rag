@@ -52,11 +52,13 @@ module Assignment
       if not File.exist? file_path
         if spec_uri.include? '.git'  # lazy way of getting a git URI
           if system("git clone #{spec_uri} temp_repo")
+            logger.debug("Download from repo spec file to: #{file_path}")
             spec_from_repo('temp_repo/autograder', file_path)
           else
             raise IOError.new("Fatal error: Retrieving spec files from #{spec_uri} repository failed.")
           end
         else
+          logger.debug("Download remote spec file to: #{file_path}")
           Dir.mkdir ENV['BASE_FOLDER'] unless Dir.exist? ENV['BASE_FOLDER']
           session = Mechanize.new
           b = session.get(spec_uri).body

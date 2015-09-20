@@ -1,8 +1,5 @@
 #!/bin/bash
 # Simple autograder setup.sh for configuring Ubuntu 12.04 LTS EC2 instance
-
-set -e
-
 # get clone only if missing, then cd into it
 git-clone-ifmissing-cd() {
     if ! test -e "$2"; then
@@ -36,9 +33,6 @@ verbose-short() {
   echo 1>&2 $ $@
   $@
 }
-
-sudo su ubuntu #in install script everything is run as superuser, run as regular user so don't have to mess with permission levels
-verbose whoami
 # install things
 ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no  # turn off ssh host checking for scripting.
 verbose sudo apt-get install -y git curl
@@ -52,13 +46,9 @@ verbose cp -f /home/ubuntu/rag/.screenrc /home/ubuntu/.screenrc
 #Take ssh key out of ENV hash and move to ./ssh.
 verbose cat $ssh_key > /home/ubuntu/.ssh/id_rsa
 verbose sudo chmod 0600 id_rsa
-
-#Add required native extensions for ruby-filemagic gem
-verbose chmod -R 777 /usr/local/rvm/gems/ruby-2.2.2
 verbose source /usr/local/rvm/scripts/rvm
 verbose cd /home/ubuntu/rag/
 verbose git checkout autograder_engine_refactor
 verbose rvm use 2.2.2 # for some reason, rvm doesn't automatically change ruby version from inside script
 verbose gem install bundler
 verbose bundle-install-ifmissing
-verbose chmod -R 777 /home/ubuntu/rag/

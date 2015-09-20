@@ -20,7 +20,7 @@ module Submission
       grader_output = grader.grade
       submission.grade!(grader_output[:comments], grader_output[:raw_score], grader_output[:raw_max])
       assignment.apply_lateness! submission  # optionally scales submission by lateness and provides comments.
-      logger.debug "SUBMISSION MESSAGE = #{submission.message}"
+      logger.debug "submission message = #{submission.message}"
       submit_response(submission)
     end
     def submit_response(_submission)
