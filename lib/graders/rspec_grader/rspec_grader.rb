@@ -42,14 +42,23 @@ module Graders
         config.formatter = 'documentation'
         config.formatter = 'RSpec::Core::Formatters::JsonPointsFormatter'
       end
-      RSpec::Core::Runner.run([file_path], errs, output)
-      formatter = RSpec.configuration.formatters.select {|formatter| formatter.is_a? RSpec::Core::Formatters::JsonPointsFormatter}.first
-      output_hash = formatter.output_hash
-      output_hash[:examples].each do |example|
-        points_max += example[:points]
-        points += example[:points] if example[:status] == 'passed'
+      begin
+        RSpec::Core::Runner.run([file_path], errs, output)
+        formatter = RSpec.configuration.formatters.select {|formatter| formatter.is_a? RSpec::Core::Formatters::JsonPointsFormatter}.first
+        output_hash = formatter.output_hash
+        output_hash[:examples].each do |example|
+          points_max += example[:points]
+          points += example[:points] if example[:status] == 'passed'
+        end
+      rescue Exception => e
+        logger.warn("RSpec::Core::Runner encountered #{e.to_s}")
+        logger.warn("Errors is:\n#{output.string}")
       end
-       {raw_score: points, raw_max: points_max, comments: [output.string, errs.string].join("\n")}
+      if e.nil?
+        {raw_score: points, raw_max: points_max, comments: [output.string, errs.string].join("\n")}
+      else
+        {raw_score: points, raw_max: 100, comments: e.to_s}
+      end
     end
 
     def runner_block
