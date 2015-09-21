@@ -117,6 +117,11 @@ module Graders
 
 
     def load_description
+      if File.directory? @description
+        # gets the first yaml file
+        dir = Dir[File.join(@description, '*.yml')]
+        @description = dir[0]
+      end
       y = YAML::load_file(@description)
 
       # Load stuff we would need
