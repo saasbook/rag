@@ -16,10 +16,12 @@ module Submission
     def handle_submission(submission)
       raise 'No submission received' if submission.nil?
       assignment = submission.assignment
-      grader = Graders::AutoGrader.create(submission.files.values.first, assignment)
+      grader = Graders::AutoGrader.create(submission.files.values.first, assignment)  # edX XQueue API only supports 1 file at a time, so grab that
       grader_output = grader.grade
+      submission.message = ''  # There's no reason why I should have to do this, but this is a bug that I can't seem to trace down.
       submission.grade!(grader_output[:comments], grader_output[:raw_score], grader_output[:raw_max])
       assignment.apply_lateness! submission  # optionally scales submission by lateness and provides comments.
+      puts "Submission message after grade: #{submission.message}"
       logger.debug "submission message = #{submission.message}"
       submit_response(submission)
     end
