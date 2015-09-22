@@ -54,9 +54,10 @@ module Graders
         logger.warn("RSpec::Core::Runner encountered #{e.to_s}")
         logger.warn("Errors is:\n#{output.string}")
       end
-      backtraces_removed = output.string.split(/\n/).select {|b| !b.match(/^    *# .*/) }
+
+      cleaned_output = output.string.split(/\n/).select{|b| !b.match(/^    *# .*/) }.join("\n").gsub(file_path, 'your_code.rb')  # Removes large stacktraces and tmpfile from error messages.
       if e.nil?
-        {raw_score: points, raw_max: points_max, comments: [backtraces_removed, errs.string].join("\n")}
+        {raw_score: points, raw_max: points_max, comments: [cleaned_output, errs.string].join("\n")}
       else
         {raw_score: points, raw_max: 100, comments: e.to_s}
       end
