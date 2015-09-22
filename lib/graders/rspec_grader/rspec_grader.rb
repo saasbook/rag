@@ -62,15 +62,16 @@ module Graders
     end
 
     def runner_block
-      Graders.load_student_files(@submission_path) if @load_student_files
       if File.directory? @spec_file_path
         combined_grade_hash = {}
-        Dir[File.join(@spec_file_path, '*.rb')].each do  |file_name|
-          combined_grade_hash = combined_grade_hash.merge(compute_points(file_name)) {|key, accumulated_val, val| accumulated_val + val}
+        Dir[File.join(@spec_file_path, '*.rb')].each do  |spec_file|
+          rspec_combined = Graders.join_student_and_spec_files(@submission_path, spec_file) if @load_student_files
+          combined_grade_hash = combined_grade_hash.merge(compute_points(rspec_combined || spec_file)) {|key, accumulated_val, val| accumulated_val + val}
         end
         combined_grade_hash
       else
-        compute_points(@spec_file_path)
+        rspec_combined = Graders.join_student_and_spec_files(@submission_path, @spec_file_path) if @load_student_files
+        compute_points(rspec_combined || @spec_file_path)
       end
     end
   end
