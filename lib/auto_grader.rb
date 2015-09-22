@@ -1,11 +1,13 @@
+require 'tempfile'
 require_relative 'rag_logger'
 
 module Graders
-  def self.load_student_files(file_path)
-    # raise "#{file_path} is not a directory. Student submission could not be loaded" unless Dir.exist? file_path
-    # Dir[File.join(file_path, '*.rb')].each do  |file_name|
-    #   load file_name
-    # end
+  def self.join_student_and_spec_files(student_file_path, spec_file_path)
+    raise "#{student_file_path} is not a directory. Student submission could not be loaded" unless Dir.exist? student_file_path
+    joined_files_s = Dir[File.join(student_file_path, '*.rb')].map do  |file_name|
+       IO.read(file_name)
+    end.join("\n") + "\n" + IO.read(spec_file_path)
+    Tempfile.open('spec_file') {|f| f.write joined_files_s; f}.path
   end
   class AutoGrader
     include RagLogger
@@ -57,18 +59,6 @@ module Graders
 
     protected
 
-    # This is broken. Global RSpec singleton means that grading func will mess up the rspec object.
-    def run_in_thread(grading_func)
-      begin
-        thr = Thread.new { grading_func.call}
-        thr.join(@timeout)
-      rescue SecurityError => err
-        raise err
-      end
-      @output_hash
-    end
-
-
     # Takes a Proc object representing the grading behavior of the auto grader and runs it in a separate process.
     # If the subprocess takes longer than @timeout seconds, the function will kill the subprocess and return a score
     # of 0.
@@ -78,10 +68,8 @@ module Graders
         logger.debug('Start subprocess to run student code.')
         @pid = fork do
             read.close
-            $stdout = STDOUT
-            $stderr = STDERR 
-            # $stdout.reopen('stdout_subprocess', 'w')  # Don't clutter the main terminal with subprocess information.
-            # $stderr.reopen('err_subprocess', 'w')
+            # $stdout.reopen('stdout_subprocess', 'w')  # Don't clutter the main terminal with subprocess information.  If you are wondering, RSpec writes its output to STDOUT
+            # $stderr.reopen('err_subprocess', 'w')  # and you can't redirect it w/o redirecting all of STDOUT.
             output_hash = grading_func.call
             write.puts JSON.generate output_hash
             write.close
