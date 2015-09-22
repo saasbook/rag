@@ -49,7 +49,10 @@ module Graders
         points_max += example[:points]
         points += example[:points] if example[:status] == 'passed'
       end
-       {raw_score: points, raw_max: points_max, comments: [output.string, errs.string].join("\n")}
+       sss = output.string.split(/\n/).select {|b| !b.match(/^    *# .*/) }
+       # puts("XXXXXX"+sss.join("\n")+"YYYYYYYYY")
+       # {raw_score: points, raw_max: points_max, comments: [output.string, errs.string].join("\n")}
+       {raw_score: points, raw_max: points_max, comments: [sss, errs.string].join("\n")}
     end
 
     def runner_block

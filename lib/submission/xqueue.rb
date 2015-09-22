@@ -18,8 +18,8 @@ module Submission
     def next_submission_with_assignment
       submission = @x_queue.get_submission
       return if submission.nil?
-      logger.debug('XQueue adapter received submission.')
       submission.assignment = Assignment::Xqueue.new(submission)
+      logger.info("XQueue adapter received submission. Student #{submission.student_id} assignment #{submission.assignment.assignment_name}")
       submission.write_to_location! File.join( [ENV['BASE_FOLDER'], submission.student_id].join(''),
                         submission.assignment.assignment_name, Time.new.strftime(STRFMT))
       submission
