@@ -22,7 +22,7 @@ describe AutoGrader do
   context 'restricts running time of test suites' do
     before(:each) do
       FakeWeb.register_uri(:get, 'http://fixture.net/timeout_submission.rb', body: IO.read('spec/fixtures/timeout_submission.rb'))
-      submission = ::XQueueSubmission.create_from_JSON(double, IO.read('spec/fixtures/x_queue_submission_timeout.json')).fetch_files!
+      submission = ::XQueueSubmission.create_from_JSON(double, IO.read('spec/fixtures/x_queue_submission_timeout.json'))
       submission.write_to_location! 'submissions/'
       @submission_path = submission.files.values.first
       @assignment = Assignment::Xqueue.new(submission)
