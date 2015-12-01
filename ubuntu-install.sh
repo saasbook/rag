@@ -45,8 +45,8 @@ verbose git-clone-ifmissing-cd https://github.com/saasbook/rag.git /home/ubuntu/
 verbose cp -f /home/ubuntu/rag/.screenrc /home/ubuntu/.screenrc
 #Take ssh key out of ENV hash and move to ./ssh.
 verbose cat $ssh_key > /home/ubuntu/.ssh/id_rsa
-verbose sudo chmod 0600 id_rsa
-verbose source /usr/local/rvm/scripts/rvm
+verbose sudo chmod 0600 /home/ubuntu/.ssh/id_rsa
+verbose source /home/ubuntu/.rvm/scripts/rvm
 verbose cd /home/ubuntu/rag/
 verbose git checkout autograder_engine_refactor
 verbose rvm use 2.2.2 # for some reason, rvm doesn't automatically change ruby version from inside script
