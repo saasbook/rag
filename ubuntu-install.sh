@@ -1,5 +1,8 @@
 #!/bin/bash
-# Simple autograder setup.sh for configuring Ubuntu 12.04 LTS EC2 instance
+# Simple autograder setup.sh for configuring Ubuntu 14.04 LTS EC2 instance. This is the first step to configuring the
+# autograder. You will also need to copy the deploy key for any private repos the autograder needs to access as
+# ~/.ssh/id_rsa
+
 # get clone only if missing, then cd into it
 git-clone-ifmissing-cd() {
     if ! test -e "$2"; then
@@ -43,12 +46,9 @@ fi
 verbose git-clone-ifmissing-cd https://github.com/saasbook/rag.git /home/ubuntu/rag/
 # To get a nice footer for screen for .screenrc
 verbose cp -f /home/ubuntu/rag/.screenrc /home/ubuntu/.screenrc
-#Take ssh key out of ENV hash and move to ./ssh.
-verbose cat $ssh_key > /home/ubuntu/.ssh/id_rsa
-verbose sudo chmod 0600 /home/ubuntu/.ssh/id_rsa
 verbose source /home/ubuntu/.rvm/scripts/rvm
 verbose cd /home/ubuntu/rag/
-verbose git checkout autograder_engine_refactor
+verbose git checkout master
 verbose rvm use 2.2.2 # for some reason, rvm doesn't automatically change ruby version from inside script
 verbose gem install bundler
 verbose bundle-install-ifmissing

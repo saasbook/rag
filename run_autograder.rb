@@ -8,7 +8,7 @@ include RagLogger
 at_exit do
   FileUtils.rm_rf('temp_repo') # make sure we always do this even if we exit abnormally
   @@logger.close # flush the log file by closing the log.
-  puts 'at_exit hook called'
+  puts 'run_autograder exited. '
 end
 
 options = {}
