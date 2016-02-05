@@ -56,5 +56,6 @@ Then(/^I should receive a grade of "(.*?)" for my assignment$/) do |grade|
   end.to raise_error(PutResultException)
   expect(@results[:score].round(1)).to be == grade.to_f
   expect(@results[:message]).not_to be_empty
-  puts "#{@results[:message]}"
+  expect(@results[:message]).not_to include('There was a fatal error with your submission. It either timed out or caused an exception.')
+  puts "message: #{@results[:message]}"
 end
