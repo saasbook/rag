@@ -1,5 +1,5 @@
 Development Process
-------------------
+===================
 
 Our default working branch is `master`.  We do work by creating branches off `master` for new features and bugfixes.  Each developer will usually work with a [fork of the main repository](https://help.github.com/articles/fork-a-repo/)
 
@@ -30,4 +30,9 @@ which will associate the pull request with the relevant GitHub issue, and then c
 For more details on Waffle work flow see:
 
 https://github.com/waffleio/waffle.io/wiki/FAQs
+
+Merging Pull Requests
+--------------------
+
+Ideally every pull request will be reviewed by at least one other team member before it is merged in.
 
