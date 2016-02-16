@@ -6,6 +6,7 @@ Travis C. I. [![Build Status](https://travis-ci.org/saasbook/rag.png)](https://t
 
 Issues ready to be worked on: [![Stories in Ready](https://badge.waffle.io/saasbook/rag.png?label=ready&title=Ready)](http://waffle.io/saasbook/rag)
 
+To contribute to the codebase please see our [contribution guidelines](CONTRIBUTING.md)
 
 ####Berkeley SAAS  w/ [edX](https://www.edx.org/)
 

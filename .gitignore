@@ -27,3 +27,5 @@ spec/unauthorized_access.xml
 spec/unknown.xml
 
 .vagrant/
+
+**/.DS_Store
