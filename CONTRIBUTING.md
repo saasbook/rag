@@ -16,6 +16,7 @@ We use [Waffle](https://waffle.io/saasbook/rag) to manage our work on features a
 ```
 git checkout -b 72_add_contribution_docs
 ```
+Please ensure that each commit in your pull request makes a single coherent change and that the overall pull request only includes commits related to the specific GitHub issue that the pull request is addressing.  This helps the project managers understand the PRs and merge them more quickly.
 
 Whatever you are working on, or however far you get please open a "Work in Progress" (WIP) [pull request](https://help.github.com/articles/creating-a-pull-request/) so that others in the team can comment on your approach.  Even if you hate your horrible code :-) please throw it up there and we'll help guide your code to fit in with the rest of the project.
 
