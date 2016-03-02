@@ -8,6 +8,20 @@ Issues ready to be worked on: [![Stories in Ready](https://badge.waffle.io/saasb
 
 To contribute to the codebase please see our [contribution guidelines](CONTRIBUTING.md)
 
+Development Setup
+-----------------
+
+To get set up with the grader on your local dev machine or cloud instance (e.g. C9), clone a fork of this repo, and then use the following commands to check that all the tests run for you:
+
+```
+$ git clone https://github.com/<your_github_username>/rag
+$ bundle
+$ bundle exec spec
+$ bundle exec cucumber
+```
+
+Please open a new [Github issue](https://github.com/saasbook/rag/issues/new) if you encounter any troubles getting the above tests to run.  Once you have the tests all green you are ready to start development.  Setting up an EC2 instance can be helpful, but is optional.
+
 ####Berkeley SAAS  w/ [edX](https://www.edx.org/)
 
 * Berkeley folks
@@ -15,7 +29,7 @@ To contribute to the codebase please see our [contribution guidelines](CONTRIBUT
 * Other folks
   * the autograder code is at [github:saasbook/rag](https://github.com/saasbook/rag).
 
-Usage
+EC2 Usage
 --------------------
 
 1. Launch an EC2 instance (micro is fine) with autograder AMI. If you are using solutions from a private repo, make sure you set up a deploy key and place it into the Amazon ENV as GITHUB_DEPLOY_KEY. 
@@ -64,7 +78,9 @@ There is one config file hosted locally on the autograder required for setup wit
     due_dates: {'20150619000000': 1.00, '20150620000000': 0.30}  # a hash that defines time brackets and grade scaling based on submission time. If date < key, then will receive scaling value associated with key. 
     version: 1.0.0  # the version of RAG configured to use with this homework
     ```
+    Note, that any top level .rb file in the autograder/ directory of the `assignment_spec_uri` repo will be treated as a spec for for the purposes of assessing a submission.
 
+    Note also that the autograder machine needs to have access to the CI repo in question.  At the moment this means it needs to be added to saasbook cs169dev team
 
 
 Execution and tests

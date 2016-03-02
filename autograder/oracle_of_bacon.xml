@@ -1,0 +1,10 @@
+<problem><startouttext/>
+  Please see the instructions <a href='https://github.com/saasbook/hw-oracle-of-bacon'>here</a>. Upload your solution below:
+  <endouttext/>
+  <coderesponse queuename="cs169-rev-development"><filesubmission points="100"/><codeparam><grader_payload>
+		{"assignment_name": "assignment1.5",
+		"assignment_spec_uri": "git@github.com:saasbook/hw-oracle-of-bacon-ci.git",
+		"autograder_type": "RspecGrader",
+		"due_dates": {"2016-01-23": 1.0, "2016-01-30": 0.75}      }
+      </grader_payload></codeparam></coderesponse>
+</problem>
