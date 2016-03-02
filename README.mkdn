@@ -64,7 +64,9 @@ There is one config file hosted locally on the autograder required for setup wit
     due_dates: {'20150619000000': 1.00, '20150620000000': 0.30}  # a hash that defines time brackets and grade scaling based on submission time. If date < key, then will receive scaling value associated with key. 
     version: 1.0.0  # the version of RAG configured to use with this homework
     ```
+    Note, that any top level .rb file in the autograder/ directory of the `assignment_spec_uri` repo will be treated as a spec for for the purposes of assessing a submission.
 
+    Note also that the autograder machine needs to have access to the CI repo in question.  At the moment this means it needs to be added to saasbook cs169dev team
 
 
 Execution and tests
