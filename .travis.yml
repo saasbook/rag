@@ -1,12 +1,15 @@
 sudo: false
 language: ruby
 rvm:
-  - "2.2.2"
+- 2.2.2
 before_install:
-  - echo -e "machine github.com\n  login $CI_USER_TOKEN" >> ~/.netrc
+- echo -e "machine github.com\n  login $CI_USER_TOKEN" >> ~/.netrc
 script:
-  - bundle exec rspec spec
-  - bundle exec cucumber features
+- bundle exec rspec spec
+- bundle exec cucumber features
 notifications:
   email: false
   slack: cs169dev:OPMf1tPzfO3a4gz6gGTOFV7w
+env:
+  global:
+    secure: YQ0zBnEYoANt1BdVIK14/3T0D3X6Zz5ygLN2etaqrP6gvF/IeUKk6/MBbhBX1cSTqLQqJv9C/ryVCjsa2yw6xpKhF81AX1HKsBwJAnktD/2FuvkFEx0u13xgCpICd6C+5SupwoXrAUqd0wQx5shn0ac0d1CIoz6GjHXaYlVBeNQ=
