@@ -38,6 +38,7 @@ module Graders
       @description = assignment.assignment_spec_file
       @temp = submission_path
       @submissiondir = Dir[File.join(@temp, '*')][-1]
+      @timeout = 20
     end
 
     def log(*args)
@@ -130,8 +131,8 @@ module Graders
 
       # Coverage
       @cov_opts = y['coverage']
-        raise ArgumentError, "No 'coverage' configuration found" unless @cov_opts
-        @cov_pts = @cov_opts.delete('points').to_f
+      raise ArgumentError, "No 'coverage' configuration found" unless @cov_opts
+      @cov_pts = @cov_opts.delete('points').to_f
       @cov_opts = @cov_opts.convert_keys
 
       # Ref cucumber
