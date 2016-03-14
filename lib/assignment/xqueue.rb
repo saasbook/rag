@@ -56,7 +56,7 @@ module Assignment
     def fetch_spec_file(spec_uri)
       file_path = "#{ENV['BASE_FOLDER']}#{@assignment_name}-spec"
       if not File.exist? file_path or file_time_in_days(file_path) > 1  # Expire a solution repo if > 1 day old
-        if spec_uri.include? '.git'  # lazy way of getting a git URI
+        if spec_uri.include? 'git'  # lazy way of getting a git URI
           if system("git clone #{spec_uri} temp_repo")
             logger.debug("Download from repo spec file to: #{file_path}")
             spec_from_repo('temp_repo/autograder', file_path)
