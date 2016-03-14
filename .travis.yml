@@ -12,4 +12,4 @@ notifications:
   slack: cs169dev:OPMf1tPzfO3a4gz6gGTOFV7w
 env:
   global:
-    secure: YQ0zBnEYoANt1BdVIK14/3T0D3X6Zz5ygLN2etaqrP6gvF/IeUKk6/MBbhBX1cSTqLQqJv9C/ryVCjsa2yw6xpKhF81AX1HKsBwJAnktD/2FuvkFEx0u13xgCpICd6C+5SupwoXrAUqd0wQx5shn0ac0d1CIoz6GjHXaYlVBeNQ=
+  - secure: D3Zn9Lu8zFFe8cR/ADWJeFaoMv5uFUO2oEacJ8992+MfEoipPiMO6zHkOgnaBD1Elr6w1Qf+Fv87wXD3KICYcrHU8qosdBsYL6Hr8BwjXBuKlu7e4bYceMyJAzCN0V/8UFlcczBbmeaOVCGyqbnMHZr+xdmL8d7jKIvInhsVmS8=
