@@ -38,7 +38,7 @@ module Graders
       @description = assignment.assignment_spec_file
       @temp = submission_path
       @submissiondir = Dir[File.join(@temp, '*')][-1]
-      @timeout = 20
+      @timeout = 60
     end
 
     def log(*args)
@@ -184,8 +184,11 @@ module Graders
         exitstatus = wait_thr.value.exitstatus
         out = stdout.read
         err = stderr.read
-        if exitstatus != 0
-          log err
+        log("OUTPUT IS #{out} \n ^^^^^")
+        if exitstatus != 0 # for some reason bundle exec rake call returns exitsttatus != 0 for some directory setups
+          # log "Encountered error in bundle exec rake saas"
+          # log "Error is: #{err}\n"
+          # log "out is  #{out}"
           return
         end
         cuke, rspec = parse_student_test_output(out)
@@ -239,6 +242,7 @@ module Graders
       # I don't know why we only care about the first one, but the FastReturn
       # mess was only grading 1 feature anyways. Ask Richard Xia.
       feature = @cucumber_config[:ref][:features][0]
+      logger.info("Feature is #{feature}")
       score = HW4Grader::Feature.total([feature])
       # score = HW4Grader::Feature.total(@cucumber_config[:ref][:features])
       steps = feature.scenarios[:steps]
