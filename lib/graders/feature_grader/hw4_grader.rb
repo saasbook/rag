@@ -184,15 +184,15 @@ module Graders
         exitstatus = wait_thr.value.exitstatus
         out = stdout.read
         err = stderr.read
-        log("OUTPUT IS #{out} \n ^^^^^")
-        if exitstatus != 0 # for some reason bundle exec rake call returns exitsttatus != 0 for some directory setups
-          # log "Encountered error in bundle exec rake saas"
-          # log "Error is: #{err}\n"
-          # log "out is  #{out}"
+        if exitstatus != 0 # this shouldn't happen
+          log "Checking your student tests failed."
+          log "Error is: #{err}\n"
           return
         end
         cuke, rspec = parse_student_test_output(out)
       end
+
+
       cuke_passed, cuke_max = score_cuke_output(cuke)
       rspec_passed, rspec_max = score_rspec_output(rspec)
       cuke_score = cuke_max > 0 ? Rational(cuke_passed, cuke_max) : 0

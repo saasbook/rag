@@ -3,26 +3,26 @@ namespace :saas do
     desc "Runs all tasks for grading"
 
     errors = []
+    puts "----BEGIN RSPEC----"
+    puts "-"*80
+    begin
+      Rake::Task["spec"].invoke
+    rescue SystemExit => e
+      errors << e.message
+    end
+    puts "-"*80
+    puts "----END RSPEC----"
+
 
     puts "----BEGIN CUCUMBER----"
     puts "-"*80
     begin
       Rake::Task["cucumber"].invoke
-    rescue StandardError => e
+    rescue SystemExit => e
       errors << e.message
     end
     puts "-"*80
     puts "----END CUCUMBER----"
-
-    puts "----BEGIN RSPEC----"
-    puts "-"*80
-    begin
-      Rake::Task["spec"].invoke
-    rescue StandardError => e
-      errors << e.message
-    end
-    puts "-"*80
-    puts "----END RSPEC----"
 
     puts errors.join("\n") if errors.any?
   end
