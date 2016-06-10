@@ -29,10 +29,6 @@ group :development, :testing do
   gem 'addressable'
   gem 'timecop'
   gem 'database_cleaner'
-  gem 'rspec'
-  gem 'rspec-collection_matchers'
-  gem 'rspec-its'
   gem 'nokogiri'
-  gem 'byebug'
   gem 'activemodel'
 end
