@@ -38,7 +38,7 @@ module Graders
       @description = assignment.assignment_spec_file
       @temp = submission_path
       @submissiondir = Dir[File.join(@temp, '*')][-1]
-      @timeout = 20
+      @timeout = 60
     end
 
     def log(*args)
@@ -184,12 +184,15 @@ module Graders
         exitstatus = wait_thr.value.exitstatus
         out = stdout.read
         err = stderr.read
-        if exitstatus != 0
-          log err
+        if exitstatus != 0 # this shouldn't happen
+          log "Checking your student tests failed."
+          log "Error is: #{err}\n"
           return
         end
         cuke, rspec = parse_student_test_output(out)
       end
+
+
       cuke_passed, cuke_max = score_cuke_output(cuke)
       rspec_passed, rspec_max = score_rspec_output(rspec)
       cuke_score = cuke_max > 0 ? Rational(cuke_passed, cuke_max) : 0
@@ -239,6 +242,7 @@ module Graders
       # I don't know why we only care about the first one, but the FastReturn
       # mess was only grading 1 feature anyways. Ask Richard Xia.
       feature = @cucumber_config[:ref][:features][0]
+      logger.info("Feature is #{feature}")
       score = HW4Grader::Feature.total([feature])
       # score = HW4Grader::Feature.total(@cucumber_config[:ref][:features])
       steps = feature.scenarios[:steps]
