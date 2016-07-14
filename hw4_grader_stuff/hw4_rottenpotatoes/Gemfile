@@ -20,6 +20,7 @@ group :development, :test do
   gem 'spring'
   gem 'web-console'
   gem 'byebug'
+  gem 'factory_girl_rails'
 end
 group :production do
   gem 'pg'
