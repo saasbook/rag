@@ -38,7 +38,7 @@ module Graders
       @description = assignment.assignment_spec_file
       @temp = submission_path
       @submissiondir = Dir[File.join(@temp, '*')][-1]
-      @timeout = 20
+      @timeout = 60
     end
 
     def log(*args)

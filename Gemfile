@@ -16,6 +16,8 @@ gem "jquery-ui-rails"
 gem "jquery-rails"
 gem 'rspec-rails'
 gem 'activeresource'
+gem 'factory_girl_rails'
+
 group :development, :testing do
   gem 'ZenTest'
   gem 'simplecov'
