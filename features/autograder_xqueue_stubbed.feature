@@ -42,6 +42,11 @@ Feature: Autograder configured to accept student submissions from edX and grade 
     And has been setup with the config file "conf.yml"
     Then I should receive a grade of "100" for my assignment
 
+  Scenario: student submits a HW3 that gets stuck
+    #Given I set up a test that requires internet connection
+    Given an XQueue that has submission "hw3_stuck_submission.json" in queue
+    And has been setup with the config file "conf.yml"
+    Then I should receive a grade of "0" for my assignment
 
   @require_net_connect
   Scenario: student submits a HW4
@@ -51,7 +56,7 @@ Feature: Autograder configured to accept student submissions from edX and grade 
     Then I should receive a grade of "100" for my assignment
 
   @require_net_connect
-  Scenario: student submits a HW4 that gest stuck
+  Scenario: student submits a HW4 that gets stuck
     Given I set up a test that requires internet connection
     Given an XQueue that has submission "hw4_stuck_submission.json" in queue
     And has been setup with the config file "conf.yml"
