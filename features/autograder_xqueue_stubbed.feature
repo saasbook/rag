@@ -67,4 +67,4 @@ Feature: Autograder configured to accept student submissions from edX and grade 
     Given I set up a test that requires internet connection
     Given an XQueue that has submission "hw4_includes_factory_girl.json" in queue
     And has been setup with the config file "conf.yml"
-    Then I should receive a grade of "40" for my assignment
+    Then I should receive a grade of "60" for my assignment
