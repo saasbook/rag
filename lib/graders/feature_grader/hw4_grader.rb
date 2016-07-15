@@ -154,6 +154,8 @@ module Graders
           out = stdout.read
           err = stderr.read
           if exitstatus != 0
+            log out
+            log err
             raise out + err
           end
         end
@@ -170,6 +172,8 @@ module Graders
           out = stdout.read
           err = stderr.read
           if exitstatus != 0
+            log out
+            log err
             raise out + err
           end
         end
@@ -185,6 +189,7 @@ module Graders
         out = stdout.read
         err = stderr.read
         if exitstatus != 0
+          log out
           log err
           return
         end

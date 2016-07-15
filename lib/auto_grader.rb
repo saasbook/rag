@@ -70,7 +70,13 @@ module Graders
             read.close
             # $stdout.reopen('stdout_subprocess', 'w')  # Don't clutter the main terminal with subprocess information.  If you are wondering, RSpec writes its output to STDOUT
             # $stderr.reopen('err_subprocess', 'w')  # and you can't redirect it w/o redirecting all of STDOUT.
-            output_hash = grading_func.call
+
+            begin
+              output_hash = grading_func.call
+            rescue => e
+              output_hash = { raw_score: 0, raw_max: 1, comments: e }
+            end
+
             write.puts JSON.generate output_hash
             write.close
         end
