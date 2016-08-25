@@ -38,7 +38,7 @@ module Graders
       @description = assignment.assignment_spec_file
       @temp = submission_path
       @submissiondir = Dir[File.join(@temp, '*')][-1]
-      @timeout = 20
+      @timeout = 60
     end
 
     def log(*args)
@@ -154,6 +154,8 @@ module Graders
           out = stdout.read
           err = stderr.read
           if exitstatus != 0
+            log out
+            log err
             raise out + err
           end
         end
@@ -170,6 +172,8 @@ module Graders
           out = stdout.read
           err = stderr.read
           if exitstatus != 0
+            log out
+            log err
             raise out + err
           end
         end
@@ -185,10 +189,14 @@ module Graders
         out = stdout.read
         err = stderr.read
         if exitstatus != 0
+          log out
           log err
           return
         end
         cuke, rspec = parse_student_test_output(out)
+        puts '!'*100
+        puts rspec
+        puts '!'*100
       end
       cuke_passed, cuke_max = score_cuke_output(cuke)
       rspec_passed, rspec_max = score_rspec_output(rspec)
