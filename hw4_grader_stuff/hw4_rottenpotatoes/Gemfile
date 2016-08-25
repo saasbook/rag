@@ -1,12 +1,18 @@
 source 'http://rubygems.org'
 
-gem 'rails', '4.2.1'
+ruby '2.3.0'
+
+gem 'rails', '4.2.6'
 
 # Bundle edge Rails instead:
 # gem 'rails',     :git => 'git://github.com/rails/rails.git'
 
 group :development do
   gem 'cucumber-rails-training-wheels'
+end
+
+group :test do
+  gem 'web-console'
 end
 
 group :development, :test do
@@ -18,10 +24,10 @@ group :development, :test do
   gem 'simplecov'
   gem 'autotest'
   gem 'spring'
-  gem 'web-console'
   gem 'byebug'
   gem 'factory_girl_rails'
 end
+
 group :production do
   gem 'pg'
   gem 'rails_12factor'

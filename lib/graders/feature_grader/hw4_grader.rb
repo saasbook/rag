@@ -73,7 +73,10 @@ module Graders
       FileUtils.cp_r Dir.glob(File.join(@submissiondir, ".")), @temp
       FileUtils.rm_r Dir.glob(@submissiondir)
       tmpdir = @temp
-      Dir.chdir(tmpdir) do 
+      puts '!' * 100
+      puts tmpdir
+      puts '!' * 100
+      Dir.chdir(tmpdir) do
         env = {
           'RAILS_ROOT' => Dir.pwd,
           'RAILS_ENV' => 'test'

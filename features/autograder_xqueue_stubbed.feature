@@ -86,3 +86,25 @@ Feature: Autograder configured to accept student submissions from edX and grade 
     Given an XQueue that has submission "hw4_includes_factory_girl.json" in queue
     And has been setup with the config file "conf.yml"
     Then I should receive a grade of "60" for my assignment
+
+  @require_net_connect
+  Scenario: student submits a HW4 that includes a tr count issue
+    Given I set up a test that requires internet connection
+    Given an XQueue that has submission "hw4_tr_count_issue.json" in queue
+    And has been setup with the config file "conf.yml"
+    Then I should receive a grade of "60" for my assignment
+
+  @require_net_connect
+  Scenario: student submits a HW4 that has factory already registered issue
+    Given I set up a test that requires internet connection
+    Given an XQueue that has submission "hw4_factory_already_registered.json" in queue
+    And has been setup with the config file "conf.yml"
+    Then I should receive a grade of "0" for my assignment
+
+  @require_net_connect
+  Scenario: student submits a HW4 that has unique constraint issue
+    Given I set up a test that requires internet connection
+    Given an XQueue that has submission "hw4_unique_constraint_violation.json" in queue
+    And has been setup with the config file "conf.yml"
+    Then I should receive a grade of "40" for my assignment
+
