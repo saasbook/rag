@@ -89,7 +89,10 @@ Execution and tests
 ####To run the autograder program:
  ``` bundle exec ruby run_autograder.rb path/to/configfile ```
  
-This process will need to be run in a [screen](http://aperiodic.net/screen/quick_reference) or [tmux](https://tmuxcheatsheet.com/) session if the autograder is deployed on a remote system such as EC2.
+This process will need to be run in a [screen](http://aperiodic.net/screen/quick_reference) or [
+](https://tmuxcheatsheet.com/) session if the autograder is deployed on a remote system such as EC2.  We will often use the command like so:
+
+```while true; do bundle exec ruby run_autograder.rb config/config.yml; done```
 
 ## The mutation testing/feature grader (HW 3)
 
