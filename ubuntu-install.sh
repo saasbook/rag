@@ -77,6 +77,10 @@ echo "
 
 
 sudo apt-get install -y git
+
+# ensure git branch names are on command prompt
+# TODO
+
 sudo apt-get install -y curl
 
 sudo -H -u ubuntu bash -c "\curl -L https://get.rvm.io | bash -s stable  --ruby=1.9.3"

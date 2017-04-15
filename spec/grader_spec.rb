@@ -18,10 +18,6 @@ describe 'Command Line Interface' do
       @auto_grader.should_receive(:grade!)
       AutoGrader.should_receive(:create).with(*args).and_return(@auto_grader)
     end
-    it 'should produce appropriate response to correct arguments' do
-      grader = Grader.cli(["-t","WeightedRspecGrader","correct_example.rb","correct_example.spec.rb"])
-      expect(grader.class).to eq Grader
-    end
     it 'should produce correctly formatted output' do
       @auto_grader.should_receive(:normalized_score).with(100).and_return(67)
       @auto_grader.should_receive(:comments).and_return('stuff')
@@ -33,10 +29,33 @@ describe 'Command Line Interface' do
     args = '1', 'GithubRspecGrader',"tansaku",{:spec => "github_spec.rb"}
     auto_grader = mock('AutoGrader')
     auto_grader.should_receive(:grade!)
+    auto_grader.should_receive(:normalized_score).with(100).and_return(67)
+    auto_grader.should_receive(:comments).and_return('stuff')
     AutoGrader.should_receive(:create).with(*args).and_return(auto_grader)
     grader = Grader.cli(["-t","GithubRspecGrader","tansaku","github_spec.rb"])
     expect(grader).not_to eq Grader.help
     #AutoGrader.create('1', 'WeightedRspecGrader', IO.read(ARGV[0]), :spec => ARGV[1])
+  end
+  it 'should be able to handle feature grader arguments' do
+    cli_args = ['-t','HW3Grader','-a','/tmp/','features.tar.gz','hwz.yml']
+    grd_args = ['3', 'HW3Grader','features.tar.gz',{:spec => 'hwz.yml'}]
+    Kernel.should_receive(:const_get).with('HW3Grader').and_return(HW3Grader)
+    HW3Grader.should_receive(:format_cli).with(cli_args).and_return(grd_args)
+    execute cli_args, grd_args
+  end
+  @MOCK_RESULTS = 'MOCK_RESULTS'
+  def mock_auto_grader
+    auto_grader = double('AutoGrader')
+    auto_grader.should_receive(:grade!)
+    auto_grader.should_receive(:normalized_score).with(100).and_return(67)
+    auto_grader.should_receive(:comments).and_return(@MOCK_RESULTS)
+    return auto_grader
+  end
+  def execute(cli_args, grader_args, expected=/#{@MOCK_RESULTS}/)
+    AutoGrader.should_receive(:create).with(*grader_args).and_return(mock_auto_grader)
+    grader = Grader.cli cli_args
+    expect(grader).to match expected
+    return grader
   end
   xit 'should be able to receive different arguments depending on the grader specified' do
     #HW1 e.g. new_grader -t WeightedRspecGrader "#{PFX}/correct_example.rb", "#{PFX}/correct_example.spec.rb"
