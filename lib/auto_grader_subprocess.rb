@@ -8,8 +8,10 @@ require_relative 'escaper'
 
 module AutoGraderSubprocess
   extend RagLogger
-  class AutoGraderSubprocess::OutputParseError < StandardError ; end
-  class AutoGraderSubprocess::SubprocessError < StandardError ; end
+  class AutoGraderSubprocess::OutputParseError < StandardError;
+  end
+  class AutoGraderSubprocess::SubprocessError < StandardError;
+  end
 
   # FIXME: This is a hack, remove later
   # This, and run_autograder, should really be part of a different module/class
@@ -22,41 +24,45 @@ module AutoGraderSubprocess
       file.flush
 
       opts = {
-        :timeout => 4,
-        :cmd => %Q{./grade "#{file.path}" "#{spec}"}
+          :timeout => 4,
+          :cmd => %Q{./grade "#{file.path}" "#{spec}"}
       }.merge case grader_type
-      when 'HerokuRspecGrader'
-        { :timeout => 180,
-          :cmd => %Q{./grade_heroku "#{submission}" "#{spec}"}
-        }
-      when 'GithubRspecGrader'
-        { :timeout => 180,
-          :cmd => %Q{./new_grader -t GithubRspecGrader "#{submission}" "#{spec}"}
-        }
-      when 'HW3Grader'
-        {
-          :timeout => 400,
-          :cmd => %Q{./grade3 -a ../rottenpotatoes "#{file.path}" "#{spec}"}
-        }
-      when 'HW4Grader'
-        {
-          :timeout => 300,
-          :cmd => %Q{./grade4 "#{file.path}" "#{spec}"}
-        }
-      when 'HW5Grader'
-        submission = escape_all_fields(submission)
-        {
-          :timeout => 300,
-          :cmd => %Q{./grade5 #{submission} "#{spec}"}
-        }
-      when 'MigrationGrader'
-        {
-          :timeout => 300,
-          :cmd => %Q{./grade6 "#{file.path}" "#{spec}"}
-        }
-      else
-        {}
-      end
+                when 'HerokuRspecGrader'
+                  {:timeout => 180,
+                   :cmd => %Q{./grade_heroku "#{submission}" "#{spec}"}
+                  }
+                when 'CapybaraRspecGrader'
+                  {:timeout => 180,
+                   :cmd => %Q{./grade_capybara "#{submission}" "#{spec}"}
+                  }
+                when 'GithubRspecGrader'
+                  {:timeout => 180,
+                   :cmd => %Q{./new_grader -t GithubRspecGrader "#{submission}" "#{spec}"}
+                  }
+                when 'HW3Grader'
+                  {
+                      :timeout => 400,
+                      :cmd => %Q{./grade3 -a ../rottenpotatoes "#{file.path}" "#{spec}"}
+                  }
+                when 'HW4Grader'
+                  {
+                      :timeout => 300,
+                      :cmd => %Q{./grade4 "#{file.path}" "#{spec}"}
+                  }
+                when 'HW5Grader'
+                  submission = escape_all_fields(submission)
+                  {
+                      :timeout => 300,
+                      :cmd => %Q{./grade5 #{submission} "#{spec}"}
+                  }
+                when 'MigrationGrader'
+                  {
+                      :timeout => 300,
+                      :cmd => %Q{./grade6 "#{file.path}" "#{spec}"}
+                  }
+                else
+                  {}
+              end
 
       begin
         stdout_text, stderr_text, exitstatus = run_with_timeout(opts[:cmd], opts[:timeout])
