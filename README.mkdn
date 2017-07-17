@@ -16,7 +16,7 @@ To get set up with the grader on your local dev machine or cloud instance (e.g. 
 ```
 $ git clone https://github.com/<your_github_username>/rag
 $ bundle
-$ bundle exec spec
+$ bundle exec rspec
 $ bundle exec cucumber
 ```
 
@@ -175,6 +175,39 @@ When a feature is run, the environment variable `version` will be set to
 the value of the `version` property for that feature.  Use this as a
 feature flag in the app (by checking `ENV["version"]`) to trigger a
 "bug", e.g. reversing sort order/not returning all data. 
+
+
+Azure Usage
+-----
+
+1. Launch an Azure Linux instance (Ubuntu 14.04.5 LTS (GNU/Linux 4.4.0-83-generic x86_64)). 
+
+
+```sh
+sudo apt-get install git
+git clone https://github.com/saasbook/rag
+cd rag
+sudo apt-add-repository -y ppa:rael-gc/rvm
+sudo apt-get update
+sudo apt-get install rvm
+```
+log out back in again or `source /usr/local/rvm/scripts/rvm` ?
+
+```sh
+rvm install ruby-2.2.2
+bundle
+gem install bundler
+bundle
+```
+
+2. If you are using solutions from a private repo, make sure you set up a ssh key on the server and then add it to the relevant repos as a deploy key: https://developer.github.com/v3/guides/managing-deploy-keys/#deploy-keys , otherwise you'll get errors like 
+
+```
+Fatal error: Retrieving spec files from git@github.com:saasbook/hw-ruby-intro-ci.git repository failed
+```
+
+3. follow the configuration instructions, which includes creating the dir and file `config/config.yml`
+
 
 
 Notes on the related homework and CI repos
