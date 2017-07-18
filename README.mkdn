@@ -208,6 +208,12 @@ Fatal error: Retrieving spec files from git@github.com:saasbook/hw-ruby-intro-ci
 
 3. follow the configuration instructions, which includes creating the dir and file `config/config.yml`
 
+4. we might also need:
+
+```
+sudo apt-get install postgresql postgresql-contrib libpq-dev
+```
+
 
 
 Notes on the related homework and CI repos
