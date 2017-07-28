@@ -4,6 +4,7 @@ Feature: Autograder configured to accept student submissions from edX and grade 
   I want to be able to create a code submission page in edX and grade it using rag
 
 #  Background:
+#    Given the submissions directory has been cleared
 #    Given I've hacked the grader to have a short timeout
 
   Scenario: simple one file submission against one spec file RSpecGrader

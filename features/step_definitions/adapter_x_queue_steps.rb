@@ -68,3 +68,7 @@ And(/^I've hacked the grader to have a short timeout$/) do
     def timeout; 20; end
   end
 end
+
+Given(/^the submissions directory has been cleared$/) do
+  `rm -rf submissions`
+end
