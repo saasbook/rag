@@ -80,7 +80,7 @@ module Graders
             write.puts JSON.generate output_hash
             write.close
         end
-        Timeout.timeout(@timeout) do
+        Timeout.timeout(timeout) do
           Process.wait @pid
         end
         write.close

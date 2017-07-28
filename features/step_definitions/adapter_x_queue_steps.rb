@@ -13,7 +13,7 @@ def fake_files(file_uris)
   if file_uris.is_a? Enumerable 
     file_uris.each do |file_uri| 
       local_file = (file_uri.split'/')[-1]
-      puts "register_uri for : #{file_uri}"
+      # puts "register_uri for : #{file_uri}"
       FakeWeb.register_uri(:get, file_uri, :body => IO.read("#{BASE_FOLDER}#{local_file}"))
     end
   else 
@@ -28,9 +28,9 @@ end
 Given(/^an XQueue that has submission "(.*?)" in queue$/) do |submission|
   response_file = "#{BASE_FOLDER}#{submission}"
   FakeWeb.register_uri(:get, %r|https://xqueue.edx.org/xqueue/get_submission/|, body: response_file)
-  JSON_string = JSON.parse(IO.read(response_file))['content']
-  submission = XQueueSubmission.create_from_JSON(double('XQueue'), JSON_string)
-  puts submission.files.values
+  json_string = JSON.parse(IO.read(response_file))['content']
+  submission = XQueueSubmission.create_from_JSON(double('XQueue'), json_string)
+  # puts submission.files.values
   fake_files(submission.files.values)
   fake_files(submission.grader_payload['assignment_spec_uri']) if submission.grader_payload['assignment_spec_uri'].include? 'fakedownload'
   XQueue.any_instance.stub(:authenticated?).and_return(true)
@@ -61,4 +61,10 @@ end
 
 And(/^results should include "(.*?)"$/) do |message|
   expect(@results[:message]).to include message
+end
+
+And(/^I've hacked the grader to have a short timeout$/) do
+  class Graders::AutoGrader
+    def timeout; 20; end
+  end
 end
