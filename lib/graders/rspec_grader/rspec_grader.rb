@@ -33,8 +33,8 @@ module Graders
     end
     
     def compute_points (file_path)
-      errs = StringIO.new('', 'w')
-      output = StringIO.new('', 'w')
+      errs = StringIO.new #('', 'w')
+      output = StringIO.new #('', 'w')
       points_max = 0
       points = 0
       RSpec.reset

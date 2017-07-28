@@ -21,7 +21,7 @@ module Submission
       submission.message = ''  # There's no reason why I should have to do this, but this is a bug that I can't seem to trace down.
       submission.grade!(grader_output[:comments], grader_output[:raw_score], grader_output[:raw_max] == 0 ? 1 : grader_output[:raw_max])
       assignment.apply_lateness! submission  # optionally scales submission by lateness and provides comments.
-      puts "Submission message after grade: #{submission.message}"
+      # puts "Submission message after grade: #{submission.message}"
       logger.debug "submission message = #{submission.message}"
       submit_response(submission)
     end
