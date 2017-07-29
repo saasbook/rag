@@ -35,11 +35,20 @@ Feature: Autograder configured to accept student submissions from edX and grade 
     And has been setup with the config file "conf.yml"
     Then I should receive a grade of "0" for my assignment
   #@require_net_connect
+
   Scenario: student submits a HW3
     #Given I set up a test that requires internet connection
     Given an XQueue that has submission "hw3_submission.json" in queue
     And has been setup with the config file "conf.yml"
     Then I should receive a grade of "100" for my assignment
+    
+  Scenario: student submits a HW3 that gets stuck
+    #Given I set up a test that requires internet connection
+    Given an XQueue that has submission "hw3_stuck_submission.json" in queue
+    And has been setup with the config file "conf.yml"
+    Then I should receive a grade of "0" for my assignment
+    And results should include "unknown attribute 'released_date' for Movie. (ActiveRecord::UnknownAttributeError)"
+
   @require_net_connect
   Scenario: student submits a HW4
     Given I set up a test that requires internet connection
@@ -48,8 +57,32 @@ Feature: Autograder configured to accept student submissions from edX and grade 
     Then I should receive a grade of "100" for my assignment
 
   @require_net_connect
-  Scenario: student submits a HW4 that gest stuck
+  Scenario: student submits a HW4 that times out
     Given I set up a test that requires internet connection
     Given an XQueue that has submission "hw4_stuck_submission.json" in queue
     And has been setup with the config file "conf.yml"
     Then I should receive a grade of "0" for my assignment
+    And results should include "There was a fatal error with your submission. It either timed out or caused an exception"
+
+  @require_net_connect
+  Scenario: student submits a HW4 conceals rspec error
+    Given I set up a test that requires internet connection
+    Given an XQueue that has submission "hw4_rspec_error.json" in queue
+    And has been setup with the config file "conf.yml"
+    Then I should receive a grade of "60" for my assignment
+    And results should include "Failure/Error: expect(assigns(:movies)).to eq([movie])"
+
+  @require_net_connect
+  Scenario: student submits a HW4 with migration_error
+    Given I set up a test that requires internet connection
+    Given an XQueue that has submission "hw4_migration_error.json" in queue
+    And has been setup with the config file "conf.yml"
+    Then I should receive a grade of "0" for my assignment
+    And results should include "SQLException: duplicate column name: director: ALTER TABLE"
+
+  @require_net_connect
+  Scenario: student submits a HW4 that includes factory girl
+    Given I set up a test that requires internet connection
+    Given an XQueue that has submission "hw4_includes_factory_girl.json" in queue
+    And has been setup with the config file "conf.yml"
+    Then I should receive a grade of "60" for my assignment

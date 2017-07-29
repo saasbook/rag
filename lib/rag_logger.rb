@@ -5,7 +5,8 @@ require 'fileutils'
 
 module RagLogger
 
-  #Create a singleton logger used across all rag classes. Write to a specified log file, if already exists, create a new file w/ timestamp in file name
+  # Create a singleton logger used across all rag classes. Will either write to logs, or print to STDOUT if not set.
+  # Priority level set by level.
   def self.configure_logger(log_to_file, level)
     if log_to_file
       FileUtils.mkdir_p('logs') unless File.directory?('logs')

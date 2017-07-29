@@ -38,7 +38,7 @@ module Assignment
 
     def apply_lateness!(submission)
       submission_time = submission.submission_time
-      submit_range = @due_dates.map {|due_date| submission_time < due_date}.find_index(true) #return index of which date range submission falls into. if nil,
+      submit_range = @due_dates.map {|due_date| submission_time < due_date}.find_index(true) #return index of which date range submission falls into. if nil, then give it a score of 0
       grade_scale = submit_range ? @due_dates[submit_range].point_scaling : 0
       submission.score = grade_scale * submission.score
       submission.message = Assignment::late_comments(submission_time, grade_scale == 1.0, grade_scale) + submission.message
@@ -46,11 +46,17 @@ module Assignment
     end
 
     protected
+
+    def file_time_in_days(file_name)
+      # returns the age of @file_name as a float in days
+      # credits: http://stackoverflow.com/questions/17955852/how-do-i-get-a-files-age-in-days-in-ruby
+      (Time.now - File.stat(file_name).mtime).to_i / 86400.0
+    end
     # Get the spec file from grader payload download URI unless it already exists. Returns a file path, which is either a file or a directory containing spec files to run.
     def fetch_spec_file(spec_uri)
       file_path = "#{ENV['BASE_FOLDER']}#{@assignment_name}-spec"
-      if not File.exist? file_path
-        if spec_uri.include? '.git'  # lazy way of getting a git URI
+      if not File.exist? file_path or file_time_in_days(file_path) > 1  # Expire a solution repo if > 1 day old
+        if spec_uri.include? 'git'  # lazy way of getting a git URI
           if system("git clone #{spec_uri} temp_repo")
             logger.debug("Download from repo spec file to: #{file_path}")
             spec_from_repo('temp_repo/autograder', file_path)
@@ -67,6 +73,7 @@ module Assignment
       end
       file_path
     end
+
 
     def spec_from_repo(repo_path, dest_path)
       FileUtils.cp_r(repo_path, dest_path)
