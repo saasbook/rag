@@ -194,9 +194,6 @@ module Graders
           return
         end
         cuke, rspec = parse_student_test_output(out)
-        puts '!'*100
-        puts rspec
-        puts '!'*100
       end
       cuke_passed, cuke_max = score_cuke_output(cuke)
       rspec_passed, rspec_max = score_rspec_output(rspec)
