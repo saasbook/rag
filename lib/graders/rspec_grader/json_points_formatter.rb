@@ -4,12 +4,15 @@ module RSpec
   module Core
     module Formatters
       class JsonPointsFormatter < JsonFormatter
-        RSpec::Core::Formatters.register self, :message, :dump_summary, :dump_profile, :stop, :close
+        RSpec::Core::Formatters.register self, :message, :dump_summary, :dump_profile, :stop
 
         def stop(notification)
           @output_hash[:examples] = notification.examples.map do |example|
             format_example(example)
           end
+        end
+
+        def close(_notification)
         end
         
         private
