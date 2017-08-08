@@ -46,6 +46,9 @@ module Graders
                 m.synchronize { s += result }
               rescue TestFailedError, IncorrectAnswer
                 m.synchronize { s += -result }
+              rescue => e
+                # make sure that standard errors don't break grading
+                # assuming this has been logged and rethrown
               end
             #end
             #t.join unless $config[:mt]
@@ -54,7 +57,7 @@ module Graders
           #threads.each(&:join)
 
           # Dump output. TODO: better way to do this?
-          # features.each { |f| f.dump_output }
+          features.each { |f| f.dump_output }
 
           return s
         end

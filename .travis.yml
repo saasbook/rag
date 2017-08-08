@@ -9,7 +9,8 @@ script:
 - bundle exec cucumber features
 notifications:
   email: false
-  slack: cs169dev:OPMf1tPzfO3a4gz6gGTOFV7w
+  slack:
+    secure: r6DkoeoERjYHAxNyEHirIDa+lMuHEylWqaQURnrwSab5lPuM54InurtFhmsCRaEDce2DWg+MgbSDh9pmjKTh3StMn7RFafrOvWK9wkU4ndwvd/AgjRRtbAxoHwoHd0Uz57+vSqq3BOqPhYISqu+m2KIX697/KV7uiY3lDVpG7ws=
 env:
   global:
   - secure: D3Zn9Lu8zFFe8cR/ADWJeFaoMv5uFUO2oEacJ8992+MfEoipPiMO6zHkOgnaBD1Elr6w1Qf+Fv87wXD3KICYcrHU8qosdBsYL6Hr8BwjXBuKlu7e4bYceMyJAzCN0V/8UFlcczBbmeaOVCGyqbnMHZr+xdmL8d7jKIvInhsVmS8=

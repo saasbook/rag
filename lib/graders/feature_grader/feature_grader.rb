@@ -62,6 +62,7 @@ module Graders
       ENV['RAILS_ROOT'] = @base_app_path
 
       start_time = Time.now
+
       score = Feature.total(@features)   # TODO: integrate Score
 
       @raw_score, @raw_max = score.points, score.max

@@ -56,5 +56,9 @@ Then(/^I should receive a grade of "(.*?)" for my assignment$/) do |grade|
   end.to raise_error(PutResultException)
   expect(@results[:score].round(1)).to be == grade.to_f
   expect(@results[:message]).not_to be_empty
-  puts "#{@results[:message]}"
+  # puts "#{@results[:message]}"
+end
+
+And(/^results should include "(.*?)"$/) do |message|
+  expect(@results[:message]).to include message
 end

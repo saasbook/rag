@@ -35,16 +35,22 @@ module Graders
         # See +$config[:mt]+
         #
         def total(features=[])
+
           s = Score.new
 
           features.each do |f|
-              begin
-                result = f.run!
-                s+= result
-              rescue TestFailedError, IncorrectAnswer
-                s += -result
-              end
+            begin
+              result = f.run!
+              s+= result
+            rescue TestFailedError, IncorrectAnswer
+              s += -result
+            rescue => e
+              # seems like although we try to catch and log
+              # errors in run! they are still bubbling up in some cases
+              # and then we lose the output entirely
+            end
           end
+
           # Dump output. TODO: better way to do this?
           features.each { |f| f.dump_output }
           return s
