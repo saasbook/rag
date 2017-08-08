@@ -180,27 +180,27 @@ feature flag in the app (by checking `ENV["version"]`) to trigger a
 Azure Usage
 -----
 
-1. Launch an Azure Linux instance (Ubuntu 14.04.5 LTS (GNU/Linux 4.4.0-83-generic x86_64)). 
+1. Launch an [Azure Linux instance](azure_deploy.md) (Ubuntu 14.04.5 LTS (GNU/Linux 4.4.0-83-generic x86_64)). 
 
 
 ```sh
-sudo apt-get install git
-git clone https://github.com/saasbook/rag
-cd rag
-sudo apt-add-repository -y ppa:rael-gc/rvm
-sudo apt-get update
-sudo apt-get install rvm
+$ sudo apt-get install git
+$ git clone https://github.com/saasbook/rag
+$ cd rag
+$ sudo apt-add-repository -y ppa:rael-gc/rvm
+$ sudo apt-get update
+$ sudo apt-get install rvm
 ```
-log out back in again or `source /usr/local/rvm/scripts/rvm` ?
+
+log out and back in again
 
 ```sh
-rvm install ruby-2.2.2
-bundle
-gem install bundler
-bundle
+$ rvm install ruby-2.2.2
+$ gem install bundler
+$ bundle
 ```
 
-2. If you are using solutions from private repos, make sure you set up a ssh key on the server and create a github machine user (a dummy account), adding the servers ssh key to that and then adding the machine user to teams that have access to the relevant repos, otherwise you'll get errors like 
+2. If you are using solutions from private repos, make sure you [set up a ssh key on the server](https://help.github.com/articles/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent/#platform-linux), add that to the ssh-agent, and create a github machine user (a dummy account), adding the servers ssh key to that and then [adding the machine user to teams](https://github.com/orgs/saasbook/teams/cs-169-gsis/members) that have access to the relevant repos, otherwise you'll get errors like 
 
 ```
 Fatal error: Retrieving spec files from git@github.com:saasbook/hw-ruby-intro-ci.git repository failed
