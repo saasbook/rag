@@ -25,7 +25,8 @@ module MechanizeHelpers
 
   def click_new_game
     page = @mech.get(@@BASE_URI + "/new")
-    form = page.form_with(:action => '/create')
+    form = page.form_with(:action => '/create') ||
+           page.form_with(:action => 'create')
     form.click_button
   end
 
