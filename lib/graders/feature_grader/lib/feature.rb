@@ -164,6 +164,7 @@ module Graders
             score.pass @weight
           end
 
+          # this might include name of test ...!
           log "Test passed. (+#{score.max})"
           score += Feature.total(@if_pass)
         else
