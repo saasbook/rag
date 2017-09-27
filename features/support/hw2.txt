@@ -1,1 +1,1 @@
-http://growing-moon-5313.herokuapp.com/
+http://rails-intro-clean2017.herokuapp.com/
