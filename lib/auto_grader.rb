@@ -4,7 +4,7 @@ require_relative 'rag_logger'
 module Graders
   def self.join_student_and_spec_files(student_file_path, spec_file_path)
     raise "#{student_file_path} is not a directory. Student submission could not be loaded" unless Dir.exist? student_file_path
-    joined_files_s = Dir[File.join(student_file_path, '*.rb')].map do  |file_name|
+    joined_files_s = Dir[File.join(student_file_path, '**/*.rb')].map do  |file_name|
        IO.read(file_name)
     end.join("\n") + "\n" + IO.read(spec_file_path)
     Tempfile.open('spec_file') {|f| f.write joined_files_s; f}.path
@@ -80,7 +80,7 @@ module Graders
             write.puts JSON.generate output_hash
             write.close
         end
-        Timeout.timeout(@timeout) do
+        Timeout.timeout(timeout) do
           Process.wait @pid
         end
         write.close
