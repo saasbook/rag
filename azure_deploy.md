@@ -1,6 +1,8 @@
 Azure Deployment
 ================
 
+http://portal.azure.com
+
 Go to "Marketplace" and then:
 
 A) Search for "Ubuntu"
