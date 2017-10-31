@@ -4,6 +4,7 @@ include Graders
 describe AutoGrader do
   before(:all) do
     FakeWeb.register_uri(:get, 'http://fixture.net/assignment1_spec.txt', :body => IO.read('spec/fixtures/ruby_intro_part1_spec.rb'))
+    `rm -rf submissions`
   end
   context 'initialization' do
     before(:each) do
