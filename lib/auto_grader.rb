@@ -37,6 +37,7 @@ module Graders
     # * +normalize+ - if given, normalize score to this maximum; default 100
     require 'timeout'
     require_relative 'graders/rspec_grader/rspec_grader.rb'
+    require_relative 'graders/rspec_grader/github_rspec_grader.rb'
     require_relative 'graders/rspec_grader/heroku_rspec_grader.rb'
     require_relative 'graders/rspec_grader/hw5_grader.rb'
     require_relative 'graders/feature_grader/hw3_grader.rb'
