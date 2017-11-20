@@ -82,6 +82,10 @@ And(/^results should include "(.*?)"$/) do |message|
   expect(@results[:message]).to include message
 end
 
+And(/^results should not include "(.*?)"$/) do |message|
+  expect(@results[:message]).not_to include message
+end
+
 And(/^I've hacked the grader to have a short timeout$/) do
   class Graders::AutoGrader
     def timeout; 20; end
