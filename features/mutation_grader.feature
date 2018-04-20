@@ -23,3 +23,9 @@ Feature: Mutation Grader
     And has been setup with the config file "conf.yml"
     Then I should receive a grade of "0" for my assignment
     And results should include "unknown attribute 'released_date' for Movie. (ActiveRecord::UnknownAttributeError)"
+  
+  Scenario: student submits a bdd cucumber assignment that completely derails the grader
+    Given an XQueue that has submission "bdd_cucumber_derailed_submission.json" in queue
+    And has been setup with the config file "conf.yml"
+    Then I should receive a grade of "0" for my assignment
+    And results should include "There was a fatal error with your submission. It either timed out or caused an exception"
