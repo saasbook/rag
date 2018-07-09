@@ -201,7 +201,7 @@ module Graders
       cuke_passed, cuke_max = score_cuke_output(cuke)
       rspec_passed, rspec_max = score_rspec_output(rspec)
       cuke_score = cuke_max > 0 ? Rational(cuke_passed, cuke_max) : 0
-      rspec_score = rspec_max > 0 ? Rational(rspec_passed, rspec_max) : 1
+      rspec_score = rspec_max > 0 ? Rational(rspec_passed, rspec_max) : 0
       section_score = (cuke_score * max_score/2.0).to_i + (rspec_score * max_score/2.0).to_i
 
       log cuke if cuke_score != 1

@@ -34,7 +34,7 @@ module Graders
       @features = []
       @description = assignment.assignment_spec_file
       @temp = submission_path
-
+      @timeout = 60
     end
 
     def log(*args)
